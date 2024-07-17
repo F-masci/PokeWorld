@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">PokeWorld</string>
+    <string name="normal">normal</string>
+    <string name="unknown">unknown</string>
+    <string name="grass">grass</string>
+    <string name="fighting">fighting</string>
+    <string name="flying">flying</string>
+    <string name="poison">poison</string>
+    <string name="ground">ground</string>
+    <string name="rock">rock</string>
+    <string name="bug">bug</string>
+    <string name="ghost">ghost</string>
+    <string name="steel">steel</string>
+    <string name="fire">fire</string>
+    <string name="water">water</string>
+    <string name="electric">electric</string>
+    <string name="psychic">psychic</string>
+    <string name="ice">ice</string>
+    <string name="dragon">dragon</string>
+    <string name="dark">dark</string>
+    <string name="fairy">fairy</string>
+    <string name="stellar">stellar</string>
+    <string name="shadow">shadow</string>
 </resources>
