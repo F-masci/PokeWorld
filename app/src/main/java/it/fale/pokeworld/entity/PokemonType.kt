@@ -30,7 +30,7 @@ enum class PokemonType(val type: String, val resource: Int) {
 
     companion object {
         fun fromString(type: String): PokemonType? {
-            Log.d("PokemonTypeConverter", "Converting $type to PokemonType")
+            //Log.d("PokemonTypeConverter", "Converting $type to PokemonType")
             return entries.find { it.type == type }
         }
     }

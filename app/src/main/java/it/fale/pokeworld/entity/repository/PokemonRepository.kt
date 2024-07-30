@@ -7,12 +7,7 @@ class PokemonRepository(private val dao: PokemonDao) {
 
     suspend fun retrievePokemonList(): List<PokemonEntity> {
         Log.d("PokemonRepository", "Retrieving pokemon list")
-        return dao.retrievePokemonList().map {
-            it.abilities = dao.retrieveAbilitiesForPokemon(it.id)
-            it.items = dao.retrieveItemsForPokemon(it.id)
-            it.moves = dao.retrieveMovesForPokemon(it.id)
-            it
-        }
+        return dao.retrievePokemonList()
     }
 
     suspend fun retrievePokemon(pokemonId: Int): PokemonEntity {

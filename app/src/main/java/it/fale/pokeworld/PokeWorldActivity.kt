@@ -65,10 +65,6 @@ fun PokemonDetail(pokemon: PokemonEntity, modifier: Modifier) {
     var txt = pokemon.name
     if(pokemon.type1 !== null) txt += " - " + stringResource(id = pokemon.type1.resource)
     if(pokemon.type2 !== null) txt += " - " + stringResource(id = pokemon.type2.resource)
-    txt += ": "
-    pokemon.abilities.forEach {ability ->
-        txt += ability.getLocaleName() + " (" + ability.getLocaleEffect() + ")"
-    }
 
     Column(modifier = modifier) {
         Row {
@@ -82,11 +78,6 @@ fun PokemonDetail(pokemon: PokemonEntity, modifier: Modifier) {
             Row {
                 Text("Tipo 2: " + stringResource(id = pokemon.type2.resource))
             }
-        pokemon.abilities.forEach {ability ->
-            Row {
-                Text(ability.getLocaleName() + " (" + ability.getLocaleEffect() + ")")
-            }
-        }
     }
 
 }
