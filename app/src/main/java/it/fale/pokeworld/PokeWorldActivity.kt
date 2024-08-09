@@ -3,6 +3,7 @@ package it.fale.pokeworld
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -23,21 +24,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
+import it.fale.pokeworld.entity.PokemonTypeConverter
 import it.fale.pokeworld.entity.repository.PokemonDatabase
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.PokeWorldTheme
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 
 class PokeWorldActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -119,27 +123,59 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly) {
         Row {
-            Text(name)
+            Text(name, fontSize = 15.sp)
         }
         AsyncImage(
             model = spriteUrl,
             contentDescription = null,
             modifier = Modifier
                 .height(140.dp)
-                .background(Color.White, RoundedCornerShape(10))
+                .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(10))
         )
-        if(pokemon.type1 !== null)
-            Row (modifier = Modifier
-                .background(getTextColorForType(type = pokemon.type1), RoundedCornerShape(10))
-                .width(120.dp)){
-                Text(stringResource(id = pokemon.type1.resource))
-            }
-        if(pokemon.type2 !== null)
-            Row (modifier = Modifier
-                .background(getTextColorForType(type = pokemon.type2), RoundedCornerShape(10))
-                .width(120.dp)){
-                Text(stringResource(id = pokemon.type2.resource))
-            }
+        if(pokemon.type1 !== null) TypeRow(type = pokemon.type1)
+        if(pokemon.type2 !== null) TypeRow(type = pokemon.type2)
+    }
+}
+
+@Composable
+fun TypeRow(type: PokemonType) {
+
+    Row (modifier = Modifier
+        .background(getTextColorForType(type = type).copy(alpha = 0.8f), RoundedCornerShape(30))
+        .width(135.dp)
+        .padding(4.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically){
+        Image(painterResource(id = getIconForType(type)), "type_icon",
+            modifier = Modifier
+                .padding(2.dp)
+                .height(20.dp))
+        Text(stringResource(id = type.resource), fontSize = 12.sp)
+    }
+}
+
+fun getIconForType(type: PokemonType): Int {
+    return when(type){
+        PokemonType.GRASS -> R.drawable.grass
+        PokemonType.FIGHTING -> R.drawable.fighting
+        PokemonType.FLYING -> R.drawable.flying
+        PokemonType.POISON -> R.drawable.poison
+        PokemonType.GROUND -> R.drawable.ground
+        PokemonType.ROCK -> R.drawable.rock
+        PokemonType.BUG -> R.drawable.bug
+        PokemonType.GHOST -> R.drawable.ghost
+        PokemonType.STEEL -> R.drawable.steel
+        PokemonType.FIRE -> R.drawable.fire
+        PokemonType.WATER -> R.drawable.water
+        PokemonType.ELECTRIC -> R.drawable.electric
+        PokemonType.PSYCHIC -> R.drawable.psychic
+        PokemonType.ICE -> R.drawable.ice
+        PokemonType.DRAGON -> R.drawable.dragon
+        PokemonType.DARK -> R.drawable.dark
+        PokemonType.FAIRY -> R.drawable.fairy
+        PokemonType.STELLAR -> R.drawable.stellar
+        PokemonType.NORMAL -> R.drawable.normal
+        else -> R.drawable.normal
     }
 }
 
