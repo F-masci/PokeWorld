@@ -69,14 +69,38 @@ fun PokemonList(
     navController: NavController,
     pokemonListViewModel: PokemonListViewModel
 ) {
-
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     Surface(//ho mantenuto il meccanismo di Surface come era nel vecchio push, ma l ho esso direttamente qui(per vedere come era prima guarda anche la parte sopra commentata)
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-
-        LazyVerticalGrid(
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(0.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+                    .background(Color.Red),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Spacer(modifier = Modifier.width(55.dp))
+                AsyncImage(model = R.drawable.logo, contentDescription = null)
+                IconButton(
+                    onClick = { navController.navigate("settings_screen") },
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.settings),
+                        contentDescription = "Settings",
+                        modifier = Modifier
+                            .size(100.dp)
+                    )
+                }
+            }
+            LazyVerticalGrid(
             columns = GridCells.Adaptive(200.dp),
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -98,38 +122,7 @@ fun PokemonList(
                     )                       //senza che nella MainActivity vado a definire
                 }
             }
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(0.dp)
-        ) {
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-                    .background(Color.Red),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Spacer(modifier = Modifier.width(55.dp))
-
-                AsyncImage(model = R.drawable.logo, contentDescription = null)
-
-                IconButton(
-                    onClick = { navController.navigate("settings_screen") },
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.settings),
-                        contentDescription = "Settings",
-                        modifier = Modifier
-                            .size(100.dp)
-
-                    )
-                }
-            }
-
+            )
         }
     }
 }
@@ -173,7 +166,7 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier,onClick: () -> Unit) 
             model = spriteUrl,
             contentDescription = null,
             modifier = Modifier
-                .clickable(onClick = onClick) //reso cliccabile, conseguenza del click implementato nella funzione PokemonList
+                .clickable(onClick = onClick)
                 .height(140.dp)
                 .background(Color.White, RoundedCornerShape(10))
         )
