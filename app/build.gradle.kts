@@ -84,4 +84,17 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.11.0")
 
+    /** --- COIL --- **/
+
+    implementation ("io.coil-kt:coil-compose:2.0.0")
+    implementation("io.coil-kt:coil-gif:2.1.0")
+
+    /** --- NAVIGATION --- **/
+    implementation("androidx.navigation:navigation-compose:2.5.0")
+
+    /** --- HILT --- **/
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+
+
 }
