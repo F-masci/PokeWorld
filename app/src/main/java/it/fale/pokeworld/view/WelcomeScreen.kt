@@ -1,4 +1,4 @@
-package it.fale.pokeworld.welcomeScreen
+package it.fale.pokeworld.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
