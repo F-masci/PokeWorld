@@ -13,7 +13,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import it.fale.pokeworld.detailsScreen.DetailsScreen
 import it.fale.pokeworld.entity.repository.PokemonDatabase
 import it.fale.pokeworld.entity.repository.PokemonRepository
-import it.fale.pokeworld.listScreen.PokemonList
 import it.fale.pokeworld.ui.theme.PokeWorldTheme
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 import it.fale.pokeworld.welcomeScreen.WelcomeScreen

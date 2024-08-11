@@ -1,22 +1,23 @@
 package it.fale.pokeworld
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,22 +25,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
-import it.fale.pokeworld.entity.PokemonTypeConverter
-import it.fale.pokeworld.entity.repository.PokemonDatabase
-import it.fale.pokeworld.entity.repository.PokemonRepository
-import it.fale.pokeworld.ui.theme.PokeWorldTheme
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 
+/*
 class PokeWorldActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,32 +60,74 @@ class PokeWorldActivity : ComponentActivity() {
         }
     }
 }
+*/
 
 @Composable
-fun PokemonList(pokemonListViewModel: PokemonListViewModel) {
-
+fun PokemonList(
+    navController: NavController,
+    pokemonListViewModel: PokemonListViewModel
+) {
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
-
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(200.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-        verticalArrangement = Arrangement.spacedBy(5.dp),
-        content = {
-            items(pokemonList.value) { pokemon ->
-                PokemonCard(
-                    pokemon = pokemon, modifier = Modifier
-                        .padding(20.dp)
-                        .border(2.dp, Color.Gray, RoundedCornerShape(10))
-                        .background(
-                            if (pokemon.type1 != null) getBackgroundColorForType(type = pokemon.type1) else Color.Magenta,
-                            RoundedCornerShape(10)
-                        )
-                        .height(250.dp)
-                        .width(250.dp)
-                    )
-            }
+    Surface(//ho mantenuto il meccanismo di Surface come era nel vecchio push, ma l ho esso direttamente qui(per vedere come era prima guarda anche la parte sopra commentata)
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(0.dp)
+        ) {
+            TopBar(navController = navController)
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(200.dp),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                content = {
+                    items(pokemonList.value) { pokemon ->
+                        PokemonCard(
+                            pokemon = pokemon, modifier = Modifier
+                                .padding(20.dp)
+                                .border(2.dp, Color.Gray, RoundedCornerShape(10))
+                                .background(
+                                    if (pokemon.type1 != null) getBackgroundColorForType(type = pokemon.type1) else Color.Magenta,
+                                    RoundedCornerShape(10)
+                                )
+                                .height(250.dp)
+                                .width(250.dp),
+                            onClick = {
+                                navController.navigate("pokemon_detail/${pokemon.id}")
+                            }                   //questa notazione è fatta in modo tale che posso passare comunque un argomento (l'id)
+                        )                       //senza che nella MainActivity vado a definire
+                    }
+                }
+            )
         }
-    )
+    }
+}
+
+@Composable
+fun TopBar(navController: NavController){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .background(Color.Red),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Spacer(modifier = Modifier.width(55.dp))
+        AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
+        IconButton(
+            onClick = { navController.navigate("settings_screen") },
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.settings),
+                contentDescription = "Settings",
+                modifier = Modifier
+                    .size(120.dp)
+            )
+        }
+    }
 }
 
 @Composable
@@ -114,7 +154,7 @@ fun PokemonDetail(pokemon: PokemonEntity, modifier: Modifier) {
 }
 
 @Composable
-fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier) {
+fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit) {
 
     var name = pokemon.name
     var spriteUrl = pokemon.spriteDefault
