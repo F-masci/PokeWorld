@@ -73,7 +73,9 @@ fun PokemonList(
                 isSearchBarVisible = !isSearchBarVisible
             })
             if (isSearchBarVisible) {
-                SearchBar()
+                SearchBar() { name, type1, type2 ->
+                    pokemonListViewModel.filterPokemon(name, type1, type2)
+                }
             }
 
             LazyVerticalGrid(
@@ -107,8 +109,10 @@ fun PokemonList(
 
 
 @Composable
-fun SearchBar() {
+fun SearchBar(filter: (String?, PokemonType?, PokemonType?) -> Unit) {
     var query by remember { mutableStateOf("") }
+    var selectedType1 by remember { mutableStateOf<PokemonType?>(null) }
+    var selectedType2 by remember { mutableStateOf<PokemonType?>(null) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -122,6 +126,7 @@ fun SearchBar() {
                 value = query,
                 onValueChange = { newValue ->
                     query = newValue
+                    filter(newValue, selectedType1, selectedType2)
                 },
                 placeholder = { Text("Search...") },
                 modifier = Modifier
@@ -138,16 +143,22 @@ fun SearchBar() {
         ) {
 
             ChoiceTypeMenu(
-                initialText = "Select Type",
+                initialText = "Select Type 1",
                 expandedState = remember { mutableStateOf(false) },
-                onOptionSelected = {},//dobbiamo inserire  filtraggio
-                options = listOf("Option A", "Option B")//da modificare per pokemon
+                onOptionSelected = { selectedOption ->
+                    selectedType1 = PokemonType.fromString(selectedOption)
+                    filter(query, selectedType1, selectedType2)
+                },
+                options = PokemonType.entries.map { it.type }
             )
             ChoiceTypeMenu(
-                initialText = "Select Type",
+                initialText = "Select Type 2",
                 expandedState = remember { mutableStateOf(false) },
-                onOptionSelected = {},
-                options = listOf("Option A", "Option B")//da modificare per pokemon
+                onOptionSelected = { selectedOption ->
+                    selectedType2 = PokemonType.fromString(selectedOption)
+                    filter(query, selectedType1, selectedType2)
+                },
+                options = PokemonType.entries.map { it.type }
             )
         }
     }
