@@ -3,13 +3,16 @@ package it.fale.pokeworld
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,11 +20,21 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,32 +48,10 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
+import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 
-/*
-class PokeWorldActivity : ComponentActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-
-            val repository = PokemonRepository(PokemonDatabase.getInstance(LocalContext.current).pokemonDao())
-            val pokemonListViewModel = PokemonListViewModel(repository)
-
-            PokeWorldTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    PokemonList(pokemonListViewModel)
-                }
-            }
-        }
-    }
-}
-*/
 
 @Composable
 fun PokemonList(
@@ -68,7 +59,8 @@ fun PokemonList(
     pokemonListViewModel: PokemonListViewModel
 ) {
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
-    Surface(//ho mantenuto il meccanismo di Surface come era nel vecchio push, ma l ho esso direttamente qui(per vedere come era prima guarda anche la parte sopra commentata)
+    var isSearchBarVisible by remember { mutableStateOf(false) }
+    Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
@@ -77,7 +69,13 @@ fun PokemonList(
                 .fillMaxSize()
                 .padding(0.dp)
         ) {
-            TopBar(navController = navController)
+            TopBar(navController = navController, onSearchClicked = {
+                isSearchBarVisible = !isSearchBarVisible
+            })
+            if (isSearchBarVisible) {
+                SearchBar()
+            }
+
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(200.dp),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -100,13 +98,111 @@ fun PokemonList(
                         )                       //senza che nella MainActivity vado a definire
                     }
                 }
+
+            )
+        }
+    }
+}
+
+
+
+@Composable
+fun SearchBar() {
+    var query by remember { mutableStateOf("") }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            TextField(
+                value = query,
+                onValueChange = { newValue ->
+                    query = newValue
+                },
+                placeholder = { Text("Search...") },
+                modifier = Modifier
+                    .weight(1f)
+                    .background(Color.White)
+                    .heightIn(min = 56.dp, max = 56.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            ChoiceTypeMenu(
+                initialText = "Select Type",
+                expandedState = remember { mutableStateOf(false) },
+                onOptionSelected = {},//dobbiamo inserire  filtraggio
+                options = listOf("Option A", "Option B")//da modificare per pokemon
+            )
+            ChoiceTypeMenu(
+                initialText = "Select Type",
+                expandedState = remember { mutableStateOf(false) },
+                onOptionSelected = {},
+                options = listOf("Option A", "Option B")//da modificare per pokemon
             )
         }
     }
 }
 
 @Composable
-fun TopBar(navController: NavController){
+fun ChoiceTypeMenu(
+    initialText: String,
+    expandedState: MutableState<Boolean>,
+    onOptionSelected: (String) -> Unit,
+    options: List<String>,
+) {
+    var selectedOption by remember { mutableStateOf(initialText) }
+
+    Box {
+        Button(
+            onClick = { expandedState.value = !expandedState.value },
+            colors = ButtonDefaults.buttonColors(Color.Transparent),
+            modifier = Modifier
+                .background(Color.Red, RoundedCornerShape(30))
+                .width(166.dp)
+        ) {
+            Text(
+                selectedOption,
+                fontSize = 10.sp,
+                color = Color.White,
+                fontFamily = pokemonPixelFont,
+            )
+        }
+        DropdownMenu(
+            expanded = expandedState.value,
+            onDismissRequest = { expandedState.value = false },
+            modifier = Modifier
+                .width(166.dp)//Per ora l'ho impostato manualmente,dato che non ho trovato una funziona che sincronizza con  Button
+        ) {
+//      possibile reset
+//            DropdownMenuItem({Text("Reset", color = Color.Red)},onClick = {
+//                selectedOption = initialText // Reset del testo del pulsante al valore iniziale
+//                onOptionSelected(initialText)
+//                expandedState.value = false
+//            })
+            options.forEach { option ->
+                DropdownMenuItem({ Text(option,  fontSize = 10.sp,fontFamily = pokemonPixelFont) },onClick = {
+                    selectedOption = option
+                    onOptionSelected(option)
+                    expandedState.value = false
+                })
+            }
+        }
+    }
+}
+
+
+@Composable
+fun TopBar(navController: NavController, onSearchClicked: () -> Unit){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -115,16 +211,21 @@ fun TopBar(navController: NavController){
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Spacer(modifier = Modifier.width(55.dp))
+        IconButton(onClick = onSearchClicked,
+            modifier = Modifier.size(60.dp)) {
+            Image(
+                painter = painterResource(id = R.drawable.search),
+                contentDescription = "Search",
+            )
+        }
         AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
         IconButton(
-            onClick = { navController.navigate("settings_screen") },
+            onClick = { navController.navigate("settings_screen")},
+            modifier = Modifier.size(60.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.settings),
+                painter = painterResource(id = R.drawable.prova2),
                 contentDescription = "Settings",
-                modifier = Modifier
-                    .size(120.dp)
             )
         }
     }
@@ -156,8 +257,8 @@ fun PokemonDetail(pokemon: PokemonEntity, modifier: Modifier) {
 @Composable
 fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit) {
 
-    var name = pokemon.name
-    var spriteUrl = pokemon.spriteDefault
+    val name = pokemon.name
+    val spriteUrl = pokemon.spriteDefault
 
     Column(modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -193,6 +294,8 @@ fun TypeRow(type: PokemonType) {
         Text(stringResource(id = type.resource), fontSize = 12.sp)
     }
 }
+
+
 
 fun getIconForType(type: PokemonType): Int {
     return when(type){
