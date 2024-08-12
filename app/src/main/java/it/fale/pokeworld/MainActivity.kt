@@ -3,6 +3,7 @@ package it.fale.pokeworld
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -28,7 +29,7 @@ class MainActivity : ComponentActivity(){
         super.onCreate(savedInstanceState)
         setContent{
             val repository = PokemonRepository(PokemonDatabase.getInstance(LocalContext.current).pokemonDao())
-            val pokemonListViewModel = PokemonListViewModel(repository)
+            val pokemonListViewModel = remember { PokemonListViewModel(repository) }
             PokeWorldTheme {
                 val navController= rememberNavController()
                 NavHost(
@@ -47,8 +48,9 @@ class MainActivity : ComponentActivity(){
                             type = NavType.IntType
                         })
                     ) { backStackEntry ->   //qui vado ad estrarre il valore dell'id del pokemon grazie a backStackEntry
-                        val pokemonId = backStackEntry.arguments?.getInt("pokemonId") ?: -1
-                        PokemonDetailsScreen(navController, PokemonDetailViewModel(repository, pokemonId))
+                        val pokemonId = backStackEntry.arguments!!.getInt("pokemonId")
+                        val pokemonDetailViewModel = remember { PokemonDetailViewModel(repository, pokemonId) }
+                        PokemonDetailsScreen(navController, pokemonDetailViewModel)
                     }
                 }//questo metodo ci può stare per estrarre i dati, se vi viene in mente qualcosa di meglio , fatemi sapere
             }

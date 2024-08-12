@@ -41,76 +41,94 @@ fun PokemonDetailsScreen (
 {
 
     val pokemon = pokemonDetailViewModel.pokemon.collectAsStateWithLifecycle().value
+    val isDetailsLoaded = pokemonDetailViewModel.detailsLoaded.collectAsStateWithLifecycle().value
 
+    if(isDetailsLoaded)
+        DetailsCard(pokemon)
+    else
+        Loader()
+
+}
+
+@Composable
+fun Loader() {
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(text = "Loading...")
+    }
+}
+
+@Composable
+fun DetailsCard(pokemon: PokemonEntity){
     pokemon.type1?.let { getBackgroundColorForType(type = it) }?.let {
         Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = it
-    ) {
-            val spriteUrl = pokemon.spriteDefault
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(0.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize(),
+            color = it
         ) {
-            Text(text = pokemon.name, modifier = Modifier
-                .background(getTextColorForType(type = pokemon.type1))
-                .fillMaxWidth()
-                .padding(20.dp),
-                textAlign = TextAlign.Center)
-            Row(
+            val spriteUrl = pokemon.spriteDefault
+            Column(
                 modifier = Modifier
+                    .fillMaxSize()
+                    .padding(0.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = pokemon.name, modifier = Modifier
+                    .background(getTextColorForType(type = pokemon.type1))
                     .fillMaxWidth()
                     .padding(20.dp),
-                horizontalArrangement = Arrangement.Center
-            ){
-                TypeRow(type = pokemon.type1)
-                if(pokemon.type2 != null){
-                    Spacer(modifier = Modifier.width(20.dp))
-                    TypeRow(type = pokemon.type2)
+                    textAlign = TextAlign.Center)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.Center
+                ){
+                    TypeRow(type = pokemon.type1)
+                    if(pokemon.type2 != null){
+                        Spacer(modifier = Modifier.width(20.dp))
+                        TypeRow(type = pokemon.type2)
+                    }
                 }
-            }
-            AsyncImage(
-                model = spriteUrl,
-                contentDescription = null,
-                modifier = Modifier
-                    .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(5))
-                    .width(350.dp)
-                    .height(300.dp)
-            )
-            Row(
-                modifier = Modifier.padding(0.dp, 15.dp),
-                horizontalArrangement = Arrangement.Center
-            ){
-                Text(text = "Height: ${pokemon.height}",
+                AsyncImage(
+                    model = spriteUrl,
+                    contentDescription = null,
                     modifier = Modifier
-                        .background(
-                            getTextColorForType(type = pokemon.type1),
-                            RoundedCornerShape(15)
-                        )
-                        .width(170.dp)
-                        .padding(15.dp),
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.sp)
-                Spacer(modifier = Modifier.width(20.dp))
-                Text(text = "Weight: ${pokemon.weight}",
-                    modifier = Modifier
-                        .background(
-                            getTextColorForType(type = pokemon.type1),
-                            RoundedCornerShape(15)
-                        )
-                        .width(170.dp)
-                        .padding(15.dp),
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.sp)
+                        .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(5))
+                        .width(350.dp)
+                        .height(300.dp)
+                )
+                Row(
+                    modifier = Modifier.padding(0.dp, 15.dp),
+                    horizontalArrangement = Arrangement.Center
+                ){
+                    Text(text = "Height: ${pokemon.height}",
+                        modifier = Modifier
+                            .background(
+                                getTextColorForType(type = pokemon.type1),
+                                RoundedCornerShape(15)
+                            )
+                            .width(170.dp)
+                            .padding(15.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 11.sp)
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(text = "Weight: ${pokemon.weight}",
+                        modifier = Modifier
+                            .background(
+                                getTextColorForType(type = pokemon.type1),
+                                RoundedCornerShape(15)
+                            )
+                            .width(170.dp)
+                            .padding(15.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 11.sp)
+                }
+                Spacer(Modifier.height(10.dp))
+                StatsSection(pokemon = pokemon)
             }
-            Spacer(Modifier.height(10.dp))
-            StatsSection(pokemon = pokemon)
         }
     }
-    }
-
 }
 
 @Composable
