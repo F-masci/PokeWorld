@@ -13,8 +13,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import it.fale.pokeworld.entity.repository.PokemonDatabase
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.PokeWorldTheme
-import it.fale.pokeworld.view.DetailsScreen
+import it.fale.pokeworld.view.PokemonDetailsScreen
 import it.fale.pokeworld.view.WelcomeScreen
+import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 
 
@@ -35,19 +36,19 @@ class MainActivity : ComponentActivity(){
                     startDestination= "welcome_screen"
                 ){
                     composable("pokemon_list_screen"){
-                            PokemonList(navController,pokemonListViewModel)
+                            PokemonList(navController, pokemonListViewModel)
                     }
                     composable("welcome_screen"){
                         WelcomeScreen(navController = navController)
                     }
                     composable(
-                        route = "details_screen/{pokemonId}", //pokemonId è un parametro dinamico, che inserisco solamente quando dalla listScreen clicco sul pokemon interessato
+                        route = "pokemon_details_screen/{pokemonId}", //pokemonId è un parametro dinamico, che inserisco solamente quando dalla listScreen clicco sul pokemon interessato
                         arguments = listOf(navArgument("pokemonId") {
                             type = NavType.IntType
                         })
                     ) { backStackEntry ->   //qui vado ad estrarre il valore dell'id del pokemon grazie a backStackEntry
                         val pokemonId = backStackEntry.arguments?.getInt("pokemonId") ?: -1
-                        DetailsScreen(navController = navController, pokemonId = pokemonId)
+                        PokemonDetailsScreen(navController, PokemonDetailViewModel(repository, pokemonId))
                     }
                 }//questo metodo ci può stare per estrarre i dati, se vi viene in mente qualcosa di meglio , fatemi sapere
             }
