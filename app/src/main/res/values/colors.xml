@@ -45,6 +45,8 @@
     <color name="stellar_light_text">#1affc6</color>
     <color name="shadow_light_background">#b3b3e6</color>
     <color name="shadow_light_text">#6666cc</color>
+    <color name="normal_light_background">#ffcccccc</color>
+    <color name="normal_light_text">#ff888888</color>
     <color name="hp">#CEB0FF</color>
     <color name="attack">#FFB5EF</color>
     <color name="defense">#FFA1A1</color>

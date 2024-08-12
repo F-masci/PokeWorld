@@ -1,8 +1,9 @@
-package it.fale.pokeworld
+package it.fale.pokeworld.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,12 +41,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
@@ -54,7 +55,7 @@ import it.fale.pokeworld.viewmodel.PokemonListViewModel
 
 
 @Composable
-fun PokemonList(
+fun PokemonListScreen(
     navController: NavController,
     pokemonListViewModel: PokemonListViewModel
 ) {
@@ -69,11 +70,13 @@ fun PokemonList(
                 .fillMaxSize()
                 .padding(0.dp)
         ) {
-            TopBar(navController = navController, onSearchClicked = {
-                isSearchBarVisible = !isSearchBarVisible
-            })
+            TopBar(
+                navController = navController,
+                onSearchClicked = {
+                    isSearchBarVisible = !isSearchBarVisible
+                })
             if (isSearchBarVisible) {
-                SearchBar() { name, type1, type2 ->
+                SearchBar { name, type1, type2 ->
                     pokemonListViewModel.filterPokemon(name, type1, type2)
                 }
             }
@@ -89,15 +92,17 @@ fun PokemonList(
                                 .padding(20.dp)
                                 .border(2.dp, Color.Gray, RoundedCornerShape(10))
                                 .background(
-                                    if (pokemon.type1 != null) getBackgroundColorForType(type = pokemon.type1) else Color.Magenta,
+                                    if (pokemon.type1 != null) colorResource(
+                                        id = pokemon.type1.backgroundColor
+                                    ) else Color.Magenta,
                                     RoundedCornerShape(10)
                                 )
                                 .height(250.dp)
                                 .width(250.dp),
                             onClick = {
                                 navController.navigate("pokemon_details_screen/${pokemon.id}")
-                            }                   //questa notazione è fatta in modo tale che posso passare comunque un argomento (l'id)
-                        )                       //senza che nella MainActivity vado a definire
+                            }
+                        )
                     }
                 }
 
@@ -243,37 +248,15 @@ fun TopBar(navController: NavController, onSearchClicked: () -> Unit){
 }
 
 @Composable
-fun PokemonDetail(pokemon: PokemonEntity, modifier: Modifier) {
-
-    var txt = pokemon.name
-    if(pokemon.type1 !== null) txt += " - " + stringResource(id = pokemon.type1.resource)
-    if(pokemon.type2 !== null) txt += " - " + stringResource(id = pokemon.type2.resource)
-
-    Column(modifier = modifier) {
-        Row {
-            Text(pokemon.name)
-        }
-        if(pokemon.type1 !== null)
-            Row {
-                Text("Tipo 1: " + stringResource(id = pokemon.type1.resource))
-            }
-        if(pokemon.type2 !== null)
-            Row {
-                Text("Tipo 2: " + stringResource(id = pokemon.type2.resource))
-            }
-    }
-
-}
-
-@Composable
 fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit) {
 
     val name = pokemon.name
     val spriteUrl = pokemon.spriteDefault
 
-    Column(modifier = modifier,
+    Column(modifier = modifier
+            .clickable{ onClick() },
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly) {
+        verticalArrangement = Arrangement.SpaceEvenly,) {
         Row {
             Text(name, fontSize = 15.sp)
         }
@@ -281,108 +264,11 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit)
             model = spriteUrl,
             contentDescription = null,
             modifier = Modifier
-                .clickable{ onClick() }
                 .height(140.dp)
                 .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(10))
         )
         if(pokemon.type1 !== null) TypeRow(type = pokemon.type1)
         if(pokemon.type2 !== null) TypeRow(type = pokemon.type2)
-    }
-}
-
-@Composable
-fun TypeRow(type: PokemonType) {
-
-    Row (modifier = Modifier
-        .background(getTextColorForType(type = type).copy(alpha = 0.8f), RoundedCornerShape(30))
-        .width(135.dp)
-        .padding(4.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically){
-        Image(painterResource(id = getIconForType(type)), "type_icon",
-            modifier = Modifier
-                .padding(2.dp)
-                .height(20.dp))
-        Text(stringResource(id = type.resource), fontSize = 12.sp)
-    }
-}
-
-
-
-fun getIconForType(type: PokemonType): Int {
-    return when(type){
-        PokemonType.GRASS -> R.drawable.grass
-        PokemonType.FIGHTING -> R.drawable.fighting
-        PokemonType.FLYING -> R.drawable.flying
-        PokemonType.POISON -> R.drawable.poison
-        PokemonType.GROUND -> R.drawable.ground
-        PokemonType.ROCK -> R.drawable.rock
-        PokemonType.BUG -> R.drawable.bug
-        PokemonType.GHOST -> R.drawable.ghost
-        PokemonType.STEEL -> R.drawable.steel
-        PokemonType.FIRE -> R.drawable.fire
-        PokemonType.WATER -> R.drawable.water
-        PokemonType.ELECTRIC -> R.drawable.electric
-        PokemonType.PSYCHIC -> R.drawable.psychic
-        PokemonType.ICE -> R.drawable.ice
-        PokemonType.DRAGON -> R.drawable.dragon
-        PokemonType.DARK -> R.drawable.dark
-        PokemonType.FAIRY -> R.drawable.fairy
-        PokemonType.STELLAR -> R.drawable.stellar
-        PokemonType.NORMAL -> R.drawable.normal
-        else -> R.drawable.normal
-    }
-}
-
-@Composable
-fun getBackgroundColorForType(type: PokemonType) : Color {
-    return when(type){
-        PokemonType.GRASS -> colorResource(R.color.grass_light_background)
-        PokemonType.FIGHTING -> colorResource(R.color.fighting_light_background)
-        PokemonType.FLYING -> colorResource(R.color.flying_light_background)
-        PokemonType.POISON -> colorResource(R.color.poison_light_background)
-        PokemonType.GROUND -> colorResource(R.color.ground_light_background)
-        PokemonType.ROCK -> colorResource(R.color.rock_light_background)
-        PokemonType.BUG -> colorResource(R.color.bug_light_background)
-        PokemonType.GHOST -> colorResource(R.color.ghost_light_background)
-        PokemonType.STEEL -> colorResource(R.color.steel_light_background)
-        PokemonType.FIRE -> colorResource(R.color.fire_light_background)
-        PokemonType.WATER -> colorResource(R.color.water_light_background)
-        PokemonType.ELECTRIC -> colorResource(R.color.electric_light_background)
-        PokemonType.PSYCHIC -> colorResource(R.color.psychic_light_background)
-        PokemonType.ICE -> colorResource(R.color.ice_light_background)
-        PokemonType.DRAGON -> colorResource(R.color.dragon_light_background)
-        PokemonType.DARK -> colorResource(R.color.dark_light_background)
-        PokemonType.FAIRY -> colorResource(R.color.fairy_light_background)
-        PokemonType.STELLAR -> colorResource(R.color.stellar_light_background)
-        PokemonType.SHADOW -> colorResource(R.color.shadow_light_background)
-        else -> Color.LightGray
-    }
-}
-
-@Composable
-fun getTextColorForType(type: PokemonType) : Color {
-    return when(type){
-        PokemonType.GRASS -> colorResource(R.color.grass_light_text)
-        PokemonType.FIGHTING -> colorResource(R.color.fighting_light_text)
-        PokemonType.FLYING -> colorResource(R.color.flying_light_text)
-        PokemonType.POISON -> colorResource(R.color.poison_light_text)
-        PokemonType.GROUND -> colorResource(R.color.ground_light_text)
-        PokemonType.ROCK -> colorResource(R.color.rock_light_text)
-        PokemonType.BUG -> colorResource(R.color.bug_light_text)
-        PokemonType.GHOST -> colorResource(R.color.ghost_light_text)
-        PokemonType.STEEL -> colorResource(R.color.steel_light_text)
-        PokemonType.FIRE -> colorResource(R.color.fire_light_text)
-        PokemonType.WATER -> colorResource(R.color.water_light_text)
-        PokemonType.ELECTRIC -> colorResource(R.color.electric_light_text)
-        PokemonType.PSYCHIC -> colorResource(R.color.psychic_light_text)
-        PokemonType.ICE -> colorResource(R.color.ice_light_text)
-        PokemonType.DRAGON -> colorResource(R.color.dragon_light_text)
-        PokemonType.DARK -> colorResource(R.color.dark_light_text)
-        PokemonType.FAIRY -> colorResource(R.color.fairy_light_text)
-        PokemonType.STELLAR -> colorResource(R.color.stellar_light_text)
-        PokemonType.SHADOW -> colorResource(R.color.shadow_light_text)
-        else -> Color.Gray
     }
 }
 

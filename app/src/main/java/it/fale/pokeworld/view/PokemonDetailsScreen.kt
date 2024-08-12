@@ -30,7 +30,6 @@ import coil.compose.AsyncImage
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
-import it.fale.pokeworld.getBackgroundColorForType
 import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
 
 @Composable
@@ -61,7 +60,7 @@ fun Loader() {
 
 @Composable
 fun DetailsCard(pokemon: PokemonEntity){
-    pokemon.type1?.let { getBackgroundColorForType(type = it) }?.let {
+    pokemon.type1?.let { colorResource(id = it.backgroundColor) }?.let {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = it
@@ -74,7 +73,7 @@ fun DetailsCard(pokemon: PokemonEntity){
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = pokemon.name, modifier = Modifier
-                    .background(getTextColorForType(type = pokemon.type1))
+                    .background(colorResource(pokemon.type1.textColor))
                     .fillMaxWidth()
                     .padding(20.dp),
                     textAlign = TextAlign.Center)
@@ -105,7 +104,7 @@ fun DetailsCard(pokemon: PokemonEntity){
                     Text(text = "Height: ${pokemon.height}",
                         modifier = Modifier
                             .background(
-                                getTextColorForType(type = pokemon.type1),
+                                colorResource(id = pokemon.type1.textColor),
                                 RoundedCornerShape(15)
                             )
                             .width(170.dp)
@@ -116,7 +115,7 @@ fun DetailsCard(pokemon: PokemonEntity){
                     Text(text = "Weight: ${pokemon.weight}",
                         modifier = Modifier
                             .background(
-                                getTextColorForType(type = pokemon.type1),
+                                colorResource(id = pokemon.type1.textColor),
                                 RoundedCornerShape(15)
                             )
                             .width(170.dp)
@@ -146,8 +145,8 @@ fun StatsSection(pokemon: PokemonEntity){
         horizontalAlignment = Alignment.CenterHorizontally
     ){
        Text(text = "STATS", fontSize = 14.sp, modifier = Modifier.padding(15.dp))
-        Column(){
-            Row(){
+        Column {
+            Row {
                 Text(text = "HP: ${pokemon.hp}",
                     modifier = Modifier
                         .background(
@@ -171,7 +170,7 @@ fun StatsSection(pokemon: PokemonEntity){
                     fontSize = 11.sp)
             }
             Spacer(modifier = Modifier.height(20.dp))
-            Row(){
+            Row {
                 Text(text = "Defense: ${pokemon.defense}",
                     modifier = Modifier
                         .background(
@@ -195,7 +194,7 @@ fun StatsSection(pokemon: PokemonEntity){
                     fontSize = 11.sp)
             }
             Spacer(modifier = Modifier.height(20.dp))
-            Row(){
+            Row {
                 Text(text = "Special Defense: ${pokemon.specialDefense}",
                     modifier = Modifier
                         .background(
@@ -229,97 +228,19 @@ fun TypeRow(type: PokemonType) {
 
     Row (modifier = Modifier
         .background(
-            it.fale.pokeworld
-                .getTextColorForType(type = type)
-                .copy(alpha = 0.8f), RoundedCornerShape(30)
+            colorResource(type.textColor)
+                .copy(alpha = 0.8f),
+            RoundedCornerShape(30)
         )
         .width(135.dp)
         .padding(4.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically){
         Image(
-            painterResource(id = it.fale.pokeworld.getIconForType(type)), "type_icon",
+            painterResource(id = type.icon), "type_icon",
             modifier = Modifier
                 .padding(2.dp)
                 .height(20.dp))
-        Text(stringResource(id = type.resource), fontSize = 12.sp)
-    }
-}
-
-fun getIconForType(type: PokemonType): Int {
-    return when(type){
-        PokemonType.GRASS -> R.drawable.grass
-        PokemonType.FIGHTING -> R.drawable.fighting
-        PokemonType.FLYING -> R.drawable.flying
-        PokemonType.POISON -> R.drawable.poison
-        PokemonType.GROUND -> R.drawable.ground
-        PokemonType.ROCK -> R.drawable.rock
-        PokemonType.BUG -> R.drawable.bug
-        PokemonType.GHOST -> R.drawable.ghost
-        PokemonType.STEEL -> R.drawable.steel
-        PokemonType.FIRE -> R.drawable.fire
-        PokemonType.WATER -> R.drawable.water
-        PokemonType.ELECTRIC -> R.drawable.electric
-        PokemonType.PSYCHIC -> R.drawable.psychic
-        PokemonType.ICE -> R.drawable.ice
-        PokemonType.DRAGON -> R.drawable.dragon
-        PokemonType.DARK -> R.drawable.dark
-        PokemonType.FAIRY -> R.drawable.fairy
-        PokemonType.STELLAR -> R.drawable.stellar
-        PokemonType.NORMAL -> R.drawable.normal
-        else -> R.drawable.normal
-    }
-}
-
-
-@Composable
-fun getBackgroundColorForType(type: PokemonType) : Color {
-    return when(type){
-        PokemonType.GRASS -> colorResource(R.color.grass_light_background)
-        PokemonType.FIGHTING -> colorResource(R.color.fighting_light_background)
-        PokemonType.FLYING -> colorResource(R.color.flying_light_background)
-        PokemonType.POISON -> colorResource(R.color.poison_light_background)
-        PokemonType.GROUND -> colorResource(R.color.ground_light_background)
-        PokemonType.ROCK -> colorResource(R.color.rock_light_background)
-        PokemonType.BUG -> colorResource(R.color.bug_light_background)
-        PokemonType.GHOST -> colorResource(R.color.ghost_light_background)
-        PokemonType.STEEL -> colorResource(R.color.steel_light_background)
-        PokemonType.FIRE -> colorResource(R.color.fire_light_background)
-        PokemonType.WATER -> colorResource(R.color.water_light_background)
-        PokemonType.ELECTRIC -> colorResource(R.color.electric_light_background)
-        PokemonType.PSYCHIC -> colorResource(R.color.psychic_light_background)
-        PokemonType.ICE -> colorResource(R.color.ice_light_background)
-        PokemonType.DRAGON -> colorResource(R.color.dragon_light_background)
-        PokemonType.DARK -> colorResource(R.color.dark_light_background)
-        PokemonType.FAIRY -> colorResource(R.color.fairy_light_background)
-        PokemonType.STELLAR -> colorResource(R.color.stellar_light_background)
-        PokemonType.SHADOW -> colorResource(R.color.shadow_light_background)
-        else -> Color.LightGray
-    }
-}
-
-@Composable
-fun getTextColorForType(type: PokemonType) : Color {
-    return when(type){
-        PokemonType.GRASS -> colorResource(R.color.grass_light_text)
-        PokemonType.FIGHTING -> colorResource(R.color.fighting_light_text)
-        PokemonType.FLYING -> colorResource(R.color.flying_light_text)
-        PokemonType.POISON -> colorResource(R.color.poison_light_text)
-        PokemonType.GROUND -> colorResource(R.color.ground_light_text)
-        PokemonType.ROCK -> colorResource(R.color.rock_light_text)
-        PokemonType.BUG -> colorResource(R.color.bug_light_text)
-        PokemonType.GHOST -> colorResource(R.color.ghost_light_text)
-        PokemonType.STEEL -> colorResource(R.color.steel_light_text)
-        PokemonType.FIRE -> colorResource(R.color.fire_light_text)
-        PokemonType.WATER -> colorResource(R.color.water_light_text)
-        PokemonType.ELECTRIC -> colorResource(R.color.electric_light_text)
-        PokemonType.PSYCHIC -> colorResource(R.color.psychic_light_text)
-        PokemonType.ICE -> colorResource(R.color.ice_light_text)
-        PokemonType.DRAGON -> colorResource(R.color.dragon_light_text)
-        PokemonType.DARK -> colorResource(R.color.dark_light_text)
-        PokemonType.FAIRY -> colorResource(R.color.fairy_light_text)
-        PokemonType.STELLAR -> colorResource(R.color.stellar_light_text)
-        PokemonType.SHADOW -> colorResource(R.color.shadow_light_text)
-        else -> Color.Gray
+        Text(stringResource(id = type.string), fontSize = 12.sp)
     }
 }

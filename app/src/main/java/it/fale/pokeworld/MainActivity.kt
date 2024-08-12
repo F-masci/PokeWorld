@@ -15,6 +15,7 @@ import it.fale.pokeworld.entity.repository.PokemonDatabase
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.PokeWorldTheme
 import it.fale.pokeworld.view.PokemonDetailsScreen
+import it.fale.pokeworld.view.PokemonListScreen
 import it.fale.pokeworld.view.WelcomeScreen
 import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
@@ -37,7 +38,10 @@ class MainActivity : ComponentActivity(){
                     startDestination= "welcome_screen"
                 ){
                     composable("pokemon_list_screen"){
-                            PokemonList(navController, pokemonListViewModel)
+                        PokemonListScreen(
+                            navController,
+                            pokemonListViewModel
+                        )
                     }
                     composable("welcome_screen"){
                         WelcomeScreen(navController = navController)
