@@ -73,7 +73,7 @@ fun DetailsCard(pokemon: PokemonEntity){
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = pokemon.name, modifier = Modifier
-                    .background(colorResource(pokemon.type1.textColor))
+                    .background(colorResource(pokemon.type1.backgroundTextColor))
                     .fillMaxWidth()
                     .padding(20.dp),
                     textAlign = TextAlign.Center)
@@ -104,7 +104,7 @@ fun DetailsCard(pokemon: PokemonEntity){
                     Text(text = "Height: ${pokemon.height}",
                         modifier = Modifier
                             .background(
-                                colorResource(id = pokemon.type1.textColor),
+                                colorResource(id = pokemon.type1.backgroundTextColor),
                                 RoundedCornerShape(15)
                             )
                             .width(170.dp)
@@ -115,7 +115,7 @@ fun DetailsCard(pokemon: PokemonEntity){
                     Text(text = "Weight: ${pokemon.weight}",
                         modifier = Modifier
                             .background(
-                                colorResource(id = pokemon.type1.textColor),
+                                colorResource(id = pokemon.type1.backgroundTextColor),
                                 RoundedCornerShape(15)
                             )
                             .width(170.dp)
@@ -228,7 +228,7 @@ fun TypeRow(type: PokemonType) {
 
     Row (modifier = Modifier
         .background(
-            colorResource(type.textColor)
+            colorResource(type.backgroundTextColor)
                 .copy(alpha = 0.8f),
             RoundedCornerShape(30)
         )

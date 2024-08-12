@@ -1,12 +1,9 @@
 package it.fale.pokeworld.entity
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.room.TypeConverter
 import it.fale.pokeworld.R
 
-enum class PokemonType(val type: String, val string: Int, val icon: Int, val backgroundColor: Int, val textColor: Int) {
+enum class PokemonType(val type: String, val string: Int, val icon: Int, val backgroundColor: Int, val backgroundTextColor: Int) {
 
     NORMAL("normal", R.string.normal, R.drawable.normal, R.color.normal_light_background, R.color.normal_light_text),
     FIGHTING("fighting", R.string.fighting, R.drawable.fighting, R.color.fighting_light_background, R.color.fighting_light_text),
