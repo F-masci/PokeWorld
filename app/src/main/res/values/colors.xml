@@ -45,4 +45,10 @@
     <color name="stellar_light_text">#1affc6</color>
     <color name="shadow_light_background">#b3b3e6</color>
     <color name="shadow_light_text">#6666cc</color>
+    <color name="hp">#CEB0FF</color>
+    <color name="attack">#FFB5EF</color>
+    <color name="defense">#FFA1A1</color>
+    <color name="special_attack">#FFCA8B</color>
+    <color name="special_defense">#9EEEFF</color>
+    <color name="speed">#BEFFA7</color>
 </resources>
