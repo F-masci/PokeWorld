@@ -3,7 +3,6 @@ package it.fale.pokeworld
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -74,7 +73,9 @@ fun PokemonList(
                 isSearchBarVisible = !isSearchBarVisible
             })
             if (isSearchBarVisible) {
-                SearchBar()
+                SearchBar() { name, type1, type2 ->
+                    pokemonListViewModel.filterPokemon(name, type1, type2)
+                }
             }
 
             LazyVerticalGrid(
@@ -108,8 +109,10 @@ fun PokemonList(
 
 
 @Composable
-fun SearchBar() {
+fun SearchBar(filter: (String?, PokemonType?, PokemonType?) -> Unit) {
     var query by remember { mutableStateOf("") }
+    var selectedType1 by remember { mutableStateOf<PokemonType?>(null) }
+    var selectedType2 by remember { mutableStateOf<PokemonType?>(null) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -123,6 +126,7 @@ fun SearchBar() {
                 value = query,
                 onValueChange = { newValue ->
                     query = newValue
+                    filter(newValue, selectedType1, selectedType2)
                 },
                 placeholder = { Text("Search...") },
                 modifier = Modifier
@@ -139,16 +143,22 @@ fun SearchBar() {
         ) {
 
             ChoiceTypeMenu(
-                initialText = "Select Type",
+                initialText = "Select Type 1",
                 expandedState = remember { mutableStateOf(false) },
-                onOptionSelected = {},//dobbiamo inserire  filtraggio
-                options = listOf("Option A", "Option B")//da modificare per pokemon
+                onOptionSelected = { selectedOption ->
+                    selectedType1 = PokemonType.fromString(selectedOption)
+                    filter(query, selectedType1, selectedType2)
+                },
+                options = PokemonType.entries.map { it.type }
             )
             ChoiceTypeMenu(
-                initialText = "Select Type",
+                initialText = "Select Type 2",
                 expandedState = remember { mutableStateOf(false) },
-                onOptionSelected = {},
-                options = listOf("Option A", "Option B")//da modificare per pokemon
+                onOptionSelected = { selectedOption ->
+                    selectedType2 = PokemonType.fromString(selectedOption)
+                    filter(query, selectedType1, selectedType2)
+                },
+                options = PokemonType.entries.map { it.type }
             )
         }
     }
@@ -261,8 +271,7 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit)
     val name = pokemon.name
     val spriteUrl = pokemon.spriteDefault
 
-    Column(modifier = modifier
-            .clickable { onClick() },
+    Column(modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly) {
         Row {
@@ -272,6 +281,7 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit)
             model = spriteUrl,
             contentDescription = null,
             modifier = Modifier
+                .clickable{ onClick() }
                 .height(140.dp)
                 .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(10))
         )
