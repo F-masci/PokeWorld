@@ -1,12 +1,8 @@
 package it.fale.pokeworld.entity
 
-import androidx.annotation.NonNull
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import it.fale.pokeworld.R
-import it.fale.pokeworld.entity.repository.PokemonDao
 
 @Entity(tableName = "pokemon")
 data class PokemonEntity(

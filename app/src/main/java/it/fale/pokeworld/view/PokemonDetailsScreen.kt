@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
@@ -34,7 +33,6 @@ import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
 
 @Composable
 fun PokemonDetailsScreen (
-    navController: NavController,
     pokemonDetailViewModel: PokemonDetailViewModel
 )
 {
@@ -132,7 +130,7 @@ fun DetailsCard(pokemon: PokemonEntity){
 
 @Composable
 fun AbilitiesSection(){
-
+    // TODO: Aggiungere le abilità
 }
 
 @Composable
