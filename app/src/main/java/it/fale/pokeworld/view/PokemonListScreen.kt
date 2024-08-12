@@ -3,6 +3,7 @@ package it.fale.pokeworld
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -95,7 +96,7 @@ fun PokemonList(
                                 .height(250.dp)
                                 .width(250.dp),
                             onClick = {
-                                navController.navigate("pokemon_detail/${pokemon.id}")
+                                navController.navigate("details_screen/${pokemon.id}")
                             }                   //questa notazione è fatta in modo tale che posso passare comunque un argomento (l'id)
                         )                       //senza che nella MainActivity vado a definire
                     }
@@ -281,6 +282,7 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit)
             model = spriteUrl,
             contentDescription = null,
             modifier = Modifier
+                .clickable{onClick()}
                 .height(140.dp)
                 .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(10))
         )

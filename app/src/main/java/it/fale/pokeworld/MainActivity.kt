@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity(){
                         })
                     ) { backStackEntry ->   //qui vado ad estrarre il valore dell'id del pokemon grazie a backStackEntry
                         val pokemonId = backStackEntry.arguments?.getInt("pokemonId") ?: -1
-                        DetailsScreen(navController = navController, pokemonId = pokemonId)
+                        DetailsScreen(pokemonId = pokemonId)
                     }
                 }//questo metodo ci può stare per estrarre i dati, se vi viene in mente qualcosa di meglio , fatemi sapere
             }
