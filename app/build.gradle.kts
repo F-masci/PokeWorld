@@ -95,6 +95,8 @@ dependencies {
     /** --- HILT --- **/
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
-
+    /** ---MODALE--- **/
+    implementation ("androidx.compose.material3:material3:1.0.1")
+    implementation ("androidx.compose.material:material:1.4.3")
 
 }

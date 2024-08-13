@@ -52,6 +52,10 @@ import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -61,52 +65,94 @@ fun PokemonList(
 ) {
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     var isSearchBarVisible by remember { mutableStateOf(false) }
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(0.dp)
-        ) {
-            TopBar(navController = navController, onSearchClicked = {
-                isSearchBarVisible = !isSearchBarVisible
-            })
-            if (isSearchBarVisible) {
-                SearchBar() { name, type1, type2 ->
-                    pokemonListViewModel.filterPokemon(name, type1, type2)
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+
+    // Funzione per aprire il drawer
+    val openDrawer = {
+        scope.launch { drawerState.open() }
+    }
+
+    // Funzione per chiudere il drawer
+    val closeDrawer = {
+        scope.launch { drawerState.close() }
+    }
+    ModalDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            // Contenuto del drawer
+            DrawerContent { selectedItem ->
+                // Gestisci l'elemento selezionato qui
+                closeDrawer() // Chiudi il drawer quando un elemento è selezionato
+            }
+        },
+        content = {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(0.dp)
+                ) {
+                    TopBar(
+                        navController = navController,
+                        onSearchClicked = {
+                            isSearchBarVisible = !isSearchBarVisible
+                        },
+                        onSettingsClicked = {
+                            openDrawer()
+                        }
+                    )
+                    if (isSearchBarVisible) {
+                        SearchBar() { name, type1, type2 ->
+                            pokemonListViewModel.filterPokemon(name, type1, type2)
+                        }
+                    }
+
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(200.dp),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        verticalArrangement = Arrangement.spacedBy(5.dp),
+                        content = {
+                            items(pokemonList.value) { pokemon ->
+                                PokemonCard(
+                                    pokemon = pokemon, modifier = Modifier
+                                        .padding(20.dp)
+                                        .border(2.dp, Color.Gray, RoundedCornerShape(10))
+                                        .background(
+                                            if (pokemon.type1 != null) getBackgroundColorForType(
+                                                type = pokemon.type1
+                                            ) else Color.Magenta,
+                                            RoundedCornerShape(10)
+                                        )
+                                        .height(250.dp)
+                                        .width(250.dp),
+                                    onClick = {
+                                        navController.navigate("details_screen/${pokemon.id}")
+                                    }                   //questa notazione è fatta in modo tale che posso passare comunque un argomento (l'id)
+                                )                       //senza che nella MainActivity vado a definire
+                            }
+                        }
+
+                    )
                 }
             }
-
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(200.dp),
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-                content = {
-                    items(pokemonList.value) { pokemon ->
-                        PokemonCard(
-                            pokemon = pokemon, modifier = Modifier
-                                .padding(20.dp)
-                                .border(2.dp, Color.Gray, RoundedCornerShape(10))
-                                .background(
-                                    if (pokemon.type1 != null) getBackgroundColorForType(type = pokemon.type1) else Color.Magenta,
-                                    RoundedCornerShape(10)
-                                )
-                                .height(250.dp)
-                                .width(250.dp),
-                            onClick = {
-                                navController.navigate("details_screen/${pokemon.id}")
-                            }                   //questa notazione è fatta in modo tale che posso passare comunque un argomento (l'id)
-                        )                       //senza che nella MainActivity vado a definire
-                    }
-                }
-
-            )
         }
-    }
+    )
 }
 
+@Composable
+fun DrawerContent(onItemClick: (String) -> Unit) {
+    Column {
+        Text("Home", modifier = Modifier.padding(16.dp).clickable { onItemClick("Home") }, fontSize = 20.sp)
+        Text("Profile", modifier = Modifier.padding(16.dp).clickable { onItemClick("Profile") }, fontSize = 20.sp)
+        Text("Settings", modifier = Modifier.padding(16.dp).clickable { onItemClick("Settings") }, fontSize = 20.sp)
+        // Aggiungi altri elementi del drawer qui
+    }
+}
 
 
 @Composable
@@ -150,7 +196,7 @@ fun SearchBar(filter: (String?, PokemonType?, PokemonType?) -> Unit) {
                     selectedType1 = PokemonType.fromString(selectedOption)
                     filter(query, selectedType1, selectedType2)
                 },
-                options = PokemonType.entries.map { it.type }
+                options = listOf("any")+(PokemonType.entries.map { it.type })
             )
             ChoiceTypeMenu(
                 initialText = "Select Type 2",
@@ -159,7 +205,7 @@ fun SearchBar(filter: (String?, PokemonType?, PokemonType?) -> Unit) {
                     selectedType2 = PokemonType.fromString(selectedOption)
                     filter(query, selectedType1, selectedType2)
                 },
-                options = PokemonType.entries.map { it.type }
+                options = listOf("any")+(PokemonType.entries.map { it.type })
             )
         }
     }
@@ -194,6 +240,7 @@ fun ChoiceTypeMenu(
             onDismissRequest = { expandedState.value = false },
             modifier = Modifier
                 .width(166.dp)//Per ora l'ho impostato manualmente,dato che non ho trovato una funziona che sincronizza con  Button
+                .height(300.dp)
         ) {
 //      possibile reset
 //            DropdownMenuItem({Text("Reset", color = Color.Red)},onClick = {
@@ -202,7 +249,7 @@ fun ChoiceTypeMenu(
 //                expandedState.value = false
 //            })
             options.forEach { option ->
-                DropdownMenuItem({ Text(option,  fontSize = 10.sp,fontFamily = pokemonPixelFont) },onClick = {
+                DropdownMenuItem({ Text(option,/*color = if (option == "any") Color.Black else Color.Red  ,*/fontSize = 10.sp,fontFamily = pokemonPixelFont) },onClick = {
                     selectedOption = option
                     onOptionSelected(option)
                     expandedState.value = false
@@ -212,9 +259,14 @@ fun ChoiceTypeMenu(
     }
 }
 
+//Tentativo di aggiunta modale laterale
 
 @Composable
-fun TopBar(navController: NavController, onSearchClicked: () -> Unit){
+fun TopBar(
+    navController: NavController,
+    onSearchClicked: () -> Unit,
+    onSettingsClicked: () -> Unit
+){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -232,7 +284,8 @@ fun TopBar(navController: NavController, onSearchClicked: () -> Unit){
         }
         AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
         IconButton(
-            onClick = { navController.navigate("settings_screen")},
+            onClick=onSettingsClicked,
+            //onClick = { navController.navigate("settings_screen")},
             modifier = Modifier.size(60.dp)
         ) {
             Image(
@@ -242,7 +295,6 @@ fun TopBar(navController: NavController, onSearchClicked: () -> Unit){
         }
     }
 }
-
 @Composable
 fun PokemonDetail(pokemon: PokemonEntity, modifier: Modifier) {
 
@@ -282,7 +334,7 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit)
             model = spriteUrl,
             contentDescription = null,
             modifier = Modifier
-                .clickable{onClick()}
+                .clickable { onClick() }
                 .height(140.dp)
                 .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(10))
         )
@@ -307,8 +359,6 @@ fun TypeRow(type: PokemonType) {
         Text(stringResource(id = type.resource), fontSize = 12.sp)
     }
 }
-
-
 
 fun getIconForType(type: PokemonType): Int {
     return when(type){
@@ -386,4 +436,3 @@ fun getTextColorForType(type: PokemonType) : Color {
         else -> Color.Gray
     }
 }
-

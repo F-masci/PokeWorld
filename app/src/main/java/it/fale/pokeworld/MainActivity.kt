@@ -1,6 +1,8 @@
 package it.fale.pokeworld
 
 import android.os.Bundle
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.ui.platform.LocalContext
@@ -50,6 +52,11 @@ class MainActivity : ComponentActivity(){
                         DetailsScreen(pokemonId = pokemonId)
                     }
                 }//questo metodo ci può stare per estrarre i dati, se vi viene in mente qualcosa di meglio , fatemi sapere
+            }
+            window.setDecorFitsSystemWindows(false)
+            window.insetsController?.let { controller ->
+                controller.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+                controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         }
     }
