@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -158,41 +159,25 @@ fun DetailsCard(pokemon: PokemonEntity){
                 }
                 item{
                     Spacer(Modifier.height(10.dp))
-                    MovesSelection(pokemon=pokemon)
+                    Text(
+                        text = "MOVES",
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(15.dp)
+                    )
                 }
-
+                items(pokemon.moves) { move ->
+                    MoveItem(
+                        moveName = move.getLocaleName(),
+                        moveDescription = move.getLocaleDescription(),
+                        accuracy = move.accuracy,
+                        effectChance = move.effectChance,
+                        power = move.power,
+                        priority = move.priority,
+                        type = pokemon.type1
+                    )
+                }
             }
         }
-    }
-}
-
-@Composable
-fun MovesSelection(pokemon: PokemonEntity) {
-    pokemon.type1?.let { colorResource(id = it.backgroundColor) }?.let {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "MOVES",
-            fontSize = 14.sp,
-            modifier = Modifier.padding(15.dp)
-        )
-        pokemon.moves.forEach { move ->
-            MoveItem(
-                moveName = move.getLocaleName(),
-                moveDescription = move.getLocaleDescription(),
-                accuracy = move.accuracy,
-                effectChance = move.effectChance,
-                power = move.power,
-                priority = move.priority,
-                type = pokemon.type1
-
-            )
-        }
-    }
     }
 }
 
