@@ -32,9 +32,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,6 +53,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
+import it.fale.pokeworld.entity.PokemonTypeConverter
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.view.TypeRow
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
@@ -123,7 +126,7 @@ fun PokemonListScreen(
                                         .border(2.dp, Color.Gray, RoundedCornerShape(10))
                                         .background(
                                             if (pokemon.type1 != null) colorResource(id = pokemon.type1.backgroundColor)
-                                             else Color.Magenta,
+                                            else Color.Magenta,
                                             RoundedCornerShape(10)
                                         )
                                         .height(250.dp)
@@ -183,18 +186,30 @@ fun SearchBar(filter: (String?, PokemonType?, PokemonType?) -> Unit) {
                 modifier = Modifier
                     .weight(1f)
                     .background(Color.White)
-                    .heightIn(min = 56.dp, max = 56.dp)
+                    .heightIn(min = 56.dp, max = 56.dp),
+                colors = TextFieldDefaults.colors(
+                    unfocusedIndicatorColor = colorResource(id = R.color.pokemon_blue),
+                    unfocusedPlaceholderColor = colorResource(id = R.color.pokemon_blue),
+                    unfocusedTextColor = colorResource(id = R.color.pokemon_blue),
+                    focusedIndicatorColor = colorResource(id = R.color.light_pokemon_blue),
+                    focusedContainerColor = colorResource(id = R.color.light_pokemon_blue),
+                    focusedTextColor = colorResource(id = R.color.light_pokemon_yellow),
+                    focusedPlaceholderColor = colorResource(id = R.color.light_pokemon_yellow),
+                    unfocusedContainerColor = colorResource(id = R.color.pokemon_yellow)
+                ),
+                shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.SpaceAround,
             modifier = Modifier.fillMaxWidth()
         ) {
 
             ChoiceTypeMenu(
                 initialText = "Select Type 1",
+                initialColor = R.color.light_pokemon_blue,
                 expandedState = remember { mutableStateOf(false) },
                 onOptionSelected = { selectedOption ->
                     selectedType1 = PokemonType.fromString(selectedOption)
@@ -204,6 +219,7 @@ fun SearchBar(filter: (String?, PokemonType?, PokemonType?) -> Unit) {
             )
             ChoiceTypeMenu(
                 initialText = "Select Type 2",
+                initialColor = R.color.light_pokemon_blue,
                 expandedState = remember { mutableStateOf(false) },
                 onOptionSelected = { selectedOption ->
                     selectedType2 = PokemonType.fromString(selectedOption)
@@ -218,20 +234,23 @@ fun SearchBar(filter: (String?, PokemonType?, PokemonType?) -> Unit) {
 @Composable
 fun ChoiceTypeMenu(
     initialText: String,
+    initialColor: Int,
     expandedState: MutableState<Boolean>,
     onOptionSelected: (String) -> Unit,
     options: List<String>,
 ) {
     var selectedOption by remember { mutableStateOf(initialText) }
+    var selectedColor by remember{ mutableIntStateOf(initialColor) }
 
     Box {
         Button(
             onClick = { expandedState.value = !expandedState.value },
             colors = ButtonDefaults.buttonColors(Color.Transparent),
             modifier = Modifier
-                .background(Color.Red, RoundedCornerShape(30))
-                .width(166.dp)
+                .background(color = colorResource(id = selectedColor), RoundedCornerShape(10.dp))
+                .width(180.dp)
         ) {
+            //Image(painterResource(id = PokemonTypeConverter().toPokemonType(selectedOption)!!.icon), "icon")
             Text(
                 selectedOption,
                 fontSize = 10.sp,
@@ -243,7 +262,7 @@ fun ChoiceTypeMenu(
             expanded = expandedState.value,
             onDismissRequest = { expandedState.value = false },
             modifier = Modifier
-                .width(166.dp)//Per ora l'ho impostato manualmente,dato che non ho trovato una funziona che sincronizza con  Button
+                .width(180.dp)//Per ora l'ho impostato manualmente,dato che non ho trovato una funziona che sincronizza con  Button
                 .height(300.dp)
         ) {
 //      possibile reset
@@ -253,8 +272,35 @@ fun ChoiceTypeMenu(
 //                expandedState.value = false
 //            })
             options.forEach { option ->
-                DropdownMenuItem({ Text(option,/*color = if (option == "any") Color.Black else Color.Red  ,*/fontSize = 10.sp,fontFamily = pokemonPixelFont) },onClick = {
+                DropdownMenuItem(
+                    { 
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize(1f)
+                                .height(30.dp)
+                                .background(
+                                    if (option == "any") Color.White
+                                    else colorResource(
+                                        id = PokemonTypeConverter().toPokemonType(
+                                            option
+                                        )!!.backgroundTextColor
+                                    ), RoundedCornerShape(10.dp)
+                                ),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ){
+                            if(option != "any") {
+                                Image(painterResource(id = PokemonTypeConverter().toPokemonType(option)!!.icon), "icon", modifier = Modifier.height(25.dp))
+                                Spacer(modifier = Modifier.width(10.dp))
+                            }
+                            Text(option,
+                                fontSize = 12.sp,fontFamily = pokemonPixelFont)
+                        }
+                    },
+                    onClick = {
                     selectedOption = option
+                    if(selectedOption == "any") selectedColor = R.color.light_pokemon_blue
+                    else selectedColor = PokemonTypeConverter().toPokemonType(option)!!.backgroundTextColor
                     onOptionSelected(option)
                     expandedState.value = false
                 })
@@ -274,8 +320,7 @@ fun TopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
-            .background(Color.Red),
+            .height(60.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

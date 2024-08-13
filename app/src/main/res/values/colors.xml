@@ -53,4 +53,8 @@
     <color name="special_attack">#FFCA8B</color>
     <color name="special_defense">#9EEEFF</color>
     <color name="speed">#BEFFA7</color>
+    <color name="pokemon_yellow">#facd01</color>
+    <color name="light_pokemon_yellow">#ffe058</color>
+    <color name="pokemon_blue">#356abc</color>
+    <color name="light_pokemon_blue">#5f83bb</color>
 </resources>
