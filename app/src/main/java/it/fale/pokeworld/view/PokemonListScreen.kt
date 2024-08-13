@@ -123,7 +123,7 @@ fun PokemonListScreen(
                                         .border(2.dp, Color.Gray, RoundedCornerShape(10))
                                         .background(
                                             if (pokemon.type1 != null) colorResource(id = pokemon.type1.backgroundColor)
-                                             else Color.Magenta,
+                                            else Color.Magenta,
                                             RoundedCornerShape(10)
                                         )
                                         .height(250.dp)
@@ -144,19 +144,81 @@ fun PokemonListScreen(
 
 @Composable
 fun DrawerContent(onItemClick: (String) -> Unit) {
+    var isSwitchOn by remember { mutableStateOf(false) }
     Column {
-        Text("Home", modifier = Modifier
-            .padding(16.dp)
-            .clickable { onItemClick("Home") }, fontSize = 20.sp)
-        Text("Profile", modifier = Modifier
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                "Theme",
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onItemClick("Home") },
+                fontSize = 20.sp
+            )
+            SwitchButton(isLightMode = isSwitchOn, onSwitchChange = {
+                isSwitchOn = it
+                // Gestisci il cambiamento dello stato dell'interruttore qui
+            })
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                "Language",
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onItemClick("Home") },
+                fontSize = 20.sp
+            )
+            ChoiceLanguageMenu(
+                initialText = "English",
+                expandedState = remember { mutableStateOf(false) },
+                onOptionSelected = { selectedOption ->
+                    /*selectedType1 = PokemonType.fromString(selectedOption)
+                    filter(query, selectedType1, selectedType2)*/
+                },
+                options = listOf("English","Italiano")
+            )
+        }
+
+        Text("Alpha Version", modifier = Modifier
             .padding(16.dp)
             .clickable { onItemClick("Profile") }, fontSize = 20.sp)
-        Text("Settings", modifier = Modifier
+        Text("Database v1.0", modifier = Modifier
             .padding(16.dp)
             .clickable { onItemClick("Settings") }, fontSize = 20.sp)
         // Aggiungi altri elementi del drawer qui
     }
 }
+
+
+@Composable
+fun SwitchButton(isLightMode: Boolean, onSwitchChange: (Boolean) -> Unit) {
+    Button(
+        onClick = { onSwitchChange(!isLightMode) },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isLightMode) Color.LightGray else Color.DarkGray
+        ),
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = if (isLightMode) "Light" else "Dark",
+            color = if (isLightMode) Color.Black else Color.White,
+            fontSize = 14.sp
+        )
+    }
+}
+
+
 
 
 @Composable
@@ -211,6 +273,48 @@ fun SearchBar(filter: (String?, PokemonType?, PokemonType?) -> Unit) {
                 },
                 options = listOf("any")+(PokemonType.entries.map { it.type })
             )
+        }
+    }
+}
+
+@Composable
+fun ChoiceLanguageMenu(
+    initialText: String,
+    expandedState: MutableState<Boolean>,
+    onOptionSelected: (String) -> Unit,
+    options: List<String>,
+) {
+    var selectedOption by remember { mutableStateOf(initialText) }
+
+    Box {
+        Button(
+            onClick = { expandedState.value = !expandedState.value },
+            colors = ButtonDefaults.buttonColors(Color.Transparent),
+            modifier = Modifier
+                .background(Color.DarkGray, RoundedCornerShape(60))
+                .width(150.dp)
+        ) {
+            Text(
+                selectedOption,
+                fontSize = 10.sp,
+                color = Color.White,
+                fontFamily = pokemonPixelFont,
+            )
+        }
+        DropdownMenu(
+            expanded = expandedState.value,
+            onDismissRequest = { expandedState.value = false },
+            modifier = Modifier
+                .width(166.dp)//Per ora l'ho impostato manualmente,dato che non ho trovato una funziona che sincronizza con  Button
+                .height(110.dp)
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem({ Text(option,/*color = if (option == "any") Color.Black else Color.Red  ,*/fontSize = 10.sp,fontFamily = pokemonPixelFont) },onClick = {
+                    selectedOption = option
+                    onOptionSelected(option)
+                    expandedState.value = false
+                })
+            }
         }
     }
 }
