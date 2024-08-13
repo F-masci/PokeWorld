@@ -58,7 +58,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun PokemonList(
+fun PokemonListScreen(
     navController: NavController,
     pokemonListViewModel: PokemonListViewModel
 ) {
@@ -129,7 +129,7 @@ fun PokemonList(
                                         .height(250.dp)
                                         .width(250.dp),
                                     onClick = {
-                                        navController.navigate("details_screen/${pokemon.id}")
+                                        navController.navigate("pokemon_details_screen/${pokemon.id}")
                                     }                   //questa notazione è fatta in modo tale che posso passare comunque un argomento (l'id)
                                 )                       //senza che nella MainActivity vado a definire
                             }
