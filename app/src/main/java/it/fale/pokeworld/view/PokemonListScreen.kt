@@ -145,9 +145,14 @@ fun PokemonListScreen(
 @Composable
 fun DrawerContent(onItemClick: (String) -> Unit) {
     var isSwitchOn by remember { mutableStateOf(false) }
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),// Assicura che la colonna riempia l'intero drawer
+
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -182,40 +187,53 @@ fun DrawerContent(onItemClick: (String) -> Unit) {
                 initialText = "English",
                 expandedState = remember { mutableStateOf(false) },
                 onOptionSelected = { selectedOption ->
-                    /*selectedType1 = PokemonType.fromString(selectedOption)
-                    filter(query, selectedType1, selectedType2)*/
+                    // Gestisci l'opzione selezionata qui
                 },
-                options = listOf("English","Italiano")
+                options = listOf("English", "Italiano")
             )
         }
 
-        Text("Alpha Version", modifier = Modifier
-            .padding(16.dp)
-            .clickable { onItemClick("Profile") }, fontSize = 20.sp)
-        Text("Database v1.0", modifier = Modifier
-            .padding(16.dp)
-            .clickable { onItemClick("Settings") }, fontSize = 20.sp)
-        // Aggiungi altri elementi del drawer qui
+        // Spacer per spingere il resto degli elementi verso il basso
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            "Alpha Version Database v1.0",
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable { onItemClick("") },
+            fontSize = 16.sp
+        )
     }
 }
 
 
+
 @Composable
 fun SwitchButton(isLightMode: Boolean, onSwitchChange: (Boolean) -> Unit) {
-    Button(
-        onClick = { onSwitchChange(!isLightMode) },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isLightMode) Color.LightGray else Color.DarkGray
-        ),
+    /*Column(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Text(
-            text = if (isLightMode) "Light" else "Dark",
-            color = if (isLightMode) Color.Black else Color.White,
-            fontSize = 14.sp
-        )
-    }
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally // Centra tutto il contenuto orizzontalmente
+    ) {*/
+        Button(
+            onClick = { onSwitchChange(!isLightMode) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isLightMode) Color.LightGray else Color.DarkGray
+            ),
+            modifier = Modifier
+                .background(
+                    if (isLightMode) Color.LightGray else Color.DarkGray,
+                    RoundedCornerShape(60)
+                )
+            //.width(110.dp) con questa larghezza raggiungo l'uguaglianza dei due bottoni non so se mi piac
+        ) {
+            Text(
+                text = if (isLightMode) "Light" else "Dark",
+                color = if (isLightMode) Color.Black else Color.White,
+                fontSize = 14.sp
+            )
+        }
+    //}
 }
 
 
@@ -292,20 +310,21 @@ fun ChoiceLanguageMenu(
             colors = ButtonDefaults.buttonColors(Color.Transparent),
             modifier = Modifier
                 .background(Color.DarkGray, RoundedCornerShape(60))
-                .width(150.dp)
+                .width(110.dp)//impostato a mano per essere uguale al button di dark-light mode
         ) {
             Text(
                 selectedOption,
-                fontSize = 10.sp,
+                fontSize = 14.sp,
                 color = Color.White,
-                fontFamily = pokemonPixelFont,
+                //opto di proposito per uno stile distaccato per evidenziare il fatto che siamo in impostazioni
+                //fontFamily = pokemonPixelFont,
             )
         }
         DropdownMenu(
             expanded = expandedState.value,
             onDismissRequest = { expandedState.value = false },
             modifier = Modifier
-                .width(166.dp)//Per ora l'ho impostato manualmente,dato che non ho trovato una funziona che sincronizza con  Button
+                .width(150.dp)
                 .height(110.dp)
         ) {
             options.forEach { option ->
