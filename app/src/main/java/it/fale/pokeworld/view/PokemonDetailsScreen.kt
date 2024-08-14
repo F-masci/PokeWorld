@@ -277,7 +277,7 @@ fun ItemSelection(pokemon: PokemonEntity) {
     ){
         Text(
             text = "ITEMS",
-            fontSize = 1.sp,
+            fontSize = 14.sp,
             modifier = Modifier.padding(15.dp)
         )
         pokemon.type1?.let { colorResource(id = it.backgroundColor) }?.let {
