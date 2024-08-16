@@ -64,9 +64,10 @@ fun PokemonListScreen(
 ) {
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     var isSearchBarVisible by remember { mutableStateOf(false) }
+    var isDarkTheme by remember { mutableStateOf(false) } // Stato del tema
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
 
     // Funzione per aprire il drawer
     val openDrawer = {
@@ -77,19 +78,24 @@ fun PokemonListScreen(
     val closeDrawer = {
         scope.launch { drawerState.close() }
     }
+
     ModalDrawer(
         drawerState = drawerState,
         drawerContent = {
-            // Contenuto del drawer
-            DrawerContent { selectedItem ->
-                // Gestisci l'elemento selezionato qui
-                closeDrawer() // Chiudi il drawer quando un elemento è selezionato
-            }
+            DrawerContent(
+                isDarkTheme = isDarkTheme,
+                onItemClick = { selectedItem ->
+                    closeDrawer()
+                },
+                onThemeToggle = { newTheme ->
+                    isDarkTheme = newTheme // Aggiorna il tema
+                }
+            )
         },
         content = {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                color = if (isDarkTheme) Color.DarkGray else Color.White
             ) {
                 Column(
                     modifier = Modifier
@@ -106,7 +112,7 @@ fun PokemonListScreen(
                         }
                     )
                     if (isSearchBarVisible) {
-                        SearchBar() { name, type1, type2 ->
+                        SearchBar { name, type1, type2 ->
                             pokemonListViewModel.filterPokemon(name, type1, type2)
                         }
                     }
@@ -118,7 +124,8 @@ fun PokemonListScreen(
                         content = {
                             items(pokemonList.value) { pokemon ->
                                 PokemonCard(
-                                    pokemon = pokemon, modifier = Modifier
+                                    pokemon = pokemon,
+                                    modifier = Modifier
                                         .padding(20.dp)
                                         .border(2.dp, Color.Gray, RoundedCornerShape(10))
                                         .background(
@@ -130,11 +137,10 @@ fun PokemonListScreen(
                                         .width(250.dp),
                                     onClick = {
                                         navController.navigate("pokemon_details_screen/${pokemon.id}")
-                                    }                   //questa notazione è fatta in modo tale che posso passare comunque un argomento (l'id)
-                                )                       //senza che nella MainActivity vado a definire
+                                    }
+                                )
                             }
                         }
-
                     )
                 }
             }
@@ -142,13 +148,19 @@ fun PokemonListScreen(
     )
 }
 
+
 @Composable
-fun DrawerContent(onItemClick: (String) -> Unit) {
-    var isSwitchOn by remember { mutableStateOf(false) }
+fun DrawerContent(
+    isDarkTheme: Boolean,
+    onItemClick: (String) -> Unit,
+    onThemeToggle: (Boolean) -> Unit // Callback per cambiare tema
+) {
+    var isSwitchOn by remember { mutableStateOf(isDarkTheme) }
+
     Column(
         modifier = Modifier
-            .fillMaxSize(),// Assicura che la colonna riempia l'intero drawer
-
+            .fillMaxSize()
+            .background(if (isDarkTheme) Color.DarkGray else Color.White)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -164,10 +176,10 @@ fun DrawerContent(onItemClick: (String) -> Unit) {
                     .clickable { onItemClick("Home") },
                 fontSize = 20.sp
             )
-            SwitchButton(isLightMode = isSwitchOn, onSwitchChange = {
+            SwitchButton(isLightMode = isSwitchOn) {
                 isSwitchOn = it
-                // Gestisci il cambiamento dello stato dell'interruttore qui
-            })
+                onThemeToggle(it) // Chiama la funzione di callback per aggiornare il tema
+            }
         }
 
         Row(
@@ -193,7 +205,6 @@ fun DrawerContent(onItemClick: (String) -> Unit) {
             )
         }
 
-        // Spacer per spingere il resto degli elementi verso il basso
         Spacer(modifier = Modifier.weight(1f))
 
         Text(
@@ -205,6 +216,7 @@ fun DrawerContent(onItemClick: (String) -> Unit) {
         )
     }
 }
+
 
 
 
@@ -225,7 +237,7 @@ fun SwitchButton(isLightMode: Boolean, onSwitchChange: (Boolean) -> Unit) {
                     if (isLightMode) Color.LightGray else Color.DarkGray,
                     RoundedCornerShape(60)
                 )
-            //.width(110.dp) con questa larghezza raggiungo l'uguaglianza dei due bottoni non so se mi piac
+            //.width(110.dp) con questa larghezza raggiungo l'uguaglianza dei due bottoni non so se mi piace
         ) {
             Text(
                 text = if (isLightMode) "Light" else "Dark",
