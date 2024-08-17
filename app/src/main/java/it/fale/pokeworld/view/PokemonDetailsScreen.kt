@@ -166,15 +166,17 @@ fun DetailsCard(pokemon: PokemonEntity){
                     )
                 }
                 items(pokemon.moves) { move ->
-                    MoveItem(
-                        moveName = move.getLocaleName(),
-                        moveDescription = move.getLocaleDescription(),
-                        accuracy = move.accuracy,
-                        effectChance = move.effectChance,
-                        power = move.power,
-                        priority = move.priority,
-                        type = pokemon.type1
-                    )
+                    if(move.accuracy != null || move.power != null || move.effectChance != null) {
+                        MoveItem(
+                            moveName = move.getLocaleName(),
+                            moveDescription = move.getLocaleDescription(),
+                            accuracy = move.accuracy,
+                            effectChance = move.effectChance,
+                            power = move.power,
+                            priority = move.priority,
+                            type = pokemon.type1
+                        )
+                    }
                 }
             }
         }
@@ -218,7 +220,7 @@ fun MoveItem(
                 text = "Priority: ${priority ?: "-"}",
                 fontSize = 8.sp,
                 modifier = Modifier
-                    .background(Color.Red, RoundedCornerShape(10.dp))
+                    .background(Color.White.copy(0.8f), RoundedCornerShape(10.dp))
                     .padding(horizontal = 8.dp, vertical = 4.dp),
                 textAlign = TextAlign.End
             )
@@ -231,12 +233,12 @@ fun MoveItem(
         )
         Spacer(modifier = Modifier.height(8.dp))
         if (hasDescription) {
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { isExpanded = !isExpanded },
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Descrizione",
@@ -251,7 +253,7 @@ fun MoveItem(
             Text(
                 text = moveDescription,
                 fontSize = 12.sp,
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.background(Color.White.copy(0.6f), RoundedCornerShape(5.dp)).padding(4.dp)
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
