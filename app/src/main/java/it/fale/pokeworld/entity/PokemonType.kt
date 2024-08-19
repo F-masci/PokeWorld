@@ -2,6 +2,7 @@ package it.fale.pokeworld.entity
 
 import androidx.room.TypeConverter
 import it.fale.pokeworld.R
+import kotlin.random.Random
 
 enum class PokemonType(val type: String, val string: Int, val icon: Int, val backgroundColor: Int, val backgroundTextColor: Int) {
 
@@ -30,6 +31,12 @@ enum class PokemonType(val type: String, val string: Int, val icon: Int, val bac
     companion object {
         fun fromString(type: String): PokemonType? {
             return entries.find { it.type == type }
+        }
+
+        fun getRandomPokemonType(): PokemonType {
+            val values = PokemonType.values()
+            val randomIndex = Random.nextInt(values.size)
+            return values[randomIndex]
         }
     }
 

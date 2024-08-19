@@ -46,6 +46,7 @@ abstract class PokemonDatabase: RoomDatabase() {
                     "pokemon.db"
                 )
                     .createFromAsset("pokemon.db")
+                    .fallbackToDestructiveMigration()
                     .build()
             }
             return db as PokemonDatabase

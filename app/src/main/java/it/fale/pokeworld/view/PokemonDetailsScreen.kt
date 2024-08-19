@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -112,7 +113,6 @@ fun DetailsCard(pokemon: PokemonEntity){
             modifier = Modifier.fillMaxSize(),
             color = it
         ) {
-            val spriteUrl = pokemon.spriteDefault
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -143,10 +143,13 @@ fun DetailsCard(pokemon: PokemonEntity){
                         .width(350.dp)
                         .height(300.dp)) {
                         AsyncImage(
-                            model = spriteUrl,
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(pokemon.getImageUrl())
+                                .decoderFactory(ImageDecoderDecoder.Factory())
+                                .build(),
                             contentDescription = null,
                             modifier = Modifier
-                                .background(WhiteDetails, RoundedCornerShape(5))
+                                .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(5))
                                 .width(350.dp)
                                 .height(300.dp)
                         )

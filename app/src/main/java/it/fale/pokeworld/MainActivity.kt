@@ -1,5 +1,6 @@
 package it.fale.pokeworld
 
+import android.os.Build
 import android.os.Bundle
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -17,7 +18,7 @@ import it.fale.pokeworld.entity.repository.PokemonDatabase
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.PokeWorldTheme
 import it.fale.pokeworld.view.PokemonDetailsScreen
-import it.fale.pokeworld.view.WelcomeScreen
+import it.fale.pokeworld.view.PokemonListScreen
 import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 
@@ -35,17 +36,14 @@ class MainActivity : ComponentActivity(){
             PokeWorldTheme {
                 val navController= rememberNavController()
                 NavHost(
-                    navController=navController,
-                    startDestination= "welcome_screen"
+                    navController = navController,
+                    startDestination= "pokemon_list_screen"
                 ){
                     composable("pokemon_list_screen"){
                         PokemonListScreen(
                             navController = navController,
                             pokemonListViewModel = pokemonListViewModel
                         )
-                    }
-                    composable("welcome_screen"){
-                        WelcomeScreen(navController = navController)
                     }
                     composable(
                         route = "pokemon_details_screen/{pokemonId}", //pokemonId è un parametro dinamico, che inserisco solamente quando dalla listScreen clicco sul pokemon interessato
@@ -59,11 +57,11 @@ class MainActivity : ComponentActivity(){
                     }
                 }
             }
-            window.setDecorFitsSystemWindows(false)
-            window.insetsController?.let { controller ->
+            //window.setDecorFitsSystemWindows(false)
+            /*window.insetsController?.let { controller ->
                 controller.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
                 controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
+            }*/
         }
     }
 }

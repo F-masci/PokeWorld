@@ -13,8 +13,17 @@ data class PokemonEntity(
     val name: String,
     val height: Int = 0,
     val weight: Int = 0,
+
+    /* --- SPRITES --- */
+
     val spriteDefault: String? = null,
     val spriteShiny: String? = null,
+
+    val showdownDefault: String? = null,
+    val showdownShiny: String? = null,
+
+    val criesLegacy: String? = null,
+    val criesLatest: String? = null,
 
     /* --- TYPES --- */
 
@@ -46,5 +55,10 @@ data class PokemonEntity(
 
     @Ignore
     var moves: List<MoveEntity> = emptyList()
+
+    fun getImageUrl(): String? {
+        if(showdownDefault != null) return showdownDefault
+        return spriteDefault
+    }
 
 }
