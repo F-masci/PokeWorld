@@ -32,15 +32,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +51,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
-import it.fale.pokeworld.entity.PokemonTypeConverter
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.view.TypeRow
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
@@ -68,6 +64,8 @@ fun PokemonListScreen(
 ) {
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     var isSearchBarVisible by remember { mutableStateOf(false) }
+    var isDarkTheme by remember { mutableStateOf(false) } // Stato del tema
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -89,16 +87,20 @@ fun PokemonListScreen(
     ModalDrawer(
         drawerState = drawerState,
         drawerContent = {
-            // Contenuto del drawer
-            DrawerContent { selectedItem ->
-                // Gestisci l'elemento selezionato qui
-                closeDrawer() // Chiudi il drawer quando un elemento è selezionato
-            }
+            DrawerContent(
+                isDarkTheme = isDarkTheme,
+                onItemClick = { selectedItem ->
+                    closeDrawer()
+                },
+                onThemeToggle = { newTheme ->
+                    isDarkTheme = newTheme // Aggiorna il tema
+                }
+            )
         },
         content = {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                color = if (isDarkTheme) Color.DarkGray else Color.White
             ) {
                 Column(
                     modifier = Modifier
@@ -129,7 +131,8 @@ fun PokemonListScreen(
                         content = {
                             items(pokemonList.value) { pokemon ->
                                 PokemonCard(
-                                    pokemon = pokemon, modifier = Modifier
+                                    pokemon = pokemon,
+                                    modifier = Modifier
                                         .padding(20.dp)
                                         .border(2.dp, Color.Gray, RoundedCornerShape(10))
                                         .background(
@@ -141,8 +144,8 @@ fun PokemonListScreen(
                                         .width(250.dp),
                                     onClick = {
                                         navController.navigate("pokemon_details_screen/${pokemon.id}")
-                                    }                   //questa notazione è fatta in modo tale che posso passare comunque un argomento (l'id)
-                                )                       //senza che nella MainActivity vado a definire
+                                    }
+                                )
                             }
                         }
 
@@ -154,20 +157,106 @@ fun PokemonListScreen(
 }
 
 @Composable
-fun DrawerContent(onItemClick: (String) -> Unit) {
-    Column {
-        Text("Home", modifier = Modifier
-            .padding(16.dp)
-            .clickable { onItemClick("Home") }, fontSize = 20.sp)
-        Text("Profile", modifier = Modifier
-            .padding(16.dp)
-            .clickable { onItemClick("Profile") }, fontSize = 20.sp)
-        Text("Settings", modifier = Modifier
-            .padding(16.dp)
-            .clickable { onItemClick("Settings") }, fontSize = 20.sp)
-        // Aggiungi altri elementi del drawer qui
+fun DrawerContent(
+    isDarkTheme: Boolean,
+    onItemClick: (String) -> Unit,
+    onThemeToggle: (Boolean) -> Unit // Callback per cambiare tema
+) {
+    var isSwitchOn by remember { mutableStateOf(isDarkTheme) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(if (isDarkTheme) Color.DarkGray else Color.White)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                "Theme",
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onItemClick("Home") },
+                fontSize = 20.sp
+            )
+            SwitchButton(isLightMode = isSwitchOn) {
+                isSwitchOn = it
+                onThemeToggle(it) // Chiama la funzione di callback per aggiornare il tema
+            }
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                "Language",
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onItemClick("Home") },
+                fontSize = 20.sp
+            )
+            ChoiceLanguageMenu(
+                initialText = "English",
+                expandedState = remember { mutableStateOf(false) },
+                onOptionSelected = { selectedOption ->
+                    // Gestisci l'opzione selezionata qui
+                },
+                options = listOf("English", "Italiano")
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            "Alpha Version Database v1.0",
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable { onItemClick("") },
+            fontSize = 16.sp
+        )
     }
 }
+
+
+
+
+@Composable
+fun SwitchButton(isLightMode: Boolean, onSwitchChange: (Boolean) -> Unit) {
+    /*Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally // Centra tutto il contenuto orizzontalmente
+    ) {*/
+        Button(
+            onClick = { onSwitchChange(!isLightMode) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isLightMode) Color.LightGray else Color.DarkGray
+            ),
+            modifier = Modifier
+                .background(
+                    if (isLightMode) Color.LightGray else Color.DarkGray,
+                    RoundedCornerShape(60)
+                )
+            //.width(110.dp) con questa larghezza raggiungo l'uguaglianza dei due bottoni non so se mi piace
+        ) {
+            Text(
+                text = if (isLightMode) "Light" else "Dark",
+                color = if (isLightMode) Color.Black else Color.White,
+                fontSize = 14.sp
+            )
+        }
+    //}
+}
+
+
+
 
 @Composable
 fun SearchBar(
@@ -256,7 +345,7 @@ fun SearchBar(
                     type2Text = if (selectedOption == "any") "Select Type 2" else selectedOption // Aggiorna il testo mostrato
                     filter(query, selectedType1, selectedType2)
                 },
-                options = listOf("any") + (PokemonType.entries.map { it.type })
+                options = listOf("any")+(PokemonType.entries.map { it.type })
             )
         }
 
@@ -300,8 +389,48 @@ fun SearchBar(
     }
 }
 
+@Composable
+fun ChoiceLanguageMenu(
+    initialText: String,
+    expandedState: MutableState<Boolean>,
+    onOptionSelected: (String) -> Unit,
+    options: List<String>,
+) {
+    var selectedOption by remember { mutableStateOf(initialText) }
 
-
+    Box {
+        Button(
+            onClick = { expandedState.value = !expandedState.value },
+            colors = ButtonDefaults.buttonColors(Color.Transparent),
+            modifier = Modifier
+                .background(Color.DarkGray, RoundedCornerShape(60))
+                .width(110.dp)//impostato a mano per essere uguale al button di dark-light mode
+        ) {
+            Text(
+                selectedOption,
+                fontSize = 14.sp,
+                color = Color.White,
+                //opto di proposito per uno stile distaccato per evidenziare il fatto che siamo in impostazioni
+                //fontFamily = pokemonPixelFont,
+            )
+        }
+        DropdownMenu(
+            expanded = expandedState.value,
+            onDismissRequest = { expandedState.value = false },
+            modifier = Modifier
+                .width(150.dp)
+                .height(110.dp)
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem({ Text(option,/*color = if (option == "any") Color.Black else Color.Red  ,*/fontSize = 10.sp,fontFamily = pokemonPixelFont) },onClick = {
+                    selectedOption = option
+                    onOptionSelected(option)
+                    expandedState.value = false
+                })
+            }
+        }
+    }
+}
 
 @Composable
 fun ChoiceTypeMenu(
@@ -434,6 +563,7 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit)
             model = spriteUrl,
             contentDescription = null,
             modifier = Modifier
+                .clickable { onClick() }
                 .height(140.dp)
                 .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(10))
         )

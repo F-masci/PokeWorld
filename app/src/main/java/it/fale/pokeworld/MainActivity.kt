@@ -40,8 +40,8 @@ class MainActivity : ComponentActivity(){
                 ){
                     composable("pokemon_list_screen"){
                         PokemonListScreen(
-                            navController,
-                            pokemonListViewModel
+                            navController = navController,
+                            pokemonListViewModel = pokemonListViewModel
                         )
                     }
                     composable("welcome_screen"){
