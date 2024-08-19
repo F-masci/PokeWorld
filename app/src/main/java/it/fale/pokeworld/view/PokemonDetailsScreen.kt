@@ -166,17 +166,15 @@ fun DetailsCard(pokemon: PokemonEntity){
                     )
                 }
                 items(pokemon.moves) { move ->
-                    if(move.accuracy != null || move.power != null || move.effectChance != null) {
-                        MoveItem(
-                            moveName = move.getLocaleName(),
-                            moveDescription = move.getLocaleDescription(),
-                            accuracy = move.accuracy,
-                            effectChance = move.effectChance,
-                            power = move.power,
-                            priority = move.priority,
-                            type = pokemon.type1
-                        )
-                    }
+                    MoveItem(
+                        moveName = move.getLocaleName(),
+                        moveDescription = move.getLocaleDescription(),
+                        accuracy = move.accuracy,
+                        effectChance = move.effectChance,
+                        power = move.power,
+                        priority = move.priority,
+                        type = pokemon.type1
+                    )
                 }
             }
         }
@@ -253,7 +251,9 @@ fun MoveItem(
             Text(
                 text = moveDescription,
                 fontSize = 12.sp,
-                modifier = Modifier.background(Color.White.copy(0.6f), RoundedCornerShape(5.dp)).padding(4.dp)
+                modifier = Modifier
+                    .background(Color.White.copy(0.6f), RoundedCornerShape(5.dp))
+                    .padding(4.dp)
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
