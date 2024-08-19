@@ -115,65 +115,10 @@ fun PokemonListScreen(
                         }
                     )
                     if (isSearchBarVisible) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                TextField(
-                                    value = query,
-                                    onValueChange = { newValue ->
-                                        query = newValue
-                                        pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
-                                    },
-                                    placeholder = { Text("Search...") },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .background(Color.White)
-                                        .heightIn(min = 56.dp, max = 56.dp),
-                                    colors = TextFieldDefaults.colors(
-                                        unfocusedIndicatorColor = colorResource(id = R.color.pokemon_blue),
-                                        unfocusedPlaceholderColor = colorResource(id = R.color.pokemon_blue),
-                                        unfocusedTextColor = colorResource(id = R.color.pokemon_blue),
-                                        focusedIndicatorColor = colorResource(id = R.color.light_pokemon_blue),
-                                        focusedContainerColor = colorResource(id = R.color.light_pokemon_blue),
-                                        focusedTextColor = colorResource(id = R.color.light_pokemon_yellow),
-                                        focusedPlaceholderColor = colorResource(id = R.color.light_pokemon_yellow),
-                                        unfocusedContainerColor = colorResource(id = R.color.pokemon_yellow)
-                                    ),
-                                    shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceAround,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-
-                                ChoiceTypeMenu(
-                                    initialType = selectedType1,
-                                    expandedState = remember { mutableStateOf(false) },
-                                    onOptionSelected = { selectedOption ->
-                                        selectedType1 = PokemonType.fromString(selectedOption)
-                                        pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
-                                    },
-                                    options = listOf("any") + (PokemonType.entries.map { it.type })
-                                )
-                                ChoiceTypeMenu(
-                                    initialType = selectedType2,
-                                    expandedState = remember { mutableStateOf(false) },
-                                    onOptionSelected = { selectedOption ->
-                                        selectedType2 = PokemonType.fromString(selectedOption)
-                                        pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
-                                    },
-                                    options = listOf("any") + (PokemonType.entries.map { it.type })
-                                )
-                            }
+                        SearchBar(
+                            pokemonListViewModel = pokemonListViewModel
+                        ) { name, type1, type2 ->
+                            pokemonListViewModel.filterPokemon(name, type1, type2)
                         }
                     }
 
@@ -225,15 +170,150 @@ fun DrawerContent(onItemClick: (String) -> Unit) {
 }
 
 @Composable
+fun SearchBar(
+    pokemonListViewModel: PokemonListViewModel, // Aggiungi il parametro qui
+    filter: (String?, PokemonType?, PokemonType?) -> Unit) {
+    var query by remember { mutableStateOf("") }
+    var selectedType1 by remember { mutableStateOf<PokemonType?>(null) }
+    var selectedType2 by remember { mutableStateOf<PokemonType?>(null) }
+
+    // Stati per i testi visualizzati nei menu a tendina
+    var type1Text by remember { mutableStateOf("Select Type 1") }
+    var type2Text by remember { mutableStateOf("Select Type 2") }
+
+    // Funzione per selezionare casualmente i tipi di Pokémon e riprovare finché non viene trovata una combinazione valida
+    fun selectRandomTypesWithRetry() {
+        // Ottieni una coppia di tipi di Pokémon casuali
+        val (randomType1, randomType2) = pokemonListViewModel.randomFilters()
+
+        // Aggiorna i tipi selezionati
+        selectedType1 = randomType1
+        selectedType2 = randomType2
+
+        // Aggiorna i testi mostrati
+        type1Text = selectedType1?.type ?: "Select Type 1"
+        type2Text = selectedType2?.type ?: "Select Type 2"
+
+        // Applica il filtro con i nuovi tipi selezionati
+        pokemonListViewModel.filterPokemon(null, selectedType1, selectedType2)
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            TextField(
+                value = query,
+                onValueChange = { newValue ->
+                    query = newValue
+                    pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
+                },
+                placeholder = { Text("Search...") },
+                modifier = Modifier
+                    .weight(1f)
+                    .background(Color.White)
+                    .heightIn(min = 56.dp, max = 56.dp),
+                colors = TextFieldDefaults.colors(
+                    unfocusedIndicatorColor = colorResource(id = R.color.pokemon_blue),
+                    unfocusedPlaceholderColor = colorResource(id = R.color.pokemon_blue),
+                    unfocusedTextColor = colorResource(id = R.color.pokemon_blue),
+                    focusedIndicatorColor = colorResource(id = R.color.light_pokemon_blue),
+                    focusedContainerColor = colorResource(id = R.color.light_pokemon_blue),
+                    focusedTextColor = colorResource(id = R.color.light_pokemon_yellow),
+                    focusedPlaceholderColor = colorResource(id = R.color.light_pokemon_yellow),
+                    unfocusedContainerColor = colorResource(id = R.color.pokemon_yellow)
+                ),
+                shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            ChoiceTypeMenu(
+                text = type1Text,
+                expandedState = remember { mutableStateOf(false) },
+                onOptionSelected = { selectedOption ->
+                    selectedType1 = if (selectedOption == "any") null else PokemonType.fromString(selectedOption)
+                    type1Text = if (selectedOption == "any") "Select Type 1" else selectedOption // Aggiorna il testo mostrato
+                    filter(query, selectedType1, selectedType2)
+                },
+                options = listOf("any") + (PokemonType.entries.map { it.type })
+            )
+            ChoiceTypeMenu(
+                text = type2Text,
+                expandedState = remember { mutableStateOf(false) },
+                onOptionSelected = { selectedOption ->
+                    selectedType2 = if (selectedOption == "any") null else PokemonType.fromString(selectedOption)
+                    type2Text = if (selectedOption == "any") "Select Type 2" else selectedOption // Aggiorna il testo mostrato
+                    filter(query, selectedType1, selectedType2)
+                },
+                options = listOf("any") + (PokemonType.entries.map { it.type })
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .height(80.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            //Pulsante per la scelta casuale
+            Button(onClick = {
+                selectRandomTypesWithRetry()
+                filter(query, selectedType1, selectedType2)
+            },
+                colors = ButtonDefaults.buttonColors(Color.Transparent),
+                modifier = Modifier
+                    .background(colorResource(id = R.color.pokemon_yellow), RoundedCornerShape(100))
+                    .width(70.dp)
+                    .height(70.dp)){
+                Image(painterResource(id = R.drawable.random), "random", modifier = Modifier.size(70.dp))
+            }
+
+            Spacer(modifier = Modifier.width(20.dp))
+            // Bottone per reimpostare i filtri a "any"
+            Button(onClick = {
+                selectedType1 = null // Resetta il valore del filtro
+                selectedType2 = null // Resetta il valore del filtro
+                type1Text = "Select Type 1" // Ripristina il testo del tipo 1
+                type2Text = "Select Type 2" // Ripristina il testo del tipo 2
+                filter(query, selectedType1, selectedType2)
+            },
+                colors = ButtonDefaults.buttonColors(Color.Transparent),
+                modifier = Modifier
+                    .background(colorResource(id = R.color.pokemon_yellow), RoundedCornerShape(100))
+                    .width(70.dp)
+                    .height(70.dp)) {
+                Image(painterResource(id = R.drawable.reset), "reset", modifier = Modifier.size(80.dp))
+            }
+        }
+    }
+}
+
+
+
+
+@Composable
 fun ChoiceTypeMenu(
-    initialType: PokemonType?,
+    text: String,
     expandedState: MutableState<Boolean>,
     onOptionSelected: (String) -> Unit,
     options: List<String>,
 ) {
-    var selectedOption by remember { mutableStateOf(initialType?.type ?: "any") }
-    var selectedColor by remember{ mutableIntStateOf(initialType?.backgroundTextColor ?: R.color.light_pokemon_blue) }
+    var selectedOption by remember { mutableStateOf(PokemonTypeConverter().toPokemonType(text)?.type ?: "any") }
+    var selectedColor by remember{ mutableIntStateOf(PokemonTypeConverter().toPokemonType(text)?.backgroundTextColor ?: R.color.light_pokemon_blue) }
 
+    // Il testo visualizzato viene ora gestito dal componente genitore
     Box {
         Button(
             onClick = { expandedState.value = !expandedState.value },
@@ -244,7 +324,7 @@ fun ChoiceTypeMenu(
         ) {
             //Image(painterResource(id = PokemonTypeConverter().toPokemonType(selectedOption)!!.icon), "icon")
             Text(
-                selectedOption,
+                text,  // Mostra il testo passato come parametro
                 fontSize = 10.sp,
                 color = Color.White,
                 fontFamily = pokemonPixelFont,
