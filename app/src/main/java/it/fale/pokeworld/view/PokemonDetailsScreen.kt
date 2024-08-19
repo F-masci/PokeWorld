@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,8 +18,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +33,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,6 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.decode.ImageDecoderDecoder
+import coil.request.ImageRequest
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
@@ -63,17 +73,40 @@ fun PokemonDetailsScreen (
 
 }
 
+
+
 @Composable
 fun Loader() {
-    Surface(
-        modifier = Modifier.fillMaxSize()
+    val context = LocalContext.current
+    val gradient = Brush.radialGradient(
+        0.0f to colorResource(id = R.color.gradient_light),
+        0.8f to colorResource(id = R.color.gradient_dark),
+        radius = 1800.0f,
+        tileMode = TileMode.Repeated)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(gradient)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Loading...")
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data(R.drawable.pokeball)
+                .decoderFactory(ImageDecoderDecoder.Factory())
+                .build(),
+            contentDescription = "Animated loading GIF",
+            modifier = Modifier
+                .width(180.dp)
+                .height(180.dp)
+        )
     }
 }
 
 @Composable
 fun DetailsCard(pokemon: PokemonEntity){
+    var isFavorite by remember { mutableStateOf(false) }//solo per test del bottone
     pokemon.type1?.let { colorResource(id = it.backgroundColor) }?.let {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -106,14 +139,32 @@ fun DetailsCard(pokemon: PokemonEntity){
                             TypeRow(type = pokemon.type2)
                         }
                     }
-                    AsyncImage(
-                        model = spriteUrl,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(5))
-                            .width(350.dp)
-                            .height(300.dp)
-                    )
+                    Box(modifier = Modifier
+                        .width(350.dp)
+                        .height(300.dp)) {
+                        AsyncImage(
+                            model = spriteUrl,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .background(WhiteDetails, RoundedCornerShape(5))
+                                .width(350.dp)
+                                .height(300.dp)
+                        )
+
+                        IconButton(
+                            onClick = {
+                                isFavorite = !isFavorite
+                            },
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = if (isFavorite) R.drawable.yellowstar else R.drawable.star),
+                                contentDescription = "Add to favourites",
+                                tint = Color.Unspecified                             )
+                        }
+                    }
                     Row(
                         modifier = Modifier.padding(0.dp, 15.dp),
                         horizontalArrangement = Arrangement.Center
@@ -202,6 +253,7 @@ fun MoveItem(
                     .copy(alpha = 0.8f), RoundedCornerShape(10.dp)
             )
             .padding(15.dp)
+            .clickable { isExpanded = !isExpanded }
     ) {
 
         Row(
@@ -233,8 +285,7 @@ fun MoveItem(
         if (hasDescription) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { isExpanded = !isExpanded },
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
