@@ -10,7 +10,6 @@ import it.fale.pokeworld.entity.ItemEntity
 import it.fale.pokeworld.entity.MoveEntity
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonTypeConverter
-import it.fale.pokeworld.utils.TranslationListConverter
 
 @Dao
 @TypeConverters(PokemonTypeConverter::class)

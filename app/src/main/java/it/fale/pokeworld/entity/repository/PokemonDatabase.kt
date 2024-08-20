@@ -5,12 +5,10 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import it.fale.pokeworld.entity.AbilityEntity
 import it.fale.pokeworld.entity.ItemEntity
 import it.fale.pokeworld.entity.MoveEntity
 import it.fale.pokeworld.entity.PokemonEntity
-import it.fale.pokeworld.entity.PokemonTypeConverter
 import it.fale.pokeworld.entity.cross.PokemonAbilityCross
 import it.fale.pokeworld.entity.cross.PokemonItemCross
 import it.fale.pokeworld.entity.cross.PokemonMoveCross

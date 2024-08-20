@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DrawerValue
-import androidx.compose.material.ModalDrawer
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -65,7 +64,6 @@ import it.fale.pokeworld.entity.PokemonTypeConverter
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.view.TypeRow
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -101,7 +99,6 @@ fun PokemonListScreen(
                         .padding(0.dp)
                 ) {
                     TopBar(
-                        navController = navController,
                         onSearchClicked = {
                             isSearchBarVisible = !isSearchBarVisible
                         },
@@ -256,7 +253,6 @@ fun ChoiceTypeMenu(
                 .background(color = colorResource(id = selectedColor), RoundedCornerShape(10.dp))
                 .width(130.dp)
         ) {
-            //Image(painterResource(id = PokemonTypeConverter().toPokemonType(selectedOption)!!.icon), "icon")
             Text(
                 selectedOption,
                 fontSize = 10.sp,
@@ -268,15 +264,9 @@ fun ChoiceTypeMenu(
             expanded = expandedState.value,
             onDismissRequest = { expandedState.value = false },
             modifier = Modifier
-                .width(180.dp)//Per ora l'ho impostato manualmente,dato che non ho trovato una funziona che sincronizza con  Button
+                .width(180.dp)
                 .height(300.dp)
         ) {
-//      possibile reset
-//            DropdownMenuItem({Text("Reset", color = Color.Red)},onClick = {
-//                selectedOption = initialText // Reset del testo del pulsante al valore iniziale
-//                onOptionSelected(initialText)
-//                expandedState.value = false
-//            })
             options.forEach { option ->
                 DropdownMenuItem(
                     {
@@ -315,11 +305,8 @@ fun ChoiceTypeMenu(
     }
 }
 
-//Tentativo di aggiunta modale laterale
-
 @Composable
 fun TopBar(
-    navController: NavController,
     onSearchClicked: () -> Unit,
     onSettingsClicked: () -> Unit
 ){
@@ -340,7 +327,6 @@ fun TopBar(
         AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
         IconButton(
             onClick=onSettingsClicked,
-            //onClick = { navController.navigate("settings_screen")},
             modifier = Modifier.size(60.dp)
         ) {
             Image(

@@ -6,12 +6,10 @@ import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class PokemonListViewModel(private val repository: PokemonRepository): ViewModel() {
 

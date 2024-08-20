@@ -44,23 +44,13 @@ fun SettingsDrawer(
     var isDarkTheme by remember { mutableStateOf(false) } // Stato del tema
     val scope = rememberCoroutineScope()
 
-    // Funzione per aprire il drawer
-    val openDrawer = {
-        scope.launch { drawerState.open() }
-    }
-
-    // Funzione per chiudere il drawer
-    val closeDrawer = {
-        scope.launch { drawerState.close() }
-    }
-
     ModalDrawer(
         drawerState = drawerState,
         drawerContent = {
             DrawerContent(
                 isDarkTheme,
                 onItemClick = {
-                    closeDrawer()
+                    scope.launch { drawerState.close() }
                 },
                 onThemeToggle = { newTheme ->
                     isDarkTheme = newTheme // Aggiorna il tema
