@@ -145,6 +145,7 @@ fun PokemonList(
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 TextField(
@@ -155,9 +156,8 @@ fun PokemonList(
                                     },
                                     placeholder = { Text("Search...") },
                                     modifier = Modifier
-                                        .weight(1f)
-                                        .background(Color.White)
-                                        .heightIn(min = 56.dp, max = 56.dp),
+                                        .heightIn(min = 56.dp, max = 56.dp)
+                                        .width(290.dp),
                                     colors = TextFieldDefaults.colors(
                                         unfocusedIndicatorColor = colorResource(id = R.color.pokemon_blue),
                                         unfocusedPlaceholderColor = colorResource(id = R.color.pokemon_blue),
@@ -170,56 +170,6 @@ fun PokemonList(
                                     ),
                                     shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
                                 )
-                            }
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceAround,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-
-                                ChoiceTypeMenu(
-                                    type = selectedType1,
-                                    expandedState = remember { mutableStateOf(false) },
-                                    onOptionSelected = { selectedOption ->
-                                        selectedType1 = PokemonType.fromString(selectedOption)
-                                        pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
-                                    },
-                                    options = listOf("any") + (PokemonType.entries.map { it.type })
-                                )
-                                ChoiceTypeMenu(
-                                    type = selectedType2,
-                                    expandedState = remember { mutableStateOf(false) },
-                                    onOptionSelected = { selectedOption ->
-                                        selectedType2 = PokemonType.fromString(selectedOption)
-                                        pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
-                                    },
-                                    options = listOf("any") + (PokemonType.entries.map { it.type })
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier
-                                    .height(80.dp)
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ){
-                                //Pulsante per la scelta casuale
-                                Button(onClick = {
-                                    val (type1, type2) = pokemonListViewModel.randomFilters()
-                                    selectedType1 = type1
-                                    selectedType2 = type2
-                                    pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
-                                },
-                                    colors = ButtonDefaults.buttonColors(Color.Transparent),
-                                    modifier = Modifier
-                                        .background(colorResource(id = R.color.pokemon_yellow), RoundedCornerShape(100))
-                                        .width(70.dp)
-                                        .height(70.dp)){
-                                    Image(painterResource(id = R.drawable.random), "random", modifier = Modifier.size(70.dp))
-                                }
-
                                 Spacer(modifier = Modifier.width(20.dp))
                                 // Bottone per reimpostare i filtri a "any"
                                 Button(onClick = {
@@ -232,8 +182,50 @@ fun PokemonList(
                                     modifier = Modifier
                                         .background(colorResource(id = R.color.pokemon_yellow), RoundedCornerShape(100))
                                         .width(70.dp)
-                                        .height(70.dp)) {
+                                        .height(50.dp)) {
                                     Image(painterResource(id = R.drawable.reset), "reset", modifier = Modifier.size(80.dp))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+
+                                ChoiceTypeMenu(
+                                    type = selectedType1,
+                                    expandedState = remember { mutableStateOf(false) },
+                                    onOptionSelected = { selectedOption ->
+                                        selectedType1 = PokemonType.fromString(selectedOption)
+                                        pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
+                                    },
+                                    options = listOf("any") + (PokemonType.entries.map { it.type })
+                                )
+                                Spacer(modifier = Modifier.width(30.dp))
+                                ChoiceTypeMenu(
+                                    type = selectedType2,
+                                    expandedState = remember { mutableStateOf(false) },
+                                    onOptionSelected = { selectedOption ->
+                                        selectedType2 = PokemonType.fromString(selectedOption)
+                                        pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
+                                    },
+                                    options = listOf("any") + (PokemonType.entries.map { it.type })
+                                )
+                                Spacer(modifier = Modifier.width(20.dp))
+                                //Pulsante per la scelta casuale
+                                Button(onClick = {
+                                    val (type1, type2) = pokemonListViewModel.randomFilters()
+                                    selectedType1 = type1
+                                    selectedType2 = type2
+                                    pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
+                                },
+                                    colors = ButtonDefaults.buttonColors(Color.Transparent),
+                                    modifier = Modifier
+                                        .background(colorResource(id = R.color.pokemon_yellow), RoundedCornerShape(100))
+                                        .width(70.dp)
+                                        .height(50.dp)){
+                                    Image(painterResource(id = R.drawable.random), "random", modifier = Modifier.size(70.dp))
                                 }
                             }
                         }
@@ -249,14 +241,14 @@ fun PokemonList(
                                     pokemon = pokemon,
                                     modifier = Modifier
                                         .padding(20.dp)
-                                        .border(2.dp, Color.Gray, RoundedCornerShape(10))
+                                        .border(2.dp, Color.DarkGray, RoundedCornerShape(10))
+                                        .height(310.dp)
+                                        .width(250.dp)
                                         .background(
                                             if (pokemon.type1 != null) colorResource(id = pokemon.type1.backgroundColor)
                                             else Color.Magenta,
                                             RoundedCornerShape(10)
-                                        )
-                                        .height(250.dp)
-                                        .width(250.dp),
+                                        ),
                                     onClick = {
                                         navController.navigate("pokemon_details_screen/${pokemon.id}")
                                     }
@@ -430,7 +422,7 @@ fun ChoiceTypeMenu(
             colors = ButtonDefaults.buttonColors(Color.Transparent),
             modifier = Modifier
                 .background(color = colorResource(id = selectedColor), RoundedCornerShape(10.dp))
-                .width(180.dp)
+                .width(130.dp)
         ) {
             //Image(painterResource(id = PokemonTypeConverter().toPokemonType(selectedOption)!!.icon), "icon")
             Text(

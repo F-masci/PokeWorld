@@ -1,5 +1,7 @@
 package it.fale.pokeworld.view
 
+import android.media.MediaPlayer
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,9 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -69,6 +67,7 @@ fun PokemonDetailsScreen (
 
     if(isDetailsLoaded)
         DetailsCard(pokemon)
+
     else
         Loader()
 
@@ -108,6 +107,7 @@ fun Loader() {
 @Composable
 fun DetailsCard(pokemon: PokemonEntity){
     var isFavorite by remember { mutableStateOf(false) }//solo per test del bottone
+
     pokemon.type1?.let { colorResource(id = it.backgroundColor) }?.let {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -141,7 +141,14 @@ fun DetailsCard(pokemon: PokemonEntity){
                     }
                     Box(modifier = Modifier
                         .width(350.dp)
-                        .height(300.dp)) {
+                        .height(300.dp),
+                        contentAlignment = Alignment.Center) {
+
+                        Canvas(modifier = Modifier
+                            .height(350.dp)
+                            .width(350.dp)
+                            .background(Color.White.copy(0.8f), RoundedCornerShape(10))) {}
+
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(pokemon.getImageUrl())
@@ -149,23 +156,38 @@ fun DetailsCard(pokemon: PokemonEntity){
                                 .build(),
                             contentDescription = null,
                             modifier = Modifier
-                                .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(5))
                                 .width(350.dp)
-                                .height(300.dp)
+                                .height(230.dp)
                         )
 
-                        IconButton(
-                            onClick = {
-                                isFavorite = !isFavorite
-                            },
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(8.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = if (isFavorite) R.drawable.yellowstar else R.drawable.star),
-                                contentDescription = "Add to favourites",
-                                tint = Color.Unspecified                             )
+                        Row(modifier = Modifier
+                            .align(Alignment.TopEnd))
+                        {
+                            IconButton(
+                                onClick = {
+                                    isFavorite = !isFavorite
+                                },
+                                modifier = Modifier
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = if (isFavorite) R.drawable.yellowstar else R.drawable.star),
+                                    contentDescription = "Add to favourites",
+                                    tint = Color.Unspecified                             )
+                            }
+
+                            IconButton(
+                                onClick = {
+                                    playAudio(pokemon)
+                                },
+                                modifier = Modifier
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.audio),
+                                    contentDescription = "Add to favourites",
+                                    tint = Color.Unspecified                             )
+                            }
                         }
                     }
                     Row(
@@ -233,6 +255,16 @@ fun DetailsCard(pokemon: PokemonEntity){
             }
         }
     }
+}
+
+fun playAudio(pokemon: PokemonEntity) {
+
+    val mediaPlayer: MediaPlayer?
+
+    mediaPlayer = MediaPlayer()
+    mediaPlayer.setDataSource(pokemon.criesLegacy)
+    mediaPlayer.prepare()
+    mediaPlayer.start()
 }
 
 @Composable
