@@ -61,14 +61,15 @@ import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
 
 @Composable
 fun PokemonDetailsScreen (
-    repository: PokemonRepository,
+    pokemonDetailViewModel: PokemonDetailViewModel,
     pokemonId: Int
 )
 {
 
-    val pokemonDetailViewModel = remember { PokemonDetailViewModel(repository, pokemonId) }
     val pokemon = pokemonDetailViewModel.pokemon.collectAsStateWithLifecycle().value
     val isDetailsLoaded = pokemonDetailViewModel.detailsLoaded.collectAsStateWithLifecycle().value
+
+    if(!isDetailsLoaded || pokemon.id != pokemonId) pokemonDetailViewModel.loadPokemon(pokemonId)
 
     if(isDetailsLoaded)
         DetailsCard(pokemon)

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PokemonDetailViewModel(private val repository: PokemonRepository, private val pokemonId: Int): ViewModel() {
+class PokemonDetailViewModel(private val repository: PokemonRepository): ViewModel() {
 
     private val _pokemon: MutableStateFlow<PokemonEntity> = MutableStateFlow(PokemonEntity(id = 0, name = "Loading..."))
     private val _detailsLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -21,7 +21,8 @@ class PokemonDetailViewModel(private val repository: PokemonRepository, private 
     val detailsLoaded: StateFlow<Boolean>
         get() = _detailsLoaded.asStateFlow()
 
-    init {
+    fun loadPokemon(pokemonId: Int) {
+        _detailsLoaded.value = false
         viewModelScope.launch(Dispatchers.IO) {
             _pokemon.value = repository.retrievePokemon(pokemonId, PokemonRepository.LOAD_ALL)
             _detailsLoaded.value = true
