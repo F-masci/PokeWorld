@@ -104,4 +104,6 @@ dependencies {
     implementation ("androidx.compose.ui:ui:1.4.0")
     implementation ("androidx.compose.foundation:foundation:1.4.0")
   //  implementation ("androidx.compose.material3:material3:1.0.0")
+
+    implementation("com.google.accompanist:accompanist-drawablepainter:0.35.0-alpha")
 }

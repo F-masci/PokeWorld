@@ -3,7 +3,6 @@ package it.fale.pokeworld.entity.cross
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import it.fale.pokeworld.entity.ItemEntity
 import it.fale.pokeworld.entity.MoveEntity
 import it.fale.pokeworld.entity.PokemonEntity
 

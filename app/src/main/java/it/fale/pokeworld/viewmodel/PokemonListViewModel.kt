@@ -6,30 +6,23 @@ import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class PokemonListViewModel(private val repository: PokemonRepository): ViewModel() {
 
     private var _pokemonList: List<PokemonEntity> = emptyList();
     private val _filteredPokemonList: MutableStateFlow<List<PokemonEntity>> = MutableStateFlow(emptyList())
-    private val _listLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     val pokemonList: StateFlow<List<PokemonEntity>>
         get() = _filteredPokemonList.asStateFlow()
-
-    val listLoaded: StateFlow<Boolean>
-        get() = _listLoaded.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _pokemonList = repository.retrievePokemonList()
             _filteredPokemonList.value = _pokemonList
-            _listLoaded.value = true
         }
     }
 

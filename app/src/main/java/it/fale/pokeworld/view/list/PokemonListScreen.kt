@@ -1,4 +1,4 @@
-package it.fale.pokeworld.view
+package it.fale.pokeworld.view.list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DrawerValue
-import androidx.compose.material.ModalDrawer
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -51,38 +50,24 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.entity.PokemonTypeConverter
-import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
+import it.fale.pokeworld.view.TypeRow
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun PokemonListScreen(
-    navController: NavController,
-    repository: PokemonRepository
-) {
-
-    val pokemonListViewModel = remember { PokemonListViewModel(repository) }
-    val isListLoaded = pokemonListViewModel.listLoaded.collectAsStateWithLifecycle().value
-
-    if(isListLoaded)
-        PokemonList(navController, pokemonListViewModel)
-    else
-        SplashScreen()
-
-}
-
-@Composable
-fun PokemonList(
     navController: NavController,
     pokemonListViewModel: PokemonListViewModel
 ) {
@@ -98,29 +83,12 @@ fun PokemonList(
     var selectedType1 by rememberSaveable { mutableStateOf<PokemonType?>(null) }
     var selectedType2 by rememberSaveable { mutableStateOf<PokemonType?>(null) }
 
-    // Funzione per aprire il drawer
-    val openDrawer = {
-        scope.launch { drawerState.open() }
-    }
-
-    // Funzione per chiudere il drawer
-    val closeDrawer = {
-        scope.launch { drawerState.close() }
-    }
-    ModalDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            DrawerContent(
-                isDarkTheme = isDarkTheme,
-                onItemClick = {
-                    closeDrawer()
-                },
-                onThemeToggle = { newTheme ->
-                    isDarkTheme = newTheme // Aggiorna il tema
-                }
-            )
-        },
-        content = {
+    if(pokemonList.value.isEmpty())
+        SplashScreen()
+    else
+        SettingsDrawer(
+            drawerState = drawerState,
+        ) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = if (isDarkTheme) Color.DarkGray else Color.White
@@ -131,12 +99,11 @@ fun PokemonList(
                         .padding(0.dp)
                 ) {
                     TopBar(
-                        navController = navController,
                         onSearchClicked = {
                             isSearchBarVisible = !isSearchBarVisible
                         },
                         onSettingsClicked = {
-                            openDrawer()
+                            scope.launch { drawerState.open() }
                         }
                     )
                     if (isSearchBarVisible) {
@@ -224,7 +191,10 @@ fun PokemonList(
                                 },
                                     colors = ButtonDefaults.buttonColors(Color.Transparent),
                                     modifier = Modifier
-                                        .background(colorResource(id = R.color.pokemon_yellow), RoundedCornerShape(100))
+                                        .background(
+                                            colorResource(id = R.color.pokemon_yellow),
+                                            RoundedCornerShape(100)
+                                        )
                                         .width(70.dp)
                                         .height(50.dp)){
                                     Image(painterResource(id = R.drawable.random), "random", modifier = Modifier.size(70.dp))
@@ -262,149 +232,6 @@ fun PokemonList(
                 }
             }
         }
-    )
-}
-
-@Composable
-fun DrawerContent(
-    isDarkTheme: Boolean,
-    onItemClick: (String) -> Unit,
-    onThemeToggle: (Boolean) -> Unit // Callback per cambiare tema
-) {
-    var isSwitchOn by remember { mutableStateOf(isDarkTheme) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(if (isDarkTheme) Color.DarkGray else Color.White)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                "Theme",
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onItemClick("Home") },
-                fontSize = 20.sp
-            )
-            SwitchButton(isLightMode = isSwitchOn) {
-                isSwitchOn = it
-                onThemeToggle(it) // Chiama la funzione di callback per aggiornare il tema
-            }
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                "Language",
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onItemClick("Home") },
-                fontSize = 20.sp
-            )
-            ChoiceLanguageMenu(
-                initialText = "English",
-                expandedState = remember { mutableStateOf(false) },
-                onOptionSelected = { selectedOption ->
-                    // Gestisci l'opzione selezionata qui
-                },
-                options = listOf("English", "Italiano")
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Text(
-            "Alpha Version Database v1.0",
-            modifier = Modifier
-                .padding(16.dp)
-                .clickable { onItemClick("") },
-            fontSize = 16.sp
-        )
-    }
-}
-
-
-
-
-@Composable
-fun SwitchButton(isLightMode: Boolean, onSwitchChange: (Boolean) -> Unit) {
-    /*Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally // Centra tutto il contenuto orizzontalmente
-    ) {*/
-        Button(
-            onClick = { onSwitchChange(!isLightMode) },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (isLightMode) Color.LightGray else Color.DarkGray
-            ),
-            modifier = Modifier
-                .background(
-                    if (isLightMode) Color.LightGray else Color.DarkGray,
-                    RoundedCornerShape(60)
-                )
-            //.width(110.dp) con questa larghezza raggiungo l'uguaglianza dei due bottoni non so se mi piace
-        ) {
-            Text(
-                text = if (isLightMode) "Light" else "Dark",
-                color = if (isLightMode) Color.Black else Color.White,
-                fontSize = 14.sp
-            )
-        }
-    //}
-}
-
-@Composable
-fun ChoiceLanguageMenu(
-    initialText: String,
-    expandedState: MutableState<Boolean>,
-    onOptionSelected: (String) -> Unit,
-    options: List<String>,
-) {
-    var selectedOption by remember { mutableStateOf(initialText) }
-
-    Box {
-        Button(
-            onClick = { expandedState.value = !expandedState.value },
-            colors = ButtonDefaults.buttonColors(Color.Transparent),
-            modifier = Modifier
-                .background(Color.DarkGray, RoundedCornerShape(60))
-                .width(110.dp)//impostato a mano per essere uguale al button di dark-light mode
-        ) {
-            Text(
-                selectedOption,
-                fontSize = 14.sp,
-                color = Color.White,
-                //opto di proposito per uno stile distaccato per evidenziare il fatto che siamo in impostazioni
-                //fontFamily = pokemonPixelFont,
-            )
-        }
-        DropdownMenu(
-            expanded = expandedState.value,
-            onDismissRequest = { expandedState.value = false },
-            modifier = Modifier
-                .width(150.dp)
-                .height(110.dp)
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem({ Text(option,/*color = if (option == "any") Color.Black else Color.Red  ,*/fontSize = 10.sp,fontFamily = pokemonPixelFont) },onClick = {
-                    selectedOption = option
-                    onOptionSelected(option)
-                    expandedState.value = false
-                })
-            }
-        }
-    }
 }
 
 @Composable
@@ -426,7 +253,6 @@ fun ChoiceTypeMenu(
                 .background(color = colorResource(id = selectedColor), RoundedCornerShape(10.dp))
                 .width(130.dp)
         ) {
-            //Image(painterResource(id = PokemonTypeConverter().toPokemonType(selectedOption)!!.icon), "icon")
             Text(
                 selectedOption,
                 fontSize = 10.sp,
@@ -438,15 +264,9 @@ fun ChoiceTypeMenu(
             expanded = expandedState.value,
             onDismissRequest = { expandedState.value = false },
             modifier = Modifier
-                .width(180.dp)//Per ora l'ho impostato manualmente,dato che non ho trovato una funziona che sincronizza con  Button
+                .width(180.dp)
                 .height(300.dp)
         ) {
-//      possibile reset
-//            DropdownMenuItem({Text("Reset", color = Color.Red)},onClick = {
-//                selectedOption = initialText // Reset del testo del pulsante al valore iniziale
-//                onOptionSelected(initialText)
-//                expandedState.value = false
-//            })
             options.forEach { option ->
                 DropdownMenuItem(
                     {
@@ -485,11 +305,8 @@ fun ChoiceTypeMenu(
     }
 }
 
-//Tentativo di aggiunta modale laterale
-
 @Composable
 fun TopBar(
-    navController: NavController,
     onSearchClicked: () -> Unit,
     onSettingsClicked: () -> Unit
 ){
@@ -510,7 +327,6 @@ fun TopBar(
         AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
         IconButton(
             onClick=onSettingsClicked,
-            //onClick = { navController.navigate("settings_screen")},
             modifier = Modifier.size(60.dp)
         ) {
             Image(
@@ -538,8 +354,7 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit)
                 .build(),
             contentDescription = null,
             modifier = Modifier
-                .height(100.dp)
-                .width(100.dp)
+                .height(140.dp)
                 .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(10))
         )
         if(pokemon.type1 !== null) TypeRow(type = pokemon.type1)
@@ -550,7 +365,6 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit)
 @Composable
 fun SplashScreen() {
 
-    val context = LocalContext.current
     val gradient = Brush.radialGradient(
         0.0f to colorResource(id = R.color.gradient_light),
         0.8f to colorResource(id = R.color.gradient_dark),
@@ -565,16 +379,24 @@ fun SplashScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(R.drawable.pikachu) //ho inserito questa gif solo per test, ne possiamo anche scegliere un altra
-                .decoderFactory(ImageDecoderDecoder.Factory())
-                .build(),
-            contentDescription = "Animated GIF",
+        Image(
+            painter = rememberDrawablePainter(
+                drawable = getDrawable(
+                    LocalContext.current,
+                    R.drawable.pikachu
+                )
+            ),
+            contentDescription = "content description",
+            modifier = Modifier
+                .height(200.dp)
+                .width(200.dp)
         )
         Spacer(modifier = Modifier.height(5.dp))
-        Image(painterResource(id = R.drawable.logo2), "logo", modifier = Modifier.size(180.dp).fillMaxHeight())
-        //Text("Loading...", color = Color.White, fontFamily = pokemonPixelFont, fontSize = 14.sp)
+        Image(painterResource(id = R.drawable.logo2),
+            contentDescription = "logo",
+            modifier = Modifier
+                .size(180.dp)
+                .fillMaxHeight())
 
     }
 }

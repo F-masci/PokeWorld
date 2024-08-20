@@ -1,13 +1,10 @@
 package it.fale.pokeworld
 
-import android.os.Build
 import android.os.Bundle
-import android.view.WindowInsets
-import android.view.WindowInsetsController
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,32 +15,38 @@ import it.fale.pokeworld.entity.repository.PokemonDatabase
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.PokeWorldTheme
 import it.fale.pokeworld.view.PokemonDetailsScreen
-import it.fale.pokeworld.view.PokemonListScreen
-import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
-import it.fale.pokeworld.viewmodel.PokemonListViewModel
+import it.fale.pokeworld.view.list.PokemonListScreen
+import it.fale.pokeworld.viewmodel.ViewModelFactory
 
 
-//Questa è la nuova classe di avvio che gestisce la navigazione
-//L'unica cosa che voglio capire e che non mi convince è come devo gestire la repository,
-// se creare la variabile qui o direttamente nella schermata della lista
+/**
+ * Classe principale dell'applicazione.
+ */
 @AndroidEntryPoint
-class MainActivity : ComponentActivity(){
+class PokeWorld : ComponentActivity(){
+
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
+
         setContent{
+
             val repository = PokemonRepository(PokemonDatabase.getInstance(LocalContext.current).pokemonDao())
+            val factory = ViewModelFactory(repository)
+            val navController = rememberNavController()
+
             PokeWorldTheme {
-                val navController= rememberNavController()
+
                 NavHost(
                     navController = navController,
-                    startDestination= "pokemon_list_screen"
+                    startDestination= "pokemon_list_screen",
                 ){
                     composable("pokemon_list_screen") {
 
                         PokemonListScreen(
                             navController = navController,
-                            repository = repository
+                            pokemonListViewModel = viewModel(factory = factory)
                         )
+
                     }
                     composable(
                         route = "pokemon_details_screen/{pokemonId}", //pokemonId è un parametro dinamico, che inserisco solamente quando dalla listScreen clicco sul pokemon interessato
@@ -53,17 +56,14 @@ class MainActivity : ComponentActivity(){
                     ) {
                         val pokemonId = it.arguments!!.getInt("pokemonId")
                         PokemonDetailsScreen(
-                            repository = repository,
+                            pokemonDetailViewModel = viewModel(factory = factory),
                             pokemonId = pokemonId
                         )
                     }
                 }
             }
-            //window.setDecorFitsSystemWindows(false)
-            /*window.insetsController?.let { controller ->
-                controller.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-                controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }*/
         }
+
     }
+
 }
