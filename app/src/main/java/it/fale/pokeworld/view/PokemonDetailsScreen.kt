@@ -154,13 +154,13 @@ fun DetailsCard(pokemon: PokemonEntity){
 
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(pokemon.getImageUrl())
+                                .data(pokemon.getAnimatedImageUrl())
                                 .decoderFactory(ImageDecoderDecoder.Factory())
                                 .build(),
                             contentDescription = null,
                             modifier = Modifier
                                 .width(350.dp)
-                                .height(230.dp)
+                                .height(200.dp)
                         )
 
                         Row(modifier = Modifier
