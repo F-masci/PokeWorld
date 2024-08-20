@@ -56,8 +56,12 @@ data class PokemonEntity(
     @Ignore
     var moves: List<MoveEntity> = emptyList()
 
-    fun getImageUrl(): String? {
+    fun getAnimatedImageUrl(): String? {
         if(showdownDefault != null) return showdownDefault
+        return this.getImageUrl()
+    }
+
+    fun getImageUrl(): String? {
         return spriteDefault
     }
 

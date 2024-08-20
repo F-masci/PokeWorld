@@ -530,21 +530,22 @@ fun TopBar(
 @Composable
 fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit) {
 
-    val name = pokemon.name
-    val spriteUrl = pokemon.spriteDefault
-
     Column(modifier = modifier
             .clickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly) {
         Row {
-            Text(name, fontSize = 15.sp)
+            Text(pokemon.name, fontSize = 15.sp)
         }
         AsyncImage(
-            model = spriteUrl,
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(pokemon.getAnimatedImageUrl())
+                .decoderFactory(ImageDecoderDecoder.Factory())
+                .build(),
             contentDescription = null,
             modifier = Modifier
-                .height(140.dp)
+                .height(100.dp)
+                .width(100.dp)
                 .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(10))
         )
         if(pokemon.type1 !== null) TypeRow(type = pokemon.type1)
