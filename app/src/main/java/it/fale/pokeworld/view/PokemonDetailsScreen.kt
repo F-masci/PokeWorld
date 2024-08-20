@@ -1,5 +1,6 @@
 package it.fale.pokeworld.view
 
+import android.content.Context
 import android.media.MediaPlayer
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,7 +71,7 @@ fun PokemonDetailsScreen (
     if(!isDetailsLoaded || pokemon.id != pokemonId) pokemonDetailViewModel.loadPokemon(pokemonId)
 
     if(isDetailsLoaded)
-        DetailsCard(pokemon)
+        DetailsCard(pokemonDetailViewModel, pokemon)
 
     else
         Loader()
@@ -108,8 +110,11 @@ fun Loader() {
 }
 
 @Composable
-fun DetailsCard(pokemon: PokemonEntity){
-    var isFavorite by remember { mutableStateOf(false) }//solo per test del bottone
+fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: PokemonEntity){
+    val context = LocalContext.current
+    var currentFavoriteId = pokemonDetailViewModel.getFavoritePokemonId(context)
+    var isFavorite by remember { mutableStateOf(currentFavoriteId == pokemon.id) }
+    var showConfirmationDialog by remember { mutableStateOf(false) }
 
     pokemon.type1?.let { colorResource(id = it.backgroundColor) }?.let {
         Surface(
@@ -163,22 +168,12 @@ fun DetailsCard(pokemon: PokemonEntity){
                                 .height(200.dp)
                         )
 
-                        Row(modifier = Modifier
-                            .align(Alignment.TopEnd))
+                        Row( modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.TopStart)
+                            .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween )
                         {
-                            IconButton(
-                                onClick = {
-                                    isFavorite = !isFavorite
-                                },
-                                modifier = Modifier
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = if (isFavorite) R.drawable.yellowstar else R.drawable.star),
-                                    contentDescription = "Add to favourites",
-                                    tint = Color.Unspecified                             )
-                            }
-
                             IconButton(
                                 onClick = {
                                     playAudio(pokemon)
@@ -191,7 +186,41 @@ fun DetailsCard(pokemon: PokemonEntity){
                                     contentDescription = "Add to favourites",
                                     tint = Color.Unspecified                             )
                             }
+                            IconButton(
+                                onClick = {
+                                    if (isFavorite) {//entro qui solo se cerco di togliere il pokemon che è già tra i preferiti
+                                        isFavorite = false
+                                        pokemonDetailViewModel.clearFavoritePokemon(context)
+                                    } else if (currentFavoriteId != null && currentFavoriteId != pokemon.id) {//solo se esiste già un preferito ma non è il pokemon della schermata attuale
+                                        showConfirmationDialog = true
+                                    } else {
+                                        isFavorite = true
+                                        pokemonDetailViewModel.saveFavoritePokemon(context, pokemon.id)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = if (isFavorite) R.drawable.yellowstar else R.drawable.star),
+                                    contentDescription = "Add to favourites",
+                                    tint = Color.Unspecified
+                                )
+                            }
                         }
+                    }
+                    if (showConfirmationDialog) {
+                        ConfirmFavoriteChangeDialog(
+                            onConfirm = {
+                                isFavorite = true
+                                pokemonDetailViewModel.saveFavoritePokemon(context, pokemon.id)
+                                currentFavoriteId=pokemon.id
+                                showConfirmationDialog = false
+                            },
+                            onCancel = {
+                                showConfirmationDialog = false
+                            }
+                        )
                     }
                     Row(
                         modifier = Modifier.padding(0.dp, 15.dp),
@@ -259,6 +288,42 @@ fun DetailsCard(pokemon: PokemonEntity){
         }
     }
 }
+
+@Composable
+fun ConfirmFavoriteChangeDialog(
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
+) {
+    androidx.compose.material.AlertDialog(
+        onDismissRequest = { onCancel() },
+        title = {
+            Text(text = "Change Favorite")
+        },
+        text = {
+            Text("Selecting this Pokémon as favorite will remove the previous one. Do you want to continue?")
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm() },
+            ) {
+                Text(
+                    text = "Yes",
+                    textAlign = TextAlign.Center,
+                    fontSize = 11.sp
+                )
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = { onCancel() },
+
+            ) {
+                Text("No")
+            }
+        }
+    )
+}
+
 
 fun playAudio(pokemon: PokemonEntity) {
 

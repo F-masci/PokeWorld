@@ -1,5 +1,6 @@
 package it.fale.pokeworld.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import it.fale.pokeworld.entity.PokemonEntity
@@ -27,6 +28,25 @@ class PokemonDetailViewModel(private val repository: PokemonRepository): ViewMod
             _pokemon.value = repository.retrievePokemon(pokemonId, PokemonRepository.LOAD_ALL)
             _detailsLoaded.value = true
         }
+    }
+    fun saveFavoritePokemon(context: Context, pokemonId: Int) {
+        val sharedPreferences = context.getSharedPreferences("pokemon_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("favorite_pokemon_id", pokemonId)
+        editor.apply()
+    }
+
+    fun getFavoritePokemonId(context: Context): Int? {
+        val sharedPreferences = context.getSharedPreferences("pokemon_prefs", Context.MODE_PRIVATE)
+        val favoriteId = sharedPreferences.getInt("favorite_pokemon_id", -1)
+        return if (favoriteId == -1) null else favoriteId
+    }
+
+    fun clearFavoritePokemon(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("pokemon_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove("favorite_pokemon_id")
+        editor.apply()
     }
 
 }
