@@ -60,6 +60,7 @@ import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.entity.PokemonTypeConverter
+import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 import kotlinx.coroutines.launch
@@ -67,9 +68,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun PokemonListScreen(
     navController: NavController,
-    pokemonListViewModel: PokemonListViewModel
+    repository: PokemonRepository
 ) {
 
+    val pokemonListViewModel = remember { PokemonListViewModel(repository) }
     val isListLoaded = pokemonListViewModel.listLoaded.collectAsStateWithLifecycle().value
 
     if(isListLoaded)

@@ -55,15 +55,18 @@ import coil.request.ImageRequest
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
+import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.WhiteDetails
 import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
 
 @Composable
 fun PokemonDetailsScreen (
-    pokemonDetailViewModel: PokemonDetailViewModel
+    repository: PokemonRepository,
+    pokemonId: Int
 )
 {
 
+    val pokemonDetailViewModel = remember { PokemonDetailViewModel(repository, pokemonId) }
     val pokemon = pokemonDetailViewModel.pokemon.collectAsStateWithLifecycle().value
     val isDetailsLoaded = pokemonDetailViewModel.detailsLoaded.collectAsStateWithLifecycle().value
 

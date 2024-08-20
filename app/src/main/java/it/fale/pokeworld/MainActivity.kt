@@ -32,17 +32,17 @@ class MainActivity : ComponentActivity(){
         super.onCreate(savedInstanceState)
         setContent{
             val repository = PokemonRepository(PokemonDatabase.getInstance(LocalContext.current).pokemonDao())
-            val pokemonListViewModel = remember { PokemonListViewModel(repository) }
             PokeWorldTheme {
                 val navController= rememberNavController()
                 NavHost(
                     navController = navController,
                     startDestination= "pokemon_list_screen"
                 ){
-                    composable("pokemon_list_screen"){
+                    composable("pokemon_list_screen") {
+
                         PokemonListScreen(
                             navController = navController,
-                            pokemonListViewModel = pokemonListViewModel
+                            repository = repository
                         )
                     }
                     composable(
@@ -52,8 +52,10 @@ class MainActivity : ComponentActivity(){
                         })
                     ) {
                         val pokemonId = it.arguments!!.getInt("pokemonId")
-                        val pokemonDetailViewModel = remember { PokemonDetailViewModel(repository, pokemonId) }
-                        PokemonDetailsScreen(pokemonDetailViewModel)
+                        PokemonDetailsScreen(
+                            repository = repository,
+                            pokemonId = pokemonId
+                        )
                     }
                 }
             }
