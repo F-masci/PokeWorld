@@ -106,7 +106,7 @@ fun PokemonListScreen(
                             isSearchBarVisible = !isSearchBarVisible
                         },
                         onSettingsClicked = {
-                            openDrawer()
+                            scope.launch { drawerState.open() }
                         }
                     )
                     if (isSearchBarVisible) {
