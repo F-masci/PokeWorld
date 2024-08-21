@@ -15,11 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -221,7 +219,9 @@ fun PokemonListScreen(
                     }
 
                     Box(
-
+                        modifier = Modifier
+                            .fillMaxHeight(1f)
+                            .fillMaxWidth(1f)
                     ) {
                         LazyVerticalGrid(
                             columns = GridCells.Adaptive(200.dp),
@@ -285,7 +285,7 @@ fun ChoiceTypeMenu(
 
 
     // Il testo visualizzato viene ora gestito dal componente genitore
-    Box (modifier=modifier){
+    Box (modifier= modifier){
         Button(
             onClick = { expandedState.value = !expandedState.value },
             colors = ButtonDefaults.buttonColors(Color.Transparent),
