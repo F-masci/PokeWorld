@@ -90,7 +90,7 @@ fun PokemonListScreen(
     var selectedType1 by rememberSaveable { mutableStateOf<PokemonType?>(null) }
     var selectedType2 by rememberSaveable { mutableStateOf<PokemonType?>(null) }
 
-    if(pokemonList.value.isEmpty())
+    if(pokemonList.value.isEmpty() && query.isBlank() && selectedType1 == null && selectedType2 == null)
         SplashScreen()
     else
         SettingsDrawer(
