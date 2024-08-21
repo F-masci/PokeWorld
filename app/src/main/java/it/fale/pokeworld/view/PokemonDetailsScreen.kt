@@ -406,8 +406,10 @@ fun MoveItem(
                 text = moveDescription,
                 fontSize = 12.sp,
                 modifier = Modifier
+                    .fillMaxWidth()
                     .background(Color.White.copy(0.6f), RoundedCornerShape(5.dp))
                     .padding(4.dp)
+
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
