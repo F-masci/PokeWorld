@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -133,7 +135,7 @@ fun PokemonListScreen(
                                     placeholder = { Text("Search...") },
                                     modifier = Modifier
                                         .heightIn(min = 56.dp, max = 56.dp)
-                                        .width(290.dp),
+                                        .weight(1f),
                                     colors = TextFieldDefaults.colors(
                                         unfocusedIndicatorColor = colorResource(id = R.color.pokemon_blue),
                                         unfocusedPlaceholderColor = colorResource(id = R.color.pokemon_blue),
@@ -146,8 +148,8 @@ fun PokemonListScreen(
                                     ),
                                     shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
                                 )
-                                Spacer(modifier = Modifier.width(20.dp))
-                                // Bottone per reimpostare i filtri a "any"
+                                Spacer(modifier = Modifier.width(10.dp))
+
                                 Button(onClick = {
                                     query = ""
                                     selectedType1 = null // Resetta il valore del filtro
@@ -176,9 +178,13 @@ fun PokemonListScreen(
                                         selectedType1 = PokemonType.fromString(selectedOption)
                                         pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
                                     },
-                                    options = listOf("any") + (PokemonType.entries.map { it.type })
+                                    options = listOf("any") + (PokemonType.entries.map { it.type }),
+                                    modifier = Modifier
+                                        .weight(1f)
+//                                        .padding(end = 15.dp)
+
                                 )
-                                Spacer(modifier = Modifier.width(30.dp))
+                                Spacer(modifier = Modifier.width(1.dp))
                                 ChoiceTypeMenu(
                                     type = selectedType2,
                                     expandedState = remember { mutableStateOf(false) },
@@ -186,9 +192,13 @@ fun PokemonListScreen(
                                         selectedType2 = PokemonType.fromString(selectedOption)
                                         pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
                                     },
-                                    options = listOf("any") + (PokemonType.entries.map { it.type })
+                                    options = listOf("any") + (PokemonType.entries.map { it.type }),
+                                    modifier = Modifier
+                                        .weight(1f)
+//                                        .padding(end = 15.dp)
+
                                 )
-                                Spacer(modifier = Modifier.width(20.dp))
+                                Spacer(modifier = Modifier.width(10.dp))
                                 //Pulsante per la scelta casuale
                                 Button(onClick = {
                                     val (type1, type2) = pokemonListViewModel.randomFilters()
@@ -268,18 +278,20 @@ fun ChoiceTypeMenu(
     expandedState: MutableState<Boolean>,
     onOptionSelected: (String) -> Unit,
     options: List<String>,
+    modifier: Modifier
 ) {
     var selectedOption = type?.type ?: "any"
     var selectedColor = type?.backgroundTextColor ?: R.color.light_pokemon_blue
 
+
     // Il testo visualizzato viene ora gestito dal componente genitore
-    Box {
+    Box (modifier=modifier){
         Button(
             onClick = { expandedState.value = !expandedState.value },
             colors = ButtonDefaults.buttonColors(Color.Transparent),
             modifier = Modifier
                 .background(color = colorResource(id = selectedColor), RoundedCornerShape(10.dp))
-                .width(130.dp)
+                .fillMaxWidth()
         ) {
             Text(
                 selectedOption,
@@ -292,15 +304,15 @@ fun ChoiceTypeMenu(
             expanded = expandedState.value,
             onDismissRequest = { expandedState.value = false },
             modifier = Modifier
-                .width(180.dp)
                 .height(300.dp)
+
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
                     {
                         Row(
                             modifier = Modifier
-                                .fillMaxSize(1f)
+                                .fillMaxWidth()
                                 .height(30.dp)
                                 .background(
                                     if (option == "any") Color.White
