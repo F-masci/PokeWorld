@@ -1,5 +1,8 @@
 package it.fale.pokeworld.viewmodel
 
+import android.content.Context
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import it.fale.pokeworld.entity.PokemonEntity
@@ -10,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class PokemonListViewModel(private val repository: PokemonRepository): ViewModel() {
 
@@ -55,4 +59,31 @@ class PokemonListViewModel(private val repository: PokemonRepository): ViewModel
 
     }
 
+    fun saveThemePreference(context: Context, isDarkTheme: Boolean) {
+        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("dark_theme", isDarkTheme)
+        editor.apply()
+    }
+
+    @Composable
+    fun getThemePreference(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("dark_theme", isSystemInDarkTheme())//uso tema di sistema come default
+    }
+
+
+    fun saveLanguagePreference(context: Context, language: String) {
+        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("language", language)
+        editor.apply()
+    }
+
+
+
+    fun getLanguagePreference(context: Context): String {
+        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("language", Locale.getDefault().language) ?: Locale.getDefault().language
+    }     //uso lingua di sistema per default
 }

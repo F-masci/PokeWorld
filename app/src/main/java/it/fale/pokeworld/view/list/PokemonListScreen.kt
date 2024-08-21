@@ -1,5 +1,6 @@
 package it.fale.pokeworld.view.list
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,8 +21,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DrawerValue
+import androidx.compose.material.Icon
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -74,6 +77,10 @@ fun PokemonListScreen(
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     var isSearchBarVisible by remember { mutableStateOf(false) }
     var isDarkTheme by remember { mutableStateOf(false) } // Stato del tema
+
+    //Variabile per memorizzare lo stato della LazyVerticalGrid, che permette di controllare la posizione di scroll
+    val pokemonListState = rememberLazyGridState()
+    val coroutineScope = rememberCoroutineScope()
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -203,32 +210,53 @@ fun PokemonListScreen(
                         }
                     }
 
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(200.dp),
-                        horizontalArrangement = Arrangement.spacedBy(5.dp),
-                        verticalArrangement = Arrangement.spacedBy(5.dp),
-                        content = {
-                            items(pokemonList.value) { pokemon ->
-                                PokemonCard(
-                                    pokemon = pokemon,
-                                    modifier = Modifier
-                                        .padding(20.dp)
-                                        .border(2.dp, Color.DarkGray, RoundedCornerShape(10))
-                                        .height(310.dp)
-                                        .width(250.dp)
-                                        .background(
-                                            if (pokemon.type1 != null) colorResource(id = pokemon.type1.backgroundColor)
-                                            else Color.Magenta,
-                                            RoundedCornerShape(10)
-                                        ),
-                                    onClick = {
-                                        navController.navigate("pokemon_details_screen/${pokemon.id}")
-                                    }
-                                )
-                            }
-                        }
+                    Box(
 
-                    )
+                    ) {
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive(200.dp),
+                            horizontalArrangement = Arrangement.spacedBy(5.dp),
+                            verticalArrangement = Arrangement.spacedBy(5.dp),
+                            state = pokemonListState,
+                            content = {
+                                items(pokemonList.value) { pokemon ->
+                                    PokemonCard(
+                                        pokemon = pokemon,
+                                        modifier = Modifier
+                                            .padding(20.dp)
+                                            .border(2.dp, Color.DarkGray, RoundedCornerShape(10))
+                                            .height(310.dp)
+                                            .width(250.dp)
+                                            .background(
+                                                if (pokemon.type1 != null) colorResource(id = pokemon.type1.backgroundColor)
+                                                else Color.Magenta,
+                                                RoundedCornerShape(10)
+                                            ),
+                                        onClick = {
+                                            navController.navigate("pokemon_details_screen/${pokemon.id}")
+                                        }
+                                    )
+                                }
+                            }
+                        )
+
+                        IconButton(
+                            onClick = {
+                                coroutineScope.launch {
+                                    pokemonListState.animateScrollToItem(index = 0)
+                                }
+                            }, modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(6.dp)
+                                .background(colorResource(id = R.color.pokemon_yellow), RoundedCornerShape(100.dp))
+                                .padding(3.dp)
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.uparrow), "uparrow",
+                                tint = colorResource(id = R.color.pokemon_blue)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -341,24 +369,47 @@ fun TopBar(
 fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit) {
 
     Column(modifier = modifier
-            .clickable { onClick() },
+        .clickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly) {
-        Row {
-            Text(pokemon.name, fontSize = 15.sp)
-        }
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(pokemon.getAnimatedImageUrl())
-                .decoderFactory(ImageDecoderDecoder.Factory())
-                .build(),
-            contentDescription = null,
+        verticalArrangement = Arrangement.Top) {
+
+        if (pokemon.name.length > 12) Spacer(modifier = Modifier.height(10.dp))
+        else Spacer(modifier = Modifier.height(20.dp))
+        Text(pokemon.name, fontSize = 15.sp)
+        Spacer(modifier = Modifier.height(20.dp))
+        Box(
             modifier = Modifier
-                .height(140.dp)
-                .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(10))
-        )
-        if(pokemon.type1 !== null) TypeRow(type = pokemon.type1)
-        if(pokemon.type2 !== null) TypeRow(type = pokemon.type2)
+                .width(120.dp)
+                .height(120.dp),
+            contentAlignment = Alignment.Center
+        ) {
+
+            Canvas(
+                modifier = Modifier
+                    .height(120.dp)
+                    .width(120.dp)
+                    .background(Color.White.copy(0.6f), RoundedCornerShape(10))
+            ) {}
+
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(pokemon.getAnimatedImageUrl())
+                    .decoderFactory(ImageDecoderDecoder.Factory())
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(100.dp)
+                    .width(100.dp)
+            )
+        }
+        if (pokemon.type1 !== null) {
+            Spacer(modifier = Modifier.height(20.dp))
+            TypeRow(type = pokemon.type1)
+        }
+        if (pokemon.type2 !== null) {
+            Spacer(modifier = Modifier.height(20.dp))
+            TypeRow(type = pokemon.type2)
+        }
     }
 }
 
