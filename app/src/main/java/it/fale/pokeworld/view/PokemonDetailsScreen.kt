@@ -1,6 +1,5 @@
 package it.fale.pokeworld.view
 
-import android.content.Context
 import android.media.MediaPlayer
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -330,7 +329,7 @@ fun playAudio(pokemon: PokemonEntity) {
     val mediaPlayer: MediaPlayer?
 
     mediaPlayer = MediaPlayer()
-    mediaPlayer.setDataSource(pokemon.criesLegacy)
+    mediaPlayer.setDataSource(pokemon.criesLatest)
     mediaPlayer.prepare()
     mediaPlayer.start()
 }

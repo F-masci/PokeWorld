@@ -116,7 +116,7 @@ fun PokemonListScreen(
         ) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = if (isDarkTheme) Color.DarkGray else Color.White
+                color = if (isDarkTheme) colorResource(id = R.color.dark_mode_background) else Color.White
             ) {
                 Column(
                     modifier = Modifier

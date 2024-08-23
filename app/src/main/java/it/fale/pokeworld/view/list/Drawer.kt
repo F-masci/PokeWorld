@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DrawerState
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material.DrawerState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
@@ -30,10 +30,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import it.fale.pokeworld.R
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import kotlinx.coroutines.launch
+
 @Composable
 fun SettingsDrawer(
     drawerState: DrawerState,
@@ -99,7 +102,7 @@ fun DrawerContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (isDarkTheme) Color.DarkGray else Color.White)
+            .background(if (isDarkTheme) colorResource(id = R.color.dark_mode_background) else Color.White)
     ) {
         // Opzioni del drawer
 
@@ -116,7 +119,8 @@ fun DrawerContent(
                 modifier = Modifier
                     .weight(1f)
                     .clickable { onItemClick("Home") },
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = if(isDarkTheme) Color.White else Color.Black
             )
             SwitchButton(isLightMode = isSwitchOn) {
                 isSwitchOn = it
@@ -135,7 +139,8 @@ fun DrawerContent(
                 modifier = Modifier
                     .weight(1f)
                     .clickable { onItemClick("Home") },
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = if(isDarkTheme) Color.White else Color.Black
             )
             ChoiceLanguageMenu(
                 initialText = "English",
@@ -143,7 +148,8 @@ fun DrawerContent(
                 onOptionSelected = { selectedOption ->
                     // Gestisci l'opzione selezionata qui
                 },
-                options = listOf("English", "Italiano")
+                options = listOf("English", "Italiano"),
+                isDarkTheme
             )
         }
 
@@ -154,7 +160,8 @@ fun DrawerContent(
             modifier = Modifier
                 .padding(16.dp)
                 .clickable { onItemClick("") },
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            color = if(isDarkTheme) Color.White else Color.Black
         )
     }
 }
@@ -191,6 +198,7 @@ fun ChoiceLanguageMenu(
     expandedState: MutableState<Boolean>,
     onOptionSelected: (String) -> Unit,
     options: List<String>,
+    isDarkMode: Boolean
 ) {
     var selectedOption by remember { mutableStateOf(initialText) }
 
@@ -199,13 +207,13 @@ fun ChoiceLanguageMenu(
             onClick = { expandedState.value = !expandedState.value },
             colors = ButtonDefaults.buttonColors(Color.Transparent),
             modifier = Modifier
-                .background(Color.DarkGray, RoundedCornerShape(60))
+                .background(if(isDarkMode) Color.LightGray else Color.DarkGray, RoundedCornerShape(60))
                 .width(110.dp)//impostato a mano per essere uguale al button di dark-light mode
         ) {
             Text(
                 selectedOption,
                 fontSize = 14.sp,
-                color = Color.White,
+                color = if(isDarkMode) Color.Black else Color.White,
                 //opto di proposito per uno stile distaccato per evidenziare il fatto che siamo in impostazioni
                 //fontFamily = pokemonPixelFont,
             )

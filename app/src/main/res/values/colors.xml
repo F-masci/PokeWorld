@@ -59,4 +59,5 @@
     <color name="light_pokemon_blue">#5f83bb</color>
     <color name="gradient_dark">#201e1e</color>
     <color name="gradient_light">#3f5ffb</color>
+    <color name="dark_mode_background">#192734</color>
 </resources>
