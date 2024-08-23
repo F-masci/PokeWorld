@@ -156,10 +156,13 @@ fun PokemonListScreen(
                                 },
                                     colors = ButtonDefaults.buttonColors(Color.Transparent),
                                     modifier = Modifier
-                                        .background(colorResource(id = R.color.pokemon_yellow), RoundedCornerShape(100))
+                                        .background(
+                                            colorResource(id = R.color.pokemon_yellow),
+                                            RoundedCornerShape(100)
+                                        )
                                         .width(70.dp)
                                         .height(50.dp)) {
-                                    Image(painterResource(id = R.drawable.reset), "reset", modifier = Modifier.size(80.dp))
+                                    Icon(painterResource(id = R.drawable.reset), "reset", tint = colorResource(id = R.color.pokemon_blue), modifier = Modifier.size(80.dp))
                                 }
                             }
                             Spacer(modifier = Modifier.height(10.dp))
@@ -212,7 +215,7 @@ fun PokemonListScreen(
                                         )
                                         .width(70.dp)
                                         .height(50.dp)){
-                                    Image(painterResource(id = R.drawable.random), "random", modifier = Modifier.size(70.dp))
+                                    Icon(painterResource(id = R.drawable.random), "random", tint = colorResource(id = R.color.pokemon_blue), modifier = Modifier.size(70.dp))
                                 }
                             }
                         }
@@ -258,7 +261,10 @@ fun PokemonListScreen(
                             }, modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .padding(6.dp)
-                                .background(colorResource(id = R.color.pokemon_yellow), RoundedCornerShape(100.dp))
+                                .background(
+                                    colorResource(id = R.color.pokemon_yellow),
+                                    RoundedCornerShape(100.dp)
+                                )
                                 .padding(3.dp)
                         ) {
                             Icon(
