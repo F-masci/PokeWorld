@@ -1,5 +1,6 @@
 package it.fale.pokeworld.view.list
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,7 +23,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Icon
 import androidx.compose.material.rememberDrawerState
@@ -31,6 +34,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -48,11 +52,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -294,9 +306,11 @@ fun ChoiceTypeMenu(
 ) {
     var selectedOption = type?.type ?: "any"
     var selectedColor = type?.backgroundTextColor ?: R.color.light_pokemon_blue
-
-
-    // Il testo visualizzato viene ora gestito dal componente genitore
+    var buttonPosition by remember { mutableStateOf(IntOffset(0, 0)) }
+    var buttonSize by remember { mutableStateOf(IntSize.Zero)}
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        // Il testo visualizzato viene ora gestito dal componente genitore
     Box (modifier= modifier){
         Button(
             onClick = { expandedState.value = !expandedState.value },
@@ -304,6 +318,11 @@ fun ChoiceTypeMenu(
             modifier = Modifier
                 .background(color = colorResource(id = selectedColor), RoundedCornerShape(10.dp))
                 .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    val position = coordinates.positionInWindow()
+                    buttonPosition = IntOffset(0, position.y.toInt())
+                    buttonSize = coordinates.size
+                }
         ) {
             Text(
                 selectedOption,
@@ -312,50 +331,87 @@ fun ChoiceTypeMenu(
                 fontFamily = pokemonPixelFont,
             )
         }
-        DropdownMenu(
-            expanded = expandedState.value,
-            onDismissRequest = { expandedState.value = false },
-            modifier = Modifier
-                .height(300.dp)
 
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(30.dp)
-                                .background(
-                                    if (option == "any") Color.White
-                                    else colorResource(
-                                        id = PokemonTypeConverter().toPokemonType(
-                                            option
-                                        )!!.backgroundTextColor
-                                    ), RoundedCornerShape(10.dp)
-                                ),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ){
-                            if(option != "any") {
-                                Image(painterResource(id = PokemonTypeConverter().toPokemonType(option)!!.icon), "icon", modifier = Modifier.height(25.dp))
-                                Spacer(modifier = Modifier.width(10.dp))
+        if (expandedState.value) {
+            val offsetY = if (isLandscape) {
+                buttonPosition.y + buttonSize.height
+            } else {
+                buttonSize.height
+            }
+
+            val widthDropDownMenu = if (isLandscape) {
+                with(LocalDensity.current) { buttonSize.width.toDp() }
+            } else {
+                with(LocalDensity.current) { (buttonSize.width + 50).toDp() }
+            }
+            Popup(
+                alignment = Alignment.TopStart,
+                offset = IntOffset(0, offsetY),
+                properties = PopupProperties(focusable = true)
+            ) {
+                Surface(
+                    color = MaterialTheme.colorScheme.background,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .width(widthDropDownMenu)
+                        .height(200.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                            options.forEach { option ->
+                                DropdownMenuItem(
+                                    {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(30.dp)
+                                                .background(
+                                                    if (option == "any") Color.White
+                                                    else colorResource(
+                                                        id = PokemonTypeConverter().toPokemonType(
+                                                            option
+                                                        )!!.backgroundTextColor
+                                                    ), RoundedCornerShape(10.dp)
+                                                ),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.Center
+                                        ) {
+                                            if (option != "any") {
+                                                Image(
+                                                    painterResource(
+                                                        id = PokemonTypeConverter().toPokemonType(
+                                                            option
+                                                        )!!.icon
+                                                    ), "icon", modifier = Modifier.height(25.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(10.dp))
+                                            }
+                                            Text(
+                                                option,
+                                                fontSize = 12.sp, fontFamily = pokemonPixelFont
+                                            )
+                                        }
+                                    },
+                                    onClick = {
+                                        selectedOption = option
+                                        if (selectedOption == "any") selectedColor =
+                                            R.color.light_pokemon_blue
+                                        else selectedColor =
+                                            PokemonTypeConverter().toPokemonType(option)!!.backgroundTextColor
+                                        onOptionSelected(option)
+                                        expandedState.value = false
+                                    })
                             }
-                            Text(option,
-                                fontSize = 12.sp,fontFamily = pokemonPixelFont)
                         }
-                    },
-                    onClick = {
-                    selectedOption = option
-                    if(selectedOption == "any") selectedColor = R.color.light_pokemon_blue
-                    else selectedColor = PokemonTypeConverter().toPokemonType(option)!!.backgroundTextColor
-                    onOptionSelected(option)
-                    expandedState.value = false
-                })
+                    }
+                }
             }
         }
     }
-}
+
 
 @Composable
 fun TopBar(
