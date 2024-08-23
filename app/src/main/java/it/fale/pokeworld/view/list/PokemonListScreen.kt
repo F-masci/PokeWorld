@@ -193,7 +193,7 @@ fun PokemonListScreen(
 //                                        .padding(end = 15.dp)
 
                                 )
-                                Spacer(modifier = Modifier.width(1.dp))
+                                Spacer(modifier = Modifier.width(10.dp))
                                 ChoiceTypeMenu(
                                     type = selectedType2,
                                     expandedState = remember { mutableStateOf(false) },
