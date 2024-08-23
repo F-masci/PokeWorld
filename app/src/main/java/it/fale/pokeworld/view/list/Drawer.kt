@@ -34,7 +34,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import kotlinx.coroutines.launch
+@Composable
+fun SettingsDrawer(
+    drawerState: DrawerState,
+    isDarkTheme: Boolean, // Ricevi il tema attuale
+    onThemeToggle: (Boolean) -> Unit, // Callback per notificare il cambio di tema
+    content: @Composable () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    ModalDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            DrawerContent(
+                isDarkTheme = isDarkTheme, // Passa il tema attuale
 
+                onItemClick = {
+                    scope.launch { drawerState.close() }
+                },
+                onThemeToggle = { newTheme ->
+                    onThemeToggle(newTheme) // Notifica il cambio di tema al PokemonListScreen
+                }
+            )
+        }
+    ) {
+        content()
+    }
+}
+/*
 @Composable
 fun SettingsDrawer(
     drawerState: DrawerState,
@@ -61,12 +87,12 @@ fun SettingsDrawer(
         content()
     }
 }
-
+*/
 @Composable
 fun DrawerContent(
-    isDarkTheme: Boolean,
+    isDarkTheme: Boolean, // Ricevi il tema attuale
     onItemClick: (String) -> Unit,
-    onThemeToggle: (Boolean) -> Unit // Callback per cambiare tema
+    onThemeToggle: (Boolean) -> Unit // Callback per notificare il cambio di tema
 ) {
     var isSwitchOn by remember { mutableStateOf(isDarkTheme) }
 
@@ -75,6 +101,9 @@ fun DrawerContent(
             .fillMaxSize()
             .background(if (isDarkTheme) Color.DarkGray else Color.White)
     ) {
+        // Opzioni del drawer
+
+        // Switch per cambiare il tema
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -91,7 +120,7 @@ fun DrawerContent(
             )
             SwitchButton(isLightMode = isSwitchOn) {
                 isSwitchOn = it
-                onThemeToggle(it) // Chiama la funzione di callback per aggiornare il tema
+                onThemeToggle(it) // Notifica il cambio di tema
             }
         }
 
@@ -135,11 +164,6 @@ fun DrawerContent(
 
 @Composable
 fun SwitchButton(isLightMode: Boolean, onSwitchChange: (Boolean) -> Unit) {
-    /*Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally // Centra tutto il contenuto orizzontalmente
-    ) {*/
     Button(
         onClick = { onSwitchChange(!isLightMode) },
         colors = ButtonDefaults.buttonColors(

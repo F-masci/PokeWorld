@@ -14,11 +14,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Locale
-
 class PokemonListViewModel(private val repository: PokemonRepository): ViewModel() {
 
-    private var _pokemonList: List<PokemonEntity> = emptyList();
+    private var _pokemonList: List<PokemonEntity> = emptyList()
     private val _filteredPokemonList: MutableStateFlow<List<PokemonEntity>> = MutableStateFlow(emptyList())
+
+    private val preferencesName = "pokeworld_preferences"
+    private val languageKey = "language_preference"
 
     val pokemonList: StateFlow<List<PokemonEntity>>
         get() = _filteredPokemonList.asStateFlow()
@@ -31,12 +33,11 @@ class PokemonListViewModel(private val repository: PokemonRepository): ViewModel
     }
 
     fun filterPokemon(name: String?, type1: PokemonType?, type2: PokemonType?) {
-
         var filteredList = _pokemonList
 
-        if(name?.isBlank() == false) filteredList = filteredList.filter { it.name.contains(name, ignoreCase = true) }
-        if(type1 != null) filteredList = filteredList.filter { it.type1 == type1 }
-        if(type2 != null) filteredList = filteredList.filter { it.type2 == type2 }
+        if (name?.isNotBlank() == true) filteredList = filteredList.filter { it.name.contains(name, ignoreCase = true) }
+        if (type1 != null) filteredList = filteredList.filter { it.type1 == type1 }
+        if (type2 != null) filteredList = filteredList.filter { it.type2 == type2 }
 
         _filteredPokemonList.value = filteredList
     }
@@ -47,43 +48,36 @@ class PokemonListViewModel(private val repository: PokemonRepository): ViewModel
         var filteredList: List<PokemonEntity>
 
         do {
-            // Seleziona due tipi di Pokémon casuali
             randomPokemonType1 = PokemonType.getRandomPokemonType()
             randomPokemonType2 = PokemonType.getRandomPokemonType()
-
             filteredList = _pokemonList.filter { it.type1 == randomPokemonType1 && it.type2 == randomPokemonType2 }
-
         } while (filteredList.isEmpty())
 
         return Pair(randomPokemonType1, randomPokemonType2)
-
     }
 
+    // Gestione del tema
     fun saveThemePreference(context: Context, isDarkTheme: Boolean) {
         val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("dark_theme", isDarkTheme)
-        editor.apply()
+        sharedPreferences.edit().putBoolean("dark_theme", isDarkTheme).apply()
     }
 
-    @Composable
     fun getThemePreference(context: Context): Boolean {
         val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getBoolean("dark_theme", isSystemInDarkTheme())//uso tema di sistema come default
+        return sharedPreferences.getBoolean("dark_theme", false)
     }
 
-
+    //Gestione della lingua
     fun saveLanguagePreference(context: Context, language: String) {
-        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("language", language)
-        editor.apply()
+        val sharedPreferences = context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putString(languageKey, language)
+            apply()
+        }
     }
-
-
 
     fun getLanguagePreference(context: Context): String {
-        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("language", Locale.getDefault().language) ?: Locale.getDefault().language
-    }     //uso lingua di sistema per default
+        val sharedPreferences = context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(languageKey, Locale.getDefault().language) ?: "en"
+    }
 }

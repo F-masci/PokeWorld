@@ -74,9 +74,12 @@ fun PokemonListScreen(
     navController: NavController,
     pokemonListViewModel: PokemonListViewModel
 ) {
+
+    val context = LocalContext.current
+    var isDarkTheme by remember { mutableStateOf(pokemonListViewModel.getThemePreference(context)) }
+
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     var isSearchBarVisible by remember { mutableStateOf(false) }
-    var isDarkTheme by remember { mutableStateOf(false) } // Stato del tema
 
     //Variabile per memorizzare lo stato della LazyVerticalGrid, che permette di controllare la posizione di scroll
     val pokemonListState = rememberLazyGridState()
@@ -95,6 +98,11 @@ fun PokemonListScreen(
     else
         SettingsDrawer(
             drawerState = drawerState,
+            isDarkTheme = isDarkTheme,
+            onThemeToggle = { newTheme ->
+                isDarkTheme = newTheme
+                pokemonListViewModel.saveThemePreference(context, isDarkTheme)
+            }
         ) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
