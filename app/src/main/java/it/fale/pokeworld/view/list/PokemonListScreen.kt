@@ -81,12 +81,10 @@ fun PokemonListScreen(
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     var isSearchBarVisible by remember { mutableStateOf(false) }
 
-    //Variabile per memorizzare lo stato della LazyVerticalGrid, che permette di controllare la posizione di scroll
-    val pokemonListState = rememberLazyGridState()
-    val coroutineScope = rememberCoroutineScope()
-
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    // Variabile per memorizzare lo stato della LazyVerticalGrid, che permette di controllare la posizione di scroll e del drawe
     val scope = rememberCoroutineScope()
+    val pokemonListState = rememberLazyGridState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     // Variabili per i filtri
     var query by remember { mutableStateOf("") }
@@ -263,7 +261,7 @@ fun PokemonListScreen(
 
                         IconButton(
                             onClick = {
-                                coroutineScope.launch {
+                                scope.launch {
                                     pokemonListState.animateScrollToItem(index = 0)
                                 }
                             }, modifier = Modifier
