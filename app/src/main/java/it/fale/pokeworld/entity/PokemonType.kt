@@ -29,7 +29,8 @@ enum class PokemonType(val type: String, val string: Int, val icon: Int, val bac
     SHADOW("shadow", R.string.shadow, R.drawable.normal, R.color.shadow_light_background, R.color.shadow_light_text);
 
     companion object {
-        fun fromString(type: String): PokemonType? {
+
+        fun fromType(type: String): PokemonType? {
             return entries.find { it.type == type }
         }
 
@@ -51,7 +52,7 @@ class PokemonTypeConverter {
 
     @TypeConverter
     fun toPokemonType(type: String): PokemonType? {
-        return PokemonType.fromString(type)
+        return PokemonType.fromType(type)
     }
 
 }

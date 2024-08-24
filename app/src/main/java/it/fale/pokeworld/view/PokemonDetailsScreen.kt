@@ -52,6 +52,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
+import androidx.compose.material3.AlertDialog
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
@@ -183,8 +184,9 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.audio),
-                                    contentDescription = "Add to favourites",
-                                    tint = Color.Unspecified                             )
+                                    contentDescription = "Play audio",
+                                    tint = Color.Unspecified
+                                )
                             }
                             IconButton(
                                 onClick = {
@@ -227,7 +229,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Height: ${pokemon.height}",
+                            text = stringResource(R.string.height) + ": ${pokemon.height}",
                             modifier = Modifier
                                 .background(
                                     colorResource(id = pokemon.type1.backgroundTextColor),
@@ -240,7 +242,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                         )
                         Spacer(modifier = Modifier.width(20.dp))
                         Text(
-                            text = "Weight: ${pokemon.weight}",
+                            text = stringResource(R.string.weight) + ": ${pokemon.weight}",
                             modifier = Modifier
                                 .background(
                                     colorResource(id = pokemon.type1.backgroundTextColor),
@@ -268,7 +270,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                 item{
                     Spacer(Modifier.height(10.dp))
                     Text(
-                        text = "MOVES",
+                        text = stringResource(R.string.moves),
                         fontSize = 14.sp,
                         modifier = Modifier.padding(15.dp)
                     )
@@ -294,20 +296,20 @@ fun ConfirmFavoriteChangeDialog(
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
 ) {
-    androidx.compose.material.AlertDialog(
-        onDismissRequest = { onCancel() },
+    AlertDialog(
+        onDismissRequest = onCancel,
         title = {
-            Text(text = "Change Favorite")
+            Text(text = stringResource(R.string.change_favorite))
         },
         text = {
-            Text("Selecting this Pokémon as favorite will remove the previous one. Do you want to continue?")
+            Text(stringResource(R.string.change_favorite_disclaimer))
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm() },
+                onClick = onConfirm,
             ) {
                 Text(
-                    text = "Yes",
+                    text = stringResource(R.string.yes),
                     textAlign = TextAlign.Center,
                     fontSize = 11.sp
                 )
@@ -315,10 +317,9 @@ fun ConfirmFavoriteChangeDialog(
         },
         dismissButton = {
             Button(
-                onClick = { onCancel() },
-
+                onClick = onCancel,
             ) {
-                Text("No")
+                Text(stringResource(R.string.no))
             }
         }
     )
@@ -370,7 +371,7 @@ fun MoveItem(
                 textAlign = TextAlign.Start
             )
             Text(
-                text = "Priority: ${priority ?: "-"}",
+                text = stringResource(R.string.priority) + ": ${priority ?: "-"}",
                 fontSize = 8.sp,
                 modifier = Modifier
                     .background(Color.White.copy(0.8f), RoundedCornerShape(10.dp))
@@ -393,7 +394,7 @@ fun MoveItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Descrizione",
+                    text = stringResource(R.string.description),
                     fontSize = 11.sp,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
@@ -417,9 +418,9 @@ fun MoveItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            ValueMoves("Accuracy", accuracy)
-            ValueMoves("Effect Chance", effectChance)
-            ValueMoves("Power", power)
+            ValueMoves(stringResource(R.string.accuracy), accuracy)
+            ValueMoves(stringResource(R.string.effect_chance), effectChance)
+            ValueMoves(stringResource(R.string.power), power)
         }
 
     }
@@ -434,7 +435,7 @@ fun ItemSelection(pokemon: PokemonEntity) {
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            text = "ITEMS",
+            text = stringResource(R.string.items),
             fontSize = 14.sp,
             modifier = Modifier.padding(15.dp)
         )
@@ -508,7 +509,7 @@ fun ItemCard(
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
-                        append("Cost:")
+                        append(stringResource(R.string.cost) + ":")
                     }
                     append(" $itemCost")
                 },
@@ -520,7 +521,7 @@ fun ItemCard(
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
-                        append("Effect:")
+                        append(stringResource(R.string.effect) + ":")
                     }
                     append(" $itemEffect")
                 },
@@ -541,7 +542,7 @@ fun AbilitiesSection(pokemon: PokemonEntity) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "ABILITIES",
+            text = stringResource(R.string.abilities),
             fontSize = 14.sp,
             modifier = Modifier.padding(15.dp)
         )
@@ -611,10 +612,10 @@ fun StatsSection(pokemon: PokemonEntity){
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-       Text(text = "STATS", fontSize = 14.sp, modifier = Modifier.padding(15.dp))
+       Text(text = stringResource(R.string.stats), fontSize = 14.sp, modifier = Modifier.padding(15.dp))
         Column {
             Row {
-                Text(text = "HP: ${pokemon.hp}",
+                Text(text = stringResource(R.string.hp) + ": ${pokemon.hp}",
                     modifier = Modifier
                         .background(
                             colorResource(id = R.color.hp),
@@ -625,7 +626,7 @@ fun StatsSection(pokemon: PokemonEntity){
                     textAlign = TextAlign.Center,
                     fontSize = 11.sp)
                 Spacer(modifier = Modifier.width(20.dp))
-                Text(text = "Attack: ${pokemon.attack}",
+                Text(text = stringResource(R.string.attack) + ": ${pokemon.attack}",
                     modifier = Modifier
                         .background(
                             colorResource(id = R.color.attack),
@@ -638,7 +639,7 @@ fun StatsSection(pokemon: PokemonEntity){
             }
             Spacer(modifier = Modifier.height(20.dp))
             Row {
-                Text(text = "Defense: ${pokemon.defense}",
+                Text(text = stringResource(R.string.defense) + ": ${pokemon.defense}",
                     modifier = Modifier
                         .background(
                             colorResource(id = R.color.defense),
@@ -649,7 +650,7 @@ fun StatsSection(pokemon: PokemonEntity){
                     textAlign = TextAlign.Center,
                     fontSize = 11.sp)
                 Spacer(modifier = Modifier.width(20.dp))
-                Text(text = "Speed: ${pokemon.speed}",
+                Text(text = stringResource(R.string.speed) + ": ${pokemon.speed}",
                     modifier = Modifier
                         .background(
                             colorResource(id = R.color.speed),
@@ -662,7 +663,7 @@ fun StatsSection(pokemon: PokemonEntity){
             }
             Spacer(modifier = Modifier.height(20.dp))
             Row {
-                Text(text = "Special Defense: ${pokemon.specialDefense}",
+                Text(text = stringResource(R.string.special_defense) + ": ${pokemon.specialDefense}",
                     modifier = Modifier
                         .background(
                             colorResource(id = R.color.special_defense),
@@ -673,7 +674,7 @@ fun StatsSection(pokemon: PokemonEntity){
                     textAlign = TextAlign.Center,
                     fontSize = 11.sp)
                 Spacer(modifier = Modifier.width(20.dp))
-                Text(text = "Special attack: ${pokemon.specialAttack}",
+                Text(text = stringResource(R.string.special_attack) + ": ${pokemon.specialAttack}",
                     modifier = Modifier
                         .background(
                             colorResource(id = R.color.special_attack),
