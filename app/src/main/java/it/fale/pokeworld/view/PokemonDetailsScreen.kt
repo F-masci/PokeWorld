@@ -276,8 +276,8 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                 }
                 items(pokemon.moves) { move ->
                     MoveItem(
-                        moveName = move.getLocaleName(),
-                        moveDescription = move.getLocaleDescription(),
+                        moveName = move.getLocaleName(LocalContext.current),
+                        moveDescription = move.getLocaleDescription(LocalContext.current),
                         accuracy = move.accuracy,
                         effectChance = move.effectChance,
                         power = move.power,
@@ -445,9 +445,9 @@ fun ItemSelection(pokemon: PokemonEntity) {
         ) {
              pokemon.items.forEach { item ->
                 ItemCard(
-                    itemName = item.getLocaleName(),
+                    itemName = item.getLocaleName(LocalContext.current),
                     itemCost = item.cost,
-                    itemEffect = item.getLocaleEffect(),
+                    itemEffect = item.getLocaleEffect(LocalContext.current),
                     itemSprite = item.sprite,
                     typeColor = colorResource(pokemon.type1.backgroundTextColor),
                 )
@@ -548,8 +548,8 @@ fun AbilitiesSection(pokemon: PokemonEntity) {
         pokemon.type1?.let { colorResource(id = it.backgroundColor) }?.let {
             pokemon.abilities.forEach { ability ->
                 AbilityItem(
-                    abilityName = ability.getLocaleName(),
-                    abilityDescription = ability.getLocaleEffect(),
+                    abilityName = ability.getLocaleName(LocalContext.current),
+                    abilityDescription = ability.getLocaleEffect(LocalContext.current),
                     typeColor = colorResource(pokemon.type1.backgroundTextColor),
                     backgroundColor=it
                 )

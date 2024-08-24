@@ -129,7 +129,7 @@ fun DrawerContent(
                     onLanguageChange(Language.fromText(newLanguage))
                 },
                 options = Language.entries.map { it.text },
-                isDarkTheme = isDarkTheme
+                isDarkMode = isDarkTheme
             )
         }
 
@@ -221,7 +221,6 @@ fun ChoiceLanguageMenu(
                 onOptionSelected(selectedOption)
                 showConfirmationDialog = false
             }, {
-                Log.d("ChoiceLanguageMenu", selectedOption)
                 selectedOption = prevOption
                 showConfirmationDialog = false
             })

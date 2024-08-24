@@ -77,7 +77,6 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
-import it.fale.pokeworld.entity.PokemonTypeConverter
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.view.TypeRow
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
@@ -96,7 +95,7 @@ fun PokemonListScreen(
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     var isSearchBarVisible by remember { mutableStateOf(false) }
 
-    // Variabile per memorizzare lo stato della LazyVerticalGrid, che permette di controllare la posizione di scroll e del drawe
+    // Variabile per memorizzare lo stato della LazyVerticalGrid, che permette di controllare la posizione di scroll e del drawer
     val scope = rememberCoroutineScope()
     val pokemonListState = rememberLazyGridState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -299,7 +298,7 @@ fun PokemonListScreen(
                                 .padding(3.dp)
                         ) {
                             Icon(
-                                painterResource(id = R.drawable.uparrow), "uparrow",
+                                painterResource(id = R.drawable.uparrow), "Up arrow",
                                 tint = colorResource(id = R.color.pokemon_blue)
                             )
                         }
