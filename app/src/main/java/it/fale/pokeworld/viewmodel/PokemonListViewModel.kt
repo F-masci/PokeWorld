@@ -7,6 +7,7 @@ import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.utils.LANGUAGE_KEY
+import it.fale.pokeworld.utils.Language
 import it.fale.pokeworld.utils.PREFERENCES_NAME
 import it.fale.pokeworld.utils.THEME_KEY
 import kotlinx.coroutines.Dispatchers
@@ -67,18 +68,14 @@ class PokemonListViewModel(private val repository: PokemonRepository): ViewModel
     }
 
     //Gestione della lingua
-    fun saveLanguagePreference(context: Context, language: String) {
+    fun saveLanguagePreference(context: Context, language: Language) {
         val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        sharedPreferences.edit().putString(LANGUAGE_KEY, language).apply()
+        sharedPreferences.edit().putString(LANGUAGE_KEY, language.code).apply()
     }
 
-    fun getLanguagePreference(context: Context): String {
+    fun getLanguagePreference(context: Context): Language {
         val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        return when(sharedPreferences.getString(LANGUAGE_KEY, Locale.getDefault().language)!!) {
-            "it" -> "Italiano"
-            "en" -> "English"
-            else -> "English"
-        }
+        return Language.fromCode(sharedPreferences.getString(LANGUAGE_KEY, Locale.getDefault().language)!!)
     }
 
 }

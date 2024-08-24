@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
+import it.fale.pokeworld.utils.Language
 import kotlinx.coroutines.launch
 @Composable
 fun SettingsDrawer(
@@ -40,7 +41,7 @@ fun SettingsDrawer(
     isDarkTheme: Boolean, // Ricevi il tema attuale
     language: String, // Ricevi la lingua attuale
     onThemeToggle: (Boolean) -> Unit, // Callback per notificare il cambio di tema
-    onLanguageChange: (selectedLanguage: String) -> Unit,
+    onLanguageChange: (selectedLanguage: Language) -> Unit,
     content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -68,7 +69,7 @@ fun DrawerContent(
     language: String, // Ricevi la lingua attuale
     onItemClick: (String) -> Unit,
     onThemeToggle: (Boolean) -> Unit, // Callback per notificare il cambio di tema
-    onLanguageChange: (selectedLanguage: String) -> Unit
+    onLanguageChange: (selectedLanguage: Language) -> Unit
 ) {
     var isSwitchOn by remember { mutableStateOf(isDarkTheme) }
 
@@ -117,13 +118,9 @@ fun DrawerContent(
                 initialText = language,
                 expandedState = remember { mutableStateOf(false) },
                 onOptionSelected = { newLanguage ->
-                    onLanguageChange(when(newLanguage) {
-                        "Italiano" -> "it"
-                        "English" -> "en"
-                        else -> "en"
-                    })
+                    onLanguageChange(Language.fromText(newLanguage))
                 },
-                options = listOf("English", "Italiano")
+                options = Language.entries.map { it.text }
             )
         }
 

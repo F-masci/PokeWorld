@@ -1,13 +1,18 @@
 package it.fale.pokeworld
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat.recreate
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -36,7 +41,9 @@ class PokeWorld : ComponentActivity(){
 
         setContent{
 
-            val repository = PokemonRepository(PokemonDatabase.getInstance(LocalContext.current).pokemonDao())
+            val repository = PokemonRepository(
+                PokemonDatabase.getInstance(LocalContext.current).pokemonDao()
+            )
             val factory = ViewModelFactory(repository)
             val navController = rememberNavController()
 
@@ -44,8 +51,8 @@ class PokeWorld : ComponentActivity(){
 
                 NavHost(
                     navController = navController,
-                    startDestination= "pokemon_list_screen",
-                ){
+                    startDestination = "pokemon_list_screen",
+                ) {
                     composable("pokemon_list_screen") {
 
                         PokemonListScreen(
@@ -70,6 +77,16 @@ class PokeWorld : ComponentActivity(){
             }
         }
 
+    }
+
+    override fun attachBaseContext(base: Context) {
+        val prefs = base.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+        val language = prefs.getString(LANGUAGE_KEY, Locale.getDefault().language)!!
+
+        val config = Configuration(base.resources.configuration)
+        config.setLocale(Locale(language))
+
+        super.attachBaseContext(ContextWrapper(base.createConfigurationContext(config)))
     }
 
 }

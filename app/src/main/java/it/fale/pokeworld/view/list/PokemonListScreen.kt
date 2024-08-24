@@ -1,6 +1,7 @@
 package it.fale.pokeworld.view.list
 
 import android.content.res.Configuration
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -65,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -90,7 +92,7 @@ fun PokemonListScreen(
 
     val context = LocalContext.current
     var isDarkTheme by rememberSaveable { mutableStateOf(pokemonListViewModel.getThemePreference(context)) }
-    var language by rememberSaveable { mutableStateOf(pokemonListViewModel.getLanguagePreference(context)) }
+    var language by rememberSaveable { mutableStateOf(pokemonListViewModel.getLanguagePreference(context).text) }
 
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     var isSearchBarVisible by remember { mutableStateOf(false) }
@@ -117,8 +119,9 @@ fun PokemonListScreen(
                 pokemonListViewModel.saveThemePreference(context, isDarkTheme)
             },
             onLanguageChange = { newLanguage ->
-                language = newLanguage
+                language = newLanguage.text
                 pokemonListViewModel.saveLanguagePreference(context, newLanguage)
+                recreate(context as ComponentActivity)
             }
         ) {
             Surface(
