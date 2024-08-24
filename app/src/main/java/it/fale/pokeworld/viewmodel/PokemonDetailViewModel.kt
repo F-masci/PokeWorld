@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.repository.PokemonRepository
+import it.fale.pokeworld.utils.FAVOURITE_KEY
+import it.fale.pokeworld.utils.PREFERENCES_NAME
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,22 +32,22 @@ class PokemonDetailViewModel(private val repository: PokemonRepository): ViewMod
         }
     }
     fun saveFavoritePokemon(context: Context, pokemonId: Int) {
-        val sharedPreferences = context.getSharedPreferences("pokemon_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        editor.putInt("favorite_pokemon_id", pokemonId)
+        editor.putInt(FAVOURITE_KEY, pokemonId)
         editor.apply()
     }
 
     fun getFavoritePokemonId(context: Context): Int? {
-        val sharedPreferences = context.getSharedPreferences("pokemon_prefs", Context.MODE_PRIVATE)
-        val favoriteId = sharedPreferences.getInt("favorite_pokemon_id", -1)
+        val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+        val favoriteId = sharedPreferences.getInt(FAVOURITE_KEY, -1)
         return if (favoriteId == -1) null else favoriteId
     }
 
     fun clearFavoritePokemon(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("pokemon_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        editor.remove("favorite_pokemon_id")
+        editor.remove(FAVOURITE_KEY)
         editor.apply()
     }
 
