@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DrawerState
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.DrawerState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
@@ -30,11 +31,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.fale.pokeworld.R
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
+import it.fale.pokeworld.utils.Language
 import kotlinx.coroutines.launch
 
 @Composable
@@ -43,7 +47,7 @@ fun SettingsDrawer(
     isDarkTheme: Boolean, // Ricevi il tema attuale
     language: String, // Ricevi la lingua attuale
     onThemeToggle: (Boolean) -> Unit, // Callback per notificare il cambio di tema
-    onLanguageChange: (selectedLanguage: String) -> Unit,
+    onLanguageChange: (selectedLanguage: Language) -> Unit,
     content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -71,7 +75,7 @@ fun DrawerContent(
     language: String, // Ricevi la lingua attuale
     onItemClick: (String) -> Unit,
     onThemeToggle: (Boolean) -> Unit, // Callback per notificare il cambio di tema
-    onLanguageChange: (selectedLanguage: String) -> Unit
+    onLanguageChange: (selectedLanguage: Language) -> Unit
 ) {
     var isSwitchOn by remember { mutableStateOf(isDarkTheme) }
 
@@ -91,7 +95,7 @@ fun DrawerContent(
                 .padding(16.dp)
         ) {
             Text(
-                "Theme",
+                stringResource(R.string.theme),
                 modifier = Modifier
                     .weight(1f)
                     .clickable { onItemClick("Home") },
@@ -111,7 +115,7 @@ fun DrawerContent(
                 .padding(16.dp)
         ) {
             Text(
-                "Language",
+                stringResource(R.string.language),
                 modifier = Modifier
                     .weight(1f)
                     .clickable { onItemClick("Home") },
@@ -122,14 +126,10 @@ fun DrawerContent(
                 initialText = language,
                 expandedState = remember { mutableStateOf(false) },
                 onOptionSelected = { newLanguage ->
-                    onLanguageChange(when(newLanguage) {
-                        "Italiano" -> "it"
-                        "English" -> "en"
-                        else -> "en"
-                    })
+                    onLanguageChange(Language.fromText(newLanguage))
                 },
-                options = listOf("English", "Italiano"),
-                isDarkTheme
+                options = Language.entries.map { it.text },
+                isDarkTheme = isDarkTheme
             )
         }
 
@@ -164,7 +164,7 @@ fun SwitchButton(isLightMode: Boolean, onSwitchChange: (Boolean) -> Unit) {
         //.width(110.dp) con questa larghezza raggiungo l'uguaglianza dei due bottoni non so se mi piace
     ) {
         Text(
-            text = if (isLightMode) "Light" else "Dark",
+            text = if (isLightMode) stringResource(R.string.light_theme) else stringResource(R.string.dark_theme),
             color = if (isLightMode) Color.Black else Color.White,
             fontSize = 14.sp
         )
@@ -181,6 +181,8 @@ fun ChoiceLanguageMenu(
     isDarkMode: Boolean
 ) {
     var selectedOption by remember { mutableStateOf(initialText) }
+    var showConfirmationDialog by remember { mutableStateOf(false) }
+    var prevOption by remember { mutableStateOf("") }
 
     Box {
         Button(
@@ -207,11 +209,57 @@ fun ChoiceLanguageMenu(
         ) {
             options.forEach { option ->
                 DropdownMenuItem({ Text(option,/*color = if (option == "any") Color.Black else Color.Red  ,*/fontSize = 10.sp,fontFamily = pokemonPixelFont) },onClick = {
+                    prevOption = selectedOption
                     selectedOption = option
-                    onOptionSelected(option)
+                    showConfirmationDialog = true
                     expandedState.value = false
                 })
             }
         }
+        if(showConfirmationDialog) {
+            ConfirmLanguageChangeDialog({
+                onOptionSelected(selectedOption)
+                showConfirmationDialog = false
+            }, {
+                Log.d("ChoiceLanguageMenu", selectedOption)
+                selectedOption = prevOption
+                showConfirmationDialog = false
+            })
+            expandedState.value = false
+        }
     }
+}
+
+@Composable
+fun ConfirmLanguageChangeDialog(
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onCancel,
+        title = {
+            Text(text = stringResource(R.string.change_language))
+        },
+        text = {
+            Text(stringResource(R.string.change_language_disclaimer))
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+            ) {
+                Text(
+                    text = stringResource(R.string.yes),
+                    textAlign = TextAlign.Center,
+                    fontSize = 11.sp
+                )
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onCancel
+            ) {
+                Text(stringResource(R.string.no))
+            }
+        }
+    )
 }

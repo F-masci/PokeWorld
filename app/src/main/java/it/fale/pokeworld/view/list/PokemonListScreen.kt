@@ -1,6 +1,7 @@
 package it.fale.pokeworld.view.list
 
 import android.content.res.Configuration
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,7 +32,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,12 +59,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -80,7 +82,6 @@ import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.view.TypeRow
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 @Composable
 fun PokemonListScreen(
@@ -90,7 +91,7 @@ fun PokemonListScreen(
 
     val context = LocalContext.current
     var isDarkTheme by rememberSaveable { mutableStateOf(pokemonListViewModel.getThemePreference(context)) }
-    var language by rememberSaveable { mutableStateOf(pokemonListViewModel.getLanguagePreference(context)) }
+    var language by rememberSaveable { mutableStateOf(pokemonListViewModel.getLanguagePreference(context).text) }
 
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     var isSearchBarVisible by remember { mutableStateOf(false) }
@@ -117,8 +118,13 @@ fun PokemonListScreen(
                 pokemonListViewModel.saveThemePreference(context, isDarkTheme)
             },
             onLanguageChange = { newLanguage ->
-                language = newLanguage
+                language = newLanguage.text
                 pokemonListViewModel.saveLanguagePreference(context, newLanguage)
+                recreate(context as ComponentActivity)
+                query = ""
+                selectedType1 = null // Resetta il valore del filtro
+                selectedType2 = null // Resetta il valore del filtro
+                pokemonListViewModel.filterPokemon(null, null, null)
             }
         ) {
             Surface(
@@ -155,7 +161,7 @@ fun PokemonListScreen(
                                         query = newValue
                                         pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
                                     },
-                                    placeholder = { Text("Search...") },
+                                    placeholder = { Text(stringResource(R.string.search)) },
                                     modifier = Modifier
                                         .heightIn(min = 56.dp, max = 56.dp)
                                         .weight(1f),
@@ -201,10 +207,10 @@ fun PokemonListScreen(
                                     type = selectedType1,
                                     expandedState = remember { mutableStateOf(false) },
                                     onOptionSelected = { selectedOption ->
-                                        selectedType1 = PokemonType.fromString(selectedOption)
+                                        selectedType1 = PokemonType.fromType(selectedOption)
                                         pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
                                     },
-                                    options = listOf("any") + (PokemonType.entries.map { it.type }),
+                                    options = listOf(stringResource(R.string.any)) + (PokemonType.entries.map { stringResource(it.string) }),
                                     modifier = Modifier
                                         .weight(1f)
 //                                        .padding(end = 15.dp)
@@ -215,10 +221,10 @@ fun PokemonListScreen(
                                     type = selectedType2,
                                     expandedState = remember { mutableStateOf(false) },
                                     onOptionSelected = { selectedOption ->
-                                        selectedType2 = PokemonType.fromString(selectedOption)
+                                        selectedType2 = PokemonType.fromType(selectedOption)
                                         pokemonListViewModel.filterPokemon(query, selectedType1, selectedType2)
                                     },
-                                    options = listOf("any") + (PokemonType.entries.map { it.type }),
+                                    options = listOf(stringResource(R.string.any)) + (PokemonType.entries.map { stringResource(it.string) }),
                                     modifier = Modifier
                                         .weight(1f)
 //                                        .padding(end = 15.dp)
@@ -311,7 +317,7 @@ fun ChoiceTypeMenu(
     options: List<String>,
     modifier: Modifier
 ) {
-    var selectedOption = type?.type ?: "any"
+    var selectedOption = if(type != null) stringResource(type.string) else stringResource(R.string.any)
     var selectedColor = type?.backgroundTextColor ?: R.color.light_pokemon_blue
     var buttonPosition by remember { mutableStateOf(IntOffset(0, 0)) }
     var buttonSize by remember { mutableStateOf(IntSize.Zero)}
@@ -368,29 +374,22 @@ fun ChoiceTypeMenu(
                             .verticalScroll(rememberScrollState())
                     ) {
                             options.forEach { option ->
+                                val t = PokemonType.entries.find { stringResource(id = it.string) == option }
+                                val color = if(t != null) colorResource(id = t.backgroundColor) else Color.White
                                 DropdownMenuItem(
                                     {
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .height(30.dp)
-                                                .background(
-                                                    if (option == "any") Color.White
-                                                    else colorResource(
-                                                        id = PokemonTypeConverter().toPokemonType(
-                                                            option
-                                                        )!!.backgroundTextColor
-                                                    ), RoundedCornerShape(10.dp)
-                                                ),
+                                                .background(color, RoundedCornerShape(10.dp)),
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.Center
                                         ) {
-                                            if (option != "any") {
+                                            if (t != null) {
                                                 Image(
                                                     painterResource(
-                                                        id = PokemonTypeConverter().toPokemonType(
-                                                            option
-                                                        )!!.icon
+                                                        id = t.icon
                                                     ), "icon", modifier = Modifier.height(25.dp)
                                                 )
                                                 Spacer(modifier = Modifier.width(10.dp))
@@ -403,11 +402,8 @@ fun ChoiceTypeMenu(
                                     },
                                     onClick = {
                                         selectedOption = option
-                                        if (selectedOption == "any") selectedColor =
-                                            R.color.light_pokemon_blue
-                                        else selectedColor =
-                                            PokemonTypeConverter().toPokemonType(option)!!.backgroundTextColor
-                                        onOptionSelected(option)
+                                        selectedColor = t?.backgroundTextColor ?: R.color.light_pokemon_blue
+                                        onOptionSelected(t?.type ?: "any")
                                         expandedState.value = false
                                     })
                             }
