@@ -38,7 +38,9 @@ import kotlinx.coroutines.launch
 fun SettingsDrawer(
     drawerState: DrawerState,
     isDarkTheme: Boolean, // Ricevi il tema attuale
+    language: String, // Ricevi la lingua attuale
     onThemeToggle: (Boolean) -> Unit, // Callback per notificare il cambio di tema
+    onLanguageChange: (selectedLanguage: String) -> Unit,
     content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -47,52 +49,26 @@ fun SettingsDrawer(
         drawerContent = {
             DrawerContent(
                 isDarkTheme = isDarkTheme, // Passa il tema attuale
-
+                language = language, // Passa la lingua attuale
+                onThemeToggle = onThemeToggle,
+                onLanguageChange = onLanguageChange,
                 onItemClick = {
                     scope.launch { drawerState.close() }
                 },
-                onThemeToggle = { newTheme ->
-                    onThemeToggle(newTheme) // Notifica il cambio di tema al PokemonListScreen
-                }
             )
         }
     ) {
         content()
     }
 }
-/*
-@Composable
-fun SettingsDrawer(
-    drawerState: DrawerState,
-    content: @Composable () -> Unit
-) {
 
-    var isDarkTheme by remember { mutableStateOf(false) } // Stato del tema
-    val scope = rememberCoroutineScope()
-
-    ModalDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            DrawerContent(
-                isDarkTheme,
-                onItemClick = {
-                    scope.launch { drawerState.close() }
-                },
-                onThemeToggle = { newTheme ->
-                    isDarkTheme = newTheme // Aggiorna il tema
-                }
-            )
-        }
-    ) {
-        content()
-    }
-}
-*/
 @Composable
 fun DrawerContent(
     isDarkTheme: Boolean, // Ricevi il tema attuale
+    language: String, // Ricevi la lingua attuale
     onItemClick: (String) -> Unit,
-    onThemeToggle: (Boolean) -> Unit // Callback per notificare il cambio di tema
+    onThemeToggle: (Boolean) -> Unit, // Callback per notificare il cambio di tema
+    onLanguageChange: (selectedLanguage: String) -> Unit
 ) {
     var isSwitchOn by remember { mutableStateOf(isDarkTheme) }
 
@@ -138,10 +114,14 @@ fun DrawerContent(
                 fontSize = 20.sp
             )
             ChoiceLanguageMenu(
-                initialText = "English",
+                initialText = language,
                 expandedState = remember { mutableStateOf(false) },
-                onOptionSelected = { selectedOption ->
-                    // Gestisci l'opzione selezionata qui
+                onOptionSelected = { newLanguage ->
+                    onLanguageChange(when(newLanguage) {
+                        "Italiano" -> "it"
+                        "English" -> "en"
+                        else -> "en"
+                    })
                 },
                 options = listOf("English", "Italiano")
             )

@@ -80,6 +80,7 @@ import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.view.TypeRow
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
 fun PokemonListScreen(
@@ -88,7 +89,8 @@ fun PokemonListScreen(
 ) {
 
     val context = LocalContext.current
-    var isDarkTheme by remember { mutableStateOf(pokemonListViewModel.getThemePreference(context)) }
+    var isDarkTheme by rememberSaveable { mutableStateOf(pokemonListViewModel.getThemePreference(context)) }
+    var language by rememberSaveable { mutableStateOf(pokemonListViewModel.getLanguagePreference(context)) }
 
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
     var isSearchBarVisible by remember { mutableStateOf(false) }
@@ -109,9 +111,14 @@ fun PokemonListScreen(
         SettingsDrawer(
             drawerState = drawerState,
             isDarkTheme = isDarkTheme,
+            language = language,
             onThemeToggle = { newTheme ->
                 isDarkTheme = newTheme
                 pokemonListViewModel.saveThemePreference(context, isDarkTheme)
+            },
+            onLanguageChange = { newLanguage ->
+                language = newLanguage
+                pokemonListViewModel.saveLanguagePreference(context, newLanguage)
             }
         ) {
             Surface(
@@ -347,9 +354,12 @@ fun ChoiceTypeMenu(
                     color = MaterialTheme.colorScheme.background,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
-                        .width( maxOf(
-                            with(LocalDensity.current) { buttonSize.width.toDp() },
-                            200.dp))
+                        .width(
+                            maxOf(
+                                with(LocalDensity.current) { buttonSize.width.toDp() },
+                                200.dp
+                            )
+                        )
                         .height(200.dp)
                 ) {
                     Column(

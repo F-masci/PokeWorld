@@ -1,8 +1,12 @@
 package it.fale.pokeworld
 
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -14,10 +18,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import it.fale.pokeworld.entity.repository.PokemonDatabase
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.PokeWorldTheme
+import it.fale.pokeworld.utils.LANGUAGE_KEY
+import it.fale.pokeworld.utils.PREFERENCES_NAME
 import it.fale.pokeworld.view.PokemonDetailsScreen
 import it.fale.pokeworld.view.list.PokemonListScreen
 import it.fale.pokeworld.viewmodel.ViewModelFactory
-
+import java.util.Locale
 
 /**
  * Classe principale dell'applicazione.

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="normal">Normale</string>
+    <string name="unknown">Sconosciuto</string>
+    <string name="grass">Erba</string>
+    <string name="fighting">Lotta</string>
+    <string name="flying">Volante</string>
+    <string name="poison">Veleno</string>
+    <string name="ground">Terra</string>
+    <string name="rock">Roccia</string>
+    <string name="bug">Coleottero</string>
+    <string name="ghost">Spettro</string>
+    <string name="steel">Metallo</string>
+    <string name="fire">Fuoco</string>
+    <string name="water">Acqua</string>
+    <string name="electric">Elettro</string>
+    <string name="psychic">Psico</string>
+    <string name="ice">Ghiaccio</string>
+    <string name="dragon">Drago</string>
+    <string name="dark">Buio</string>
+    <string name="fairy">Folletto</string>
+    <string name="stellar">Astrale</string>
+    <string name="shadow">Ombra</string>
+</resources>
