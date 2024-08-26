@@ -52,4 +52,5 @@
     <string name="speed">Speed</string>
     <string name="special_defense">Special defense</string>
     <string name="special_attack">Special attack</string>
+    <string name="no_favorite_disclaimer">There\'s no pokemon selected as favourite yet.</string>
 </resources>

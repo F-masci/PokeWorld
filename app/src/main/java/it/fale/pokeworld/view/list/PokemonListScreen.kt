@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Icon
 import androidx.compose.material.rememberDrawerState
@@ -79,7 +80,6 @@ import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.view.TypeRow
-import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 import kotlinx.coroutines.launch
 
@@ -458,14 +458,41 @@ fun TopBar(
 
 @Composable
 fun FavePokemon(pokemon: PokemonEntity?, navController: NavController){
-    if(pokemon == null) return
-    else Row(verticalAlignment = Alignment.CenterVertically,
+    var showDialog by remember{mutableStateOf(false)}
+
+    if(pokemon == null) {
+        Spacer(Modifier.width(25.dp))
+        Image(painter = painterResource(id = R.drawable.yellowstar), "star",
+            Modifier
+                .height(25.dp)
+                .clickable {
+                    showDialog = true
+                })
+    }
+    else {
+        Row(verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier
+                .fillMaxHeight()
                 .clickable { navController.navigate("pokemon_details_screen/${pokemon.id}") }){
             AsyncImage(model = pokemon.spriteDefault, contentDescription = "fave pokemon", modifier = Modifier.height(60.dp))
             Image(painter = painterResource(id = R.drawable.yellowstar), "star", Modifier.height(25.dp))
         }
+    }
+    if(showDialog) NoFavouriteAlert {
+        showDialog = false
+    }
+}
+
+@Composable
+fun NoFavouriteAlert(
+    onDismiss: () -> Unit
+){
+    AlertDialog(onDismissRequest = onDismiss,
+        confirmButton = {},
+        text = {
+            Text(stringResource(id = R.string.no_favorite_disclaimer))
+        })
 }
 
 @Composable
