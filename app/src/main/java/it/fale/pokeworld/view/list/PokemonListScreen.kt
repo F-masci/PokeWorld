@@ -79,13 +79,15 @@ import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.view.TypeRow
+import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
 import it.fale.pokeworld.viewmodel.PokemonListViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun PokemonListScreen(
     navController: NavController,
-    pokemonListViewModel: PokemonListViewModel
+    pokemonListViewModel: PokemonListViewModel,
+    pokemonDetailViewModel: PokemonDetailViewModel
 ) {
 
     val context = LocalContext.current
@@ -141,7 +143,9 @@ fun PokemonListScreen(
                         },
                         onSettingsClicked = {
                             scope.launch { drawerState.open() }
-                        }
+                        },
+                        pokemonDetailViewModel,
+                        navController
                     )
                     if (isSearchBarVisible) {
                         Column(
@@ -417,23 +421,17 @@ fun ChoiceTypeMenu(
 @Composable
 fun TopBar(
     onSearchClicked: () -> Unit,
-    onSettingsClicked: () -> Unit
+    onSettingsClicked: () -> Unit,
+    pokemonDetailViewModel: PokemonDetailViewModel,
+    navController: NavController
 ){
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        IconButton(onClick = onSearchClicked,
-            modifier = Modifier.size(60.dp)) {
-            Image(
-                painter = painterResource(id = R.drawable.search),
-                contentDescription = "Search",
-            )
-        }
-        AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
         IconButton(
             onClick=onSettingsClicked,
             modifier = Modifier.size(60.dp)
@@ -443,6 +441,32 @@ fun TopBar(
                 contentDescription = "Settings",
             )
         }
+        IconButton(onClick = onSearchClicked,
+            modifier = Modifier.size(60.dp)) {
+            Image(
+                painter = painterResource(id = R.drawable.search),
+                contentDescription = "Search",
+            )
+        }
+        AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
+        FavePokemon(pokemonDetailViewModel, navController)
+    }
+}
+
+@Composable
+fun FavePokemon(pokemonDetailViewModel: PokemonDetailViewModel, navController: NavController){
+    val context = LocalContext.current
+    val faveId = pokemonDetailViewModel.getFavoritePokemonId(context)
+    val favePokemon = pokemonDetailViewModel.pokemon.collectAsStateWithLifecycle().value
+    if (faveId != null) {
+        pokemonDetailViewModel.loadPokemon(faveId)
+    }
+    Row(verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxHeight()
+            .clickable { navController.navigate("pokemon_details_screen/${favePokemon.id}") }){
+        AsyncImage(model = favePokemon.spriteDefault, contentDescription = "fave pokemon", modifier = Modifier.height(60.dp))
+        Image(painter = painterResource(id = R.drawable.yellowstar), "star", Modifier.height(25.dp))
     }
 }
 

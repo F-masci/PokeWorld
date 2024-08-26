@@ -4,15 +4,9 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.app.ActivityCompat.recreate
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -57,7 +51,8 @@ class PokeWorld : ComponentActivity(){
 
                         PokemonListScreen(
                             navController = navController,
-                            pokemonListViewModel = viewModel(factory = factory)
+                            pokemonListViewModel = viewModel(factory = factory),
+                            pokemonDetailViewModel = viewModel(factory = factory)
                         )
 
                     }
