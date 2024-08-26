@@ -430,11 +430,11 @@ fun TopBar(
             .fillMaxWidth()
             .height(60.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
+        horizontalArrangement = Arrangement.Center
     ) {
         IconButton(
             onClick=onSettingsClicked,
-            modifier = Modifier.size(60.dp)
+            modifier = Modifier.size(50.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.prova2),
@@ -442,13 +442,15 @@ fun TopBar(
             )
         }
         IconButton(onClick = onSearchClicked,
-            modifier = Modifier.size(60.dp)) {
+            modifier = Modifier.size(50.dp)) {
             Image(
                 painter = painterResource(id = R.drawable.search),
                 contentDescription = "Search",
             )
         }
+        Spacer(Modifier.width(20.dp))
         AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
+        Spacer(Modifier.width(20.dp))
         FavePokemon(pokemonDetailViewModel, navController)
     }
 }
