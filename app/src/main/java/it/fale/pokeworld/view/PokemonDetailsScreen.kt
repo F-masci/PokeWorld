@@ -513,7 +513,9 @@ fun ItemCard(
                     append(" $itemCost")
                 },
                 fontSize = 11.sp,
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -525,7 +527,9 @@ fun ItemCard(
                     append(" $itemEffect")
                 },
                 fontSize = 11.sp,
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
             )
         }
     }
@@ -594,6 +598,7 @@ fun AbilityItem(
                 text = abilityDescription,
                 fontSize = 11.sp,
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(top = 8.dp)
                     .background(backgroundColor, RoundedCornerShape(10.dp))
                     .padding(16.dp)
