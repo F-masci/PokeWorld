@@ -36,6 +36,7 @@
     <string name="moves">MOVES</string>
     <string name="change_favorite">Change Favorite</string>
     <string name="change_favorite_disclaimer">Selecting this Pokémon as favorite will remove the previous one. Do you want to continue?</string>
+    <string name="no_favorite_disclaimer">There\'s no pokemon selected as favourite yet.</string>
     <string name="priority">Priority</string>
     <string name="description">Description</string>
     <string name="accuracy">Accuracy</string>

@@ -65,14 +65,13 @@ fun PokemonDetailsScreen (
 )
 {
 
-    val pokemon = pokemonDetailViewModel.pokemon.collectAsStateWithLifecycle().value
+    val pokemon: PokemonEntity? = pokemonDetailViewModel.pokemon.collectAsStateWithLifecycle().value
     val isDetailsLoaded = pokemonDetailViewModel.detailsLoaded.collectAsStateWithLifecycle().value
 
-    if(!isDetailsLoaded || pokemon.id != pokemonId) pokemonDetailViewModel.loadPokemon(pokemonId)
+    if(!isDetailsLoaded || pokemon?.id != pokemonId) pokemonDetailViewModel.loadPokemon(pokemonId)
 
     if(isDetailsLoaded)
-        DetailsCard(pokemonDetailViewModel, pokemon)
-
+        DetailsCard(pokemonDetailViewModel, pokemon!!)
     else
         Loader()
 
@@ -196,7 +195,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                                         showConfirmationDialog = true
                                     } else {
                                         isFavorite = true
-                                        pokemonDetailViewModel.saveFavoritePokemon(context, pokemon.id)
+                                        pokemonDetailViewModel.saveFavoritePokemon(context)
                                     }
                                 },
                                 modifier = Modifier
@@ -214,7 +213,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                         ConfirmFavoriteChangeDialog(
                             onConfirm = {
                                 isFavorite = true
-                                pokemonDetailViewModel.saveFavoritePokemon(context, pokemon.id)
+                                pokemonDetailViewModel.saveFavoritePokemon(context)
                                 currentFavoriteId=pokemon.id
                                 showConfirmationDialog = false
                             },

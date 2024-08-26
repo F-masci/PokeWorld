@@ -25,6 +25,7 @@
     <string name="no">No</string>
     <string name="change_language">Cambia Lingua</string>
     <string name="change_language_disclaimer">Selezionando questa lingua l\'app verrà riavviata. Vuoi continuare?</string>
+    <string name="no_favorite_disclaimer">Nessun Pokemon selezionato come preferito ancora.</string>
     <string name="light_theme">Chiaro</string>
     <string name="dark_theme">Scuro</string>
     <string name="theme">Tema</string>

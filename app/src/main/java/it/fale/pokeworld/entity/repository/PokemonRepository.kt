@@ -17,12 +17,14 @@ class PokemonRepository(private val dao: PokemonDao) {
         return dao.retrievePokemonList()
     }
 
-    suspend fun retrievePokemon(pokemonId: Int, load: Int = 0): PokemonEntity {
+    suspend fun retrievePokemon(pokemonId: Int, load: Int = 0): PokemonEntity? {
         Log.d("PokemonRepository", "Retrieving pokemon with id $pokemonId")
         val p = dao.retrievePokemon(pokemonId)
-        if(load and LOAD_ABILITIES != 0) p.abilities = dao.retrieveAbilitiesForPokemon(pokemonId)
-        if(load and LOAD_MOVES != 0) p.moves = dao.retrieveMovesForPokemon(pokemonId)
-        if(load and LOAD_ITEMS != 0) p.items = dao.retrieveItemsForPokemon(pokemonId)
+        if(p != null) {
+            if (load and LOAD_ABILITIES != 0) p.abilities = dao.retrieveAbilitiesForPokemon(pokemonId)
+            if (load and LOAD_MOVES != 0) p.moves = dao.retrieveMovesForPokemon(pokemonId)
+            if (load and LOAD_ITEMS != 0) p.items = dao.retrieveItemsForPokemon(pokemonId)
+        }
         return p
     }
 

@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Icon
 import androidx.compose.material.rememberDrawerState
@@ -85,7 +86,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PokemonListScreen(
     navController: NavController,
-    pokemonListViewModel: PokemonListViewModel
+    pokemonListViewModel: PokemonListViewModel,
 ) {
 
     val context = LocalContext.current
@@ -93,6 +94,8 @@ fun PokemonListScreen(
     var language by rememberSaveable { mutableStateOf(pokemonListViewModel.getLanguagePreference(context).text) }
 
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
+    val favoritePokemon = pokemonListViewModel.favoritePokemon.collectAsStateWithLifecycle()
+
     var isSearchBarVisible by remember { mutableStateOf(false) }
 
     // Variabile per memorizzare lo stato della LazyVerticalGrid, che permette di controllare la posizione di scroll e del drawer
@@ -141,7 +144,9 @@ fun PokemonListScreen(
                         },
                         onSettingsClicked = {
                             scope.launch { drawerState.open() }
-                        }
+                        },
+                        favoritePokemon.value,
+                        navController
                     )
                     if (isSearchBarVisible) {
                         Column(
@@ -417,33 +422,77 @@ fun ChoiceTypeMenu(
 @Composable
 fun TopBar(
     onSearchClicked: () -> Unit,
-    onSettingsClicked: () -> Unit
+    onSettingsClicked: () -> Unit,
+    favoritePokemon: PokemonEntity?,
+    navController: NavController
 ){
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.Center
     ) {
-        IconButton(onClick = onSearchClicked,
-            modifier = Modifier.size(60.dp)) {
-            Image(
-                painter = painterResource(id = R.drawable.search),
-                contentDescription = "Search",
-            )
-        }
-        AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
         IconButton(
             onClick=onSettingsClicked,
-            modifier = Modifier.size(60.dp)
+            modifier = Modifier.size(50.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.prova2),
                 contentDescription = "Settings",
             )
         }
+        IconButton(onClick = onSearchClicked,
+            modifier = Modifier.size(50.dp)) {
+            Image(
+                painter = painterResource(id = R.drawable.search),
+                contentDescription = "Search",
+            )
+        }
+        Spacer(Modifier.width(20.dp))
+        AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
+        Spacer(Modifier.width(20.dp))
+        FavePokemon(favoritePokemon, navController)
     }
+}
+
+@Composable
+fun FavePokemon(pokemon: PokemonEntity?, navController: NavController){
+    var showDialog by remember{mutableStateOf(false)}
+
+    if(pokemon == null) {
+        Spacer(Modifier.width(25.dp))
+        Image(painter = painterResource(id = R.drawable.yellowstar), "star",
+            Modifier
+                .height(25.dp)
+                .clickable {
+                    showDialog = true
+                })
+    }
+    else {
+        Row(verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxHeight()
+                .clickable { navController.navigate("pokemon_details_screen/${pokemon.id}") }){
+            AsyncImage(model = pokemon.spriteDefault, contentDescription = "fave pokemon", modifier = Modifier.height(60.dp))
+            Image(painter = painterResource(id = R.drawable.yellowstar), "star", Modifier.height(25.dp))
+        }
+    }
+    if(showDialog) NoFavouriteAlert {
+        showDialog = false
+    }
+}
+
+@Composable
+fun NoFavouriteAlert(
+    onDismiss: () -> Unit
+){
+    AlertDialog(onDismissRequest = onDismiss,
+        confirmButton = {},
+        text = {
+            Text(stringResource(id = R.string.no_favorite_disclaimer))
+        })
 }
 
 @Composable
