@@ -7,18 +7,19 @@ import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.utils.FAVOURITE_KEY
 import it.fale.pokeworld.utils.PREFERENCES_NAME
+import it.fale.pokeworld.viewmodel.shared.FavoritePokemonSharedRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PokemonDetailViewModel(private val repository: PokemonRepository): ViewModel() {
+class PokemonDetailViewModel(private val repository: PokemonRepository, private val favoritePokemonSharedRepository: FavoritePokemonSharedRepository): ViewModel() {
 
-    private val _pokemon: MutableStateFlow<PokemonEntity> = MutableStateFlow(PokemonEntity(id = 0, name = "Loading..."))
+    private val _pokemon: MutableStateFlow<PokemonEntity?> = MutableStateFlow(null)
     private val _detailsLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    val pokemon: StateFlow<PokemonEntity>
+    val pokemon: StateFlow<PokemonEntity?>
         get() = _pokemon.asStateFlow()
 
     val detailsLoaded: StateFlow<Boolean>
@@ -31,11 +32,12 @@ class PokemonDetailViewModel(private val repository: PokemonRepository): ViewMod
             _detailsLoaded.value = true
         }
     }
-    fun saveFavoritePokemon(context: Context, pokemonId: Int) {
+    fun saveFavoritePokemon(context: Context) {
         val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        editor.putInt(FAVOURITE_KEY, pokemonId)
+        editor.putInt(FAVOURITE_KEY, pokemon.value!!.id)
         editor.apply()
+        favoritePokemonSharedRepository.updateFavoritePokemon(pokemon.value)
     }
 
     fun getFavoritePokemonId(context: Context): Int? {
@@ -49,6 +51,7 @@ class PokemonDetailViewModel(private val repository: PokemonRepository): ViewMod
         val editor = sharedPreferences.edit()
         editor.remove(FAVOURITE_KEY)
         editor.apply()
+        favoritePokemonSharedRepository.updateFavoritePokemon(null)
     }
 
 }

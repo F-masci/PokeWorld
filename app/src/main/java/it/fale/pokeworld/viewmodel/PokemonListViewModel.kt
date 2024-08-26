@@ -1,15 +1,18 @@
 package it.fale.pokeworld.viewmodel
 
 import android.content.Context
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.entity.repository.PokemonRepository
+import it.fale.pokeworld.utils.FAVOURITE_KEY
 import it.fale.pokeworld.utils.LANGUAGE_KEY
 import it.fale.pokeworld.utils.Language
 import it.fale.pokeworld.utils.PREFERENCES_NAME
 import it.fale.pokeworld.utils.THEME_KEY
+import it.fale.pokeworld.viewmodel.shared.FavoritePokemonSharedRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,11 +20,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-class PokemonListViewModel(private val repository: PokemonRepository): ViewModel() {
+class PokemonListViewModel(private val repository: PokemonRepository, private val favoritePokemonSharedRepository: FavoritePokemonSharedRepository): ViewModel() {
 
     private var _pokemonList: List<PokemonEntity> = emptyList()
     private val _filteredPokemonList: MutableStateFlow<List<PokemonEntity>> = MutableStateFlow(emptyList())
 
+    val favoritePokemon: StateFlow<PokemonEntity?> = favoritePokemonSharedRepository.sharedFavoritePokemon
     val pokemonList: StateFlow<List<PokemonEntity>>
         get() = _filteredPokemonList.asStateFlow()
 

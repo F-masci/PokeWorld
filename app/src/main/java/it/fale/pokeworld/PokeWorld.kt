@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -14,14 +15,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.repository.PokemonDatabase
 import it.fale.pokeworld.entity.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.PokeWorldTheme
+import it.fale.pokeworld.utils.FAVOURITE_KEY
 import it.fale.pokeworld.utils.LANGUAGE_KEY
 import it.fale.pokeworld.utils.PREFERENCES_NAME
 import it.fale.pokeworld.view.PokemonDetailsScreen
 import it.fale.pokeworld.view.list.PokemonListScreen
 import it.fale.pokeworld.viewmodel.ViewModelFactory
+import it.fale.pokeworld.viewmodel.shared.FavoritePokemonSharedRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 /**
@@ -33,12 +40,21 @@ class PokeWorld : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
 
+        val context = applicationContext
+        val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+        val favoriteId = sharedPreferences.getInt(FAVOURITE_KEY, -1)
+
+        val repository = PokemonRepository(PokemonDatabase.getInstance(context).pokemonDao())
+        val sharedRepository = FavoritePokemonSharedRepository()
+        CoroutineScope(Dispatchers.IO).launch {
+            val favPokemon: PokemonEntity? = repository.retrievePokemon(favoriteId)
+            sharedRepository.updateFavoritePokemon(favPokemon)
+        }
+
+        val factory = ViewModelFactory(repository, sharedRepository)
+
         setContent{
 
-            val repository = PokemonRepository(
-                PokemonDatabase.getInstance(LocalContext.current).pokemonDao()
-            )
-            val factory = ViewModelFactory(repository)
             val navController = rememberNavController()
 
             PokeWorldTheme {
@@ -51,8 +67,7 @@ class PokeWorld : ComponentActivity(){
 
                         PokemonListScreen(
                             navController = navController,
-                            pokemonListViewModel = viewModel(factory = factory),
-                            pokemonDetailViewModel = viewModel(factory = factory)
+                            pokemonListViewModel = viewModel(factory = factory)
                         )
 
                     }

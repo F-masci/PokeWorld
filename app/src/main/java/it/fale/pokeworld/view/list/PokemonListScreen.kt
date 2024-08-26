@@ -87,7 +87,6 @@ import kotlinx.coroutines.launch
 fun PokemonListScreen(
     navController: NavController,
     pokemonListViewModel: PokemonListViewModel,
-    pokemonDetailViewModel: PokemonDetailViewModel
 ) {
 
     val context = LocalContext.current
@@ -95,6 +94,8 @@ fun PokemonListScreen(
     var language by rememberSaveable { mutableStateOf(pokemonListViewModel.getLanguagePreference(context).text) }
 
     val pokemonList = pokemonListViewModel.pokemonList.collectAsStateWithLifecycle()
+    val favoritePokemon = pokemonListViewModel.favoritePokemon.collectAsStateWithLifecycle()
+
     var isSearchBarVisible by remember { mutableStateOf(false) }
 
     // Variabile per memorizzare lo stato della LazyVerticalGrid, che permette di controllare la posizione di scroll e del drawer
@@ -144,7 +145,7 @@ fun PokemonListScreen(
                         onSettingsClicked = {
                             scope.launch { drawerState.open() }
                         },
-                        pokemonDetailViewModel,
+                        favoritePokemon.value,
                         navController
                     )
                     if (isSearchBarVisible) {
@@ -422,7 +423,7 @@ fun ChoiceTypeMenu(
 fun TopBar(
     onSearchClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
-    pokemonDetailViewModel: PokemonDetailViewModel,
+    favoritePokemon: PokemonEntity?,
     navController: NavController
 ){
     Row(
@@ -451,25 +452,20 @@ fun TopBar(
         Spacer(Modifier.width(20.dp))
         AsyncImage(model = R.drawable.logo, contentDescription = null, modifier = Modifier.height(40.dp))
         Spacer(Modifier.width(20.dp))
-        FavePokemon(pokemonDetailViewModel, navController)
+        FavePokemon(favoritePokemon, navController)
     }
 }
 
 @Composable
-fun FavePokemon(pokemonDetailViewModel: PokemonDetailViewModel, navController: NavController){
-    val context = LocalContext.current
-    val faveId = pokemonDetailViewModel.getFavoritePokemonId(context)
-    val favePokemon = pokemonDetailViewModel.pokemon.collectAsStateWithLifecycle().value
-    if (faveId != null) {
-        pokemonDetailViewModel.loadPokemon(faveId)
-    }
-    Row(verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxHeight()
-            .clickable { navController.navigate("pokemon_details_screen/${favePokemon.id}") }){
-        AsyncImage(model = favePokemon.spriteDefault, contentDescription = "fave pokemon", modifier = Modifier.height(60.dp))
-        Image(painter = painterResource(id = R.drawable.yellowstar), "star", Modifier.height(25.dp))
-    }
+fun FavePokemon(pokemon: PokemonEntity?, navController: NavController){
+    if(pokemon == null) return
+    else Row(verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxHeight()
+                .clickable { navController.navigate("pokemon_details_screen/${pokemon.id}") }){
+            AsyncImage(model = pokemon.spriteDefault, contentDescription = "fave pokemon", modifier = Modifier.height(60.dp))
+            Image(painter = painterResource(id = R.drawable.yellowstar), "star", Modifier.height(25.dp))
+        }
 }
 
 @Composable

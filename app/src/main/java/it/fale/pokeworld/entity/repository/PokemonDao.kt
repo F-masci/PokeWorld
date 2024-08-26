@@ -19,7 +19,7 @@ interface PokemonDao {
     suspend fun retrievePokemonList(): List<PokemonEntity>
 
     @Query("SELECT * FROM pokemon WHERE id = :pokemonId")
-    suspend fun retrievePokemon(pokemonId: Int): PokemonEntity
+    suspend fun retrievePokemon(pokemonId: Int): PokemonEntity?
 
     @Transaction
     @Query(
