@@ -699,7 +699,7 @@ fun TypeRow(type: PokemonType) {
                 .copy(alpha = 0.8f),
             RoundedCornerShape(30)
         )
-        .width(135.dp)
+        .width(150.dp)
         .padding(4.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically){
@@ -708,7 +708,7 @@ fun TypeRow(type: PokemonType) {
             modifier = Modifier
                 .padding(2.dp)
                 .height(20.dp))
-        Text(stringResource(id = type.string), fontSize = 12.sp)
+        Text(stringResource(id = type.string), fontSize = 10.sp)
     }
 }
 @Composable

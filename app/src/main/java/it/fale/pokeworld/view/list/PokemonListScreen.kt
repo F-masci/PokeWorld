@@ -266,10 +266,10 @@ fun PokemonListScreen(
                                     PokemonCard(
                                         pokemon = pokemon,
                                         modifier = Modifier
-                                            .padding(20.dp)
+                                            .padding(10.dp)
                                             .border(2.dp, Color.DarkGray, RoundedCornerShape(10))
                                             .height(310.dp)
-                                            .width(250.dp)
+                                            .width(270.dp)
                                             .background(
                                                 if (pokemon.type1 != null) colorResource(id = pokemon.type1.backgroundColor)
                                                 else Color.Magenta,
@@ -460,15 +460,15 @@ fun PokemonCard(pokemon: PokemonEntity, modifier: Modifier, onClick: () -> Unit)
         Spacer(modifier = Modifier.height(20.dp))
         Box(
             modifier = Modifier
-                .width(120.dp)
-                .height(120.dp),
+                .width(150.dp)
+                .height(135.dp),
             contentAlignment = Alignment.Center
         ) {
 
             Canvas(
                 modifier = Modifier
-                    .height(120.dp)
-                    .width(120.dp)
+                    .height(135.dp)
+                    .width(150.dp)
                     .background(Color.White.copy(0.6f), RoundedCornerShape(10))
             ) {}
 
