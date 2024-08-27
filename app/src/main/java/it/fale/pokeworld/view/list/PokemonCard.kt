@@ -23,7 +23,7 @@ import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.ui.theme.list.PokemonCardConstants
 import it.fale.pokeworld.ui.theme.themedColorsPalette
 import it.fale.pokeworld.ui.theme.themedTypography
-import it.fale.pokeworld.view.TypeRow
+import it.fale.pokeworld.view.detail.TypeRow
 
 /**
  * Composable per la card di un Pokémon.

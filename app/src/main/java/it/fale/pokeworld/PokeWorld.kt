@@ -19,7 +19,7 @@ import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.repository.PokemonDatabase
 import it.fale.pokeworld.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.PokeWorldTheme
-import it.fale.pokeworld.view.PokemonDetailsScreen
+import it.fale.pokeworld.view.detail.PokemonDetailsScreen
 import it.fale.pokeworld.view.list.PokemonListScreen
 import it.fale.pokeworld.viewmodel.ViewModelFactory
 import it.fale.pokeworld.repository.FavoritePokemonSharedRepository
