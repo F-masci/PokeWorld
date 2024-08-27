@@ -6,6 +6,9 @@ import com.google.gson.reflect.TypeToken
 
 data class Translation(val language: String, val text: String)
 
+/**
+ * Classe per la conversione tra una lista di oggetti Translation e una stringa JSON.
+ */
 class TranslationListConverter {
 
     @TypeConverter

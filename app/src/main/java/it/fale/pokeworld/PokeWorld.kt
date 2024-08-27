@@ -1,13 +1,13 @@
 package it.fale.pokeworld
 
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,20 +16,17 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import it.fale.pokeworld.entity.PokemonEntity
-import it.fale.pokeworld.entity.repository.PokemonDatabase
-import it.fale.pokeworld.entity.repository.PokemonRepository
+import it.fale.pokeworld.repository.PokemonDatabase
+import it.fale.pokeworld.repository.PokemonRepository
 import it.fale.pokeworld.ui.theme.PokeWorldTheme
-import it.fale.pokeworld.utils.FAVOURITE_KEY
-import it.fale.pokeworld.utils.LANGUAGE_KEY
-import it.fale.pokeworld.utils.PREFERENCES_NAME
 import it.fale.pokeworld.view.PokemonDetailsScreen
 import it.fale.pokeworld.view.list.PokemonListScreen
 import it.fale.pokeworld.viewmodel.ViewModelFactory
-import it.fale.pokeworld.viewmodel.shared.FavoritePokemonSharedRepository
+import it.fale.pokeworld.repository.FavoritePokemonSharedRepository
+import it.fale.pokeworld.repository.UserPreferencesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 /**
  * Classe principale dell'applicazione.
@@ -40,43 +37,58 @@ class PokeWorld : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
 
-        val context = applicationContext
-        val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        val favoriteId = sharedPreferences.getInt(FAVOURITE_KEY, -1)
+        /* --- Inizializzazione --- */
 
-        val repository = PokemonRepository(PokemonDatabase.getInstance(context).pokemonDao())
-        val sharedRepository = FavoritePokemonSharedRepository()
-        CoroutineScope(Dispatchers.IO).launch {
-            val favPokemon: PokemonEntity? = repository.retrievePokemon(favoriteId)
-            sharedRepository.updateFavoritePokemon(favPokemon)
-        }
+        UserPreferencesRepository.initialize(this)
 
-        val factory = ViewModelFactory(repository, sharedRepository)
+        val pokemonRepository = PokemonRepository(PokemonDatabase.getInstance(applicationContext).pokemonDao())
+        loadFavoritePokemon(pokemonRepository)
 
-        setContent{
+        val factory = ViewModelFactory(pokemonRepository)
+
+        /* ------------------------ */
+
+        setContent {
 
             val navController = rememberNavController()
 
-            PokeWorldTheme {
+            var isDarkTheme by rememberSaveable { mutableStateOf(UserPreferencesRepository.getDarkModePreference()) }
+            var language by rememberSaveable { mutableStateOf(UserPreferencesRepository.getLanguagePreference()) }
+
+            PokeWorldTheme(
+                darkTheme = isDarkTheme,
+                languageCode = language.code,
+                context = applicationContext
+            ) {
 
                 NavHost(
                     navController = navController,
                     startDestination = "pokemon_list_screen",
                 ) {
                     composable("pokemon_list_screen") {
-
+                        
                         PokemonListScreen(
                             navController = navController,
-                            pokemonListViewModel = viewModel(factory = factory)
+                            pokemonListViewModel = viewModel(factory = factory),
+                            isDarkTheme = isDarkTheme,
+                            onThemeToggle = { isDark ->
+                                AppCompatDelegate.setDefaultNightMode(if(isDark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
+                                isDarkTheme = isDark
+                            },
+                            language = language,
+                            onLanguageChange = { newLanguage ->
+                                language = newLanguage
+                            }
                         )
 
                     }
                     composable(
-                        route = "pokemon_details_screen/{pokemonId}", //pokemonId è un parametro dinamico, che inserisco solamente quando dalla listScreen clicco sul pokemon interessato
+                        route = "pokemon_details_screen/{pokemonId}",
                         arguments = listOf(navArgument("pokemonId") {
                             type = NavType.IntType
                         })
                     ) {
+                        // ID del pokemon passato come argomento della route
                         val pokemonId = it.arguments!!.getInt("pokemonId")
                         PokemonDetailsScreen(
                             pokemonDetailViewModel = viewModel(factory = factory),
@@ -89,14 +101,23 @@ class PokeWorld : ComponentActivity(){
 
     }
 
-    override fun attachBaseContext(base: Context) {
-        val prefs = base.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        val language = prefs.getString(LANGUAGE_KEY, Locale.getDefault().language)!!
+    /**
+     * Carica il pokemon preferito salvato nelle SharedPreferences
+     * nel repository condiviso per essere utilizzato da più ViewModel.
+     *
+     * @param pokemonRepository Repository per le operazioni di database.
+     */
+    private fun loadFavoritePokemon(pokemonRepository: PokemonRepository) {
 
-        val config = Configuration(base.resources.configuration)
-        config.setLocale(Locale(language))
+        // Carica l'id del pokemon preferito
+        val favoriteId: Int? = UserPreferencesRepository.getFavoritePokemonId()
 
-        super.attachBaseContext(ContextWrapper(base.createConfigurationContext(config)))
+        // Imposta il pokemon preferito nel repository condiviso
+        CoroutineScope(Dispatchers.IO).launch {
+            val favPokemon: PokemonEntity? = pokemonRepository.retrievePokemon(favoriteId ?: 0)
+            FavoritePokemonSharedRepository.updateFavoritePokemon(favPokemon)
+        }
+
     }
 
 }

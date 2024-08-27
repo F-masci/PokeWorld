@@ -1,0 +1,95 @@
+package it.fale.pokeworld.repository
+
+import android.content.Context
+import android.content.SharedPreferences
+import it.fale.pokeworld.utils.Language
+import java.util.Locale
+
+const val PREFERENCES_FILE_NAME: String = "pokeworld_preferences"
+const val PREFS_LANGUAGE_KEY: String = "language_preference"
+const val PREFS_THEME_KEY: String = "dark_theme"
+const val PREFS_FAVORITE_POKEMON_KEY: String ="favorite_pokemon"
+
+/**
+ * Repository per le preferenze dell'utente.
+ */
+object UserPreferencesRepository {
+
+    // Variabili per la gestione delle preferenze
+    private lateinit var sharedPreferences: SharedPreferences
+
+    /**
+     * Inizializza il repository di preferenze.
+     */
+    fun initialize(context: Context) {
+        sharedPreferences = context.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
+    }
+
+    /**
+     * Salva la preferenza di tema in SharedPreferences.
+     *
+     * @param isDarkTheme Indica se il tema è scuro o meno.
+     */
+    fun saveDarkModePreference(isDarkTheme: Boolean) {
+        sharedPreferences.edit().putBoolean(PREFS_THEME_KEY, isDarkTheme).apply()
+    }
+
+    /**
+     * Ottiene la preferenza di tema da SharedPreferences.
+     *
+     * @return True se il tema è scuro, false altrimenti.
+     */
+    fun getDarkModePreference(): Boolean {
+        return sharedPreferences.getBoolean(PREFS_THEME_KEY, false)
+    }
+
+    /**
+     * Salva la preferenza di lingua in SharedPreferences.
+     *
+     * @param language La lingua da salvare.
+     */
+    fun saveLanguagePreference(language: Language) {
+        sharedPreferences.edit().putString(PREFS_LANGUAGE_KEY, language.code).apply()
+    }
+
+    /**
+     * Ottiene la preferenza di lingua da SharedPreferences.
+     *
+     * @return La lingua corrente.
+     */
+    fun getLanguagePreference(): Language {
+        return Language.fromCode(
+            sharedPreferences.getString(
+                PREFS_LANGUAGE_KEY,
+                Locale.getDefault().language
+            )!!
+        )
+    }
+
+    /**
+     * Salva l'ID del pokemon preferito in SharedPreferences.
+     *
+     * @param pokemonId L'ID del pokemon da salvare.
+     */
+    fun saveFavoritePokemonId(pokemonId: Int) {
+        sharedPreferences.edit().putInt(PREFS_FAVORITE_POKEMON_KEY, pokemonId).apply()
+    }
+
+    /**
+     * Rimuove l'ID del pokemon preferito in SharedPreferences.
+     */
+    fun clearFavoritePokemonId() {
+        sharedPreferences.edit().remove(PREFS_FAVORITE_POKEMON_KEY).apply()
+    }
+
+    /**
+     * Ottiene l'ID del pokemon preferito da SharedPreferences.
+     *
+     * @return L'ID del pokemon preferito.
+     */
+    fun getFavoritePokemonId(): Int? {
+        val id = sharedPreferences.getInt(PREFS_FAVORITE_POKEMON_KEY, -1)
+        return if(id == 0) null else id
+    }
+
+}

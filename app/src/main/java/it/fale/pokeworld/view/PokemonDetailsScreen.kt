@@ -111,179 +111,180 @@ fun Loader() {
 @Composable
 fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: PokemonEntity){
     val context = LocalContext.current
-    var currentFavoriteId = pokemonDetailViewModel.getFavoritePokemonId(context)
+    var currentFavoriteId = pokemonDetailViewModel.getFavoritePokemonId()
     var isFavorite by remember { mutableStateOf(currentFavoriteId == pokemon.id) }
     var showConfirmationDialog by remember { mutableStateOf(false) }
 
-    pokemon.type1?.let { colorResource(id = it.backgroundColor) }?.let {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = it
+    val backgroundColor = pokemon.type1?.getBackgroundColor?.invoke() ?: Color.White
+    val backgroundTextColor = pokemon.type1?.getBackgroundTextColor?.invoke() ?: Color.White
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = backgroundColor
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(0.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(0.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                item {
-                    Text(
-                        text = pokemon.name, modifier = Modifier
-                            .background(colorResource(pokemon.type1.backgroundTextColor))
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        textAlign = TextAlign.Center
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        TypeRow(type = pokemon.type1)
-                        if (pokemon.type2 != null) {
-                            Spacer(modifier = Modifier.width(20.dp))
-                            TypeRow(type = pokemon.type2)
-                        }
-                    }
-                    Box(modifier = Modifier
-                        .width(350.dp)
-                        .height(300.dp),
-                        contentAlignment = Alignment.Center) {
-
-                        Canvas(modifier = Modifier
-                            .height(350.dp)
-                            .width(350.dp)
-                            .background(Color.White.copy(0.8f), RoundedCornerShape(10))) {}
-
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(pokemon.getAnimatedImageUrl())
-                                .decoderFactory(ImageDecoderDecoder.Factory())
-                                .build(),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .width(350.dp)
-                                .height(200.dp)
-                        )
-
-                        Row( modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.TopStart)
-                            .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween )
-                        {
-                            IconButton(
-                                onClick = {
-                                    playAudio(pokemon)
-                                },
-                                modifier = Modifier
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.audio),
-                                    contentDescription = "Play audio",
-                                    tint = Color.Unspecified
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    if (isFavorite) {//entro qui solo se cerco di togliere il pokemon che è già tra i preferiti
-                                        isFavorite = false
-                                        pokemonDetailViewModel.clearFavoritePokemon(context)
-                                    } else if (currentFavoriteId != null && currentFavoriteId != pokemon.id) {//solo se esiste già un preferito ma non è il pokemon della schermata attuale
-                                        showConfirmationDialog = true
-                                    } else {
-                                        isFavorite = true
-                                        pokemonDetailViewModel.saveFavoritePokemon(context)
-                                    }
-                                },
-                                modifier = Modifier
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = if (isFavorite) R.drawable.yellowstar else R.drawable.star),
-                                    contentDescription = "Add to favourites",
-                                    tint = Color.Unspecified
-                                )
-                            }
-                        }
-                    }
-                    if (showConfirmationDialog) {
-                        ConfirmFavoriteChangeDialog(
-                            onConfirm = {
-                                isFavorite = true
-                                pokemonDetailViewModel.saveFavoritePokemon(context)
-                                currentFavoriteId=pokemon.id
-                                showConfirmationDialog = false
-                            },
-                            onCancel = {
-                                showConfirmationDialog = false
-                            }
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.padding(0.dp, 15.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.height) + ": ${pokemon.height}",
-                            modifier = Modifier
-                                .background(
-                                    colorResource(id = pokemon.type1.backgroundTextColor),
-                                    RoundedCornerShape(15)
-                                )
-                                .width(170.dp)
-                                .padding(15.dp),
-                            textAlign = TextAlign.Center,
-                            fontSize = 11.sp
-                        )
+            item {
+                Text(
+                    text = pokemon.name, modifier = Modifier
+                        .background(backgroundTextColor)
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    textAlign = TextAlign.Center
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TypeRow(type = pokemon.type1!!)
+                    if (pokemon.type2 != null) {
                         Spacer(modifier = Modifier.width(20.dp))
-                        Text(
-                            text = stringResource(R.string.weight) + ": ${pokemon.weight}",
-                            modifier = Modifier
-                                .background(
-                                    colorResource(id = pokemon.type1.backgroundTextColor),
-                                    RoundedCornerShape(15)
-                                )
-                                .width(170.dp)
-                                .padding(15.dp),
-                            textAlign = TextAlign.Center,
-                            fontSize = 11.sp
-                        )
+                        TypeRow(type = pokemon.type2)
                     }
                 }
-                item {
-                    Spacer(Modifier.height(10.dp))
-                    StatsSection(pokemon = pokemon)
+                Box(modifier = Modifier
+                    .width(350.dp)
+                    .height(300.dp),
+                    contentAlignment = Alignment.Center) {
+
+                    Canvas(modifier = Modifier
+                        .height(350.dp)
+                        .width(350.dp)
+                        .background(Color.White.copy(0.8f), RoundedCornerShape(10))) {}
+
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(pokemon.getAnimatedImageUrl())
+                            .decoderFactory(ImageDecoderDecoder.Factory())
+                            .build(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .width(350.dp)
+                            .height(200.dp)
+                    )
+
+                    Row( modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopStart)
+                        .padding(8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween )
+                    {
+                        IconButton(
+                            onClick = {
+                                playAudio(pokemon)
+                            },
+                            modifier = Modifier
+                                .padding(8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.audio),
+                                contentDescription = "Play audio",
+                                tint = Color.Unspecified
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                if (isFavorite) {//entro qui solo se cerco di togliere il pokemon che è già tra i preferiti
+                                    isFavorite = false
+                                    pokemonDetailViewModel.clearFavoritePokemon()
+                                } else if (currentFavoriteId != null && currentFavoriteId != pokemon.id) {//solo se esiste già un preferito ma non è il pokemon della schermata attuale
+                                    showConfirmationDialog = true
+                                } else {
+                                    isFavorite = true
+                                    pokemonDetailViewModel.saveFavoritePokemon()
+                                }
+                            },
+                            modifier = Modifier
+                                .padding(8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = if (isFavorite) R.drawable.yellowstar else R.drawable.star),
+                                contentDescription = "Add to favourites",
+                                tint = Color.Unspecified
+                            )
+                        }
+                    }
                 }
-                item {
-                    Spacer(Modifier.height(10.dp))
-                    AbilitiesSection(pokemon = pokemon)
+                if (showConfirmationDialog) {
+                    ConfirmFavoriteChangeDialog(
+                        onConfirm = {
+                            isFavorite = true
+                            pokemonDetailViewModel.saveFavoritePokemon()
+                            currentFavoriteId=pokemon.id
+                            showConfirmationDialog = false
+                        },
+                        onCancel = {
+                            showConfirmationDialog = false
+                        }
+                    )
                 }
-                item {
-                    Spacer(Modifier.height(10.dp))
-                    ItemSelection(pokemon = pokemon)
-                }
-                item{
-                    Spacer(Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier.padding(0.dp, 15.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     Text(
-                        text = stringResource(R.string.moves),
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(15.dp)
+                        text = stringResource(R.string.height) + ": ${pokemon.height}",
+                        modifier = Modifier
+                            .background(
+                                backgroundTextColor,
+                                RoundedCornerShape(15)
+                            )
+                            .width(170.dp)
+                            .padding(15.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 11.sp
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(
+                        text = stringResource(R.string.weight) + ": ${pokemon.weight}",
+                        modifier = Modifier
+                            .background(
+                                backgroundTextColor,
+                                RoundedCornerShape(15)
+                            )
+                            .width(170.dp)
+                            .padding(15.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 11.sp
                     )
                 }
-                items(pokemon.moves) { move ->
-                    MoveItem(
-                        moveName = move.getLocaleName(LocalContext.current),
-                        moveDescription = move.getLocaleDescription(LocalContext.current),
-                        accuracy = move.accuracy,
-                        effectChance = move.effectChance,
-                        power = move.power,
-                        priority = move.priority,
-                        type = pokemon.type1
-                    )
-                }
+            }
+            item {
+                Spacer(Modifier.height(10.dp))
+                StatsSection(pokemon = pokemon)
+            }
+            item {
+                Spacer(Modifier.height(10.dp))
+                AbilitiesSection(pokemon = pokemon)
+            }
+            item {
+                Spacer(Modifier.height(10.dp))
+                ItemSelection(pokemon = pokemon)
+            }
+            item{
+                Spacer(Modifier.height(10.dp))
+                Text(
+                    text = stringResource(R.string.moves),
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(15.dp)
+                )
+            }
+            items(pokemon.moves) { move ->
+                MoveItem(
+                    moveName = move.getLocaleName(),
+                    moveDescription = move.getLocaleDescription(),
+                    accuracy = move.accuracy,
+                    effectChance = move.effectChance,
+                    power = move.power,
+                    priority = move.priority,
+                    type = pokemon.type1!!
+                )
             }
         }
     }
@@ -351,8 +352,10 @@ fun MoveItem(
             .fillMaxWidth()
             .padding(8.dp)
             .background(
-                colorResource(type.backgroundTextColor)
-                    .copy(alpha = 0.8f), RoundedCornerShape(10.dp)
+                type
+                    .getBackgroundTextColor()
+                    .copy(alpha = 0.8f),
+                RoundedCornerShape(10.dp)
             )
             .padding(15.dp)
             .clickable { isExpanded = !isExpanded }
@@ -437,22 +440,19 @@ fun ItemSelection(pokemon: PokemonEntity) {
             fontSize = 14.sp,
             modifier = Modifier.padding(15.dp)
         )
-        pokemon.type1?.let { colorResource(id = it.backgroundColor) }?.let {
         Row(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
              pokemon.items.forEach { item ->
                 ItemCard(
-                    itemName = item.getLocaleName(LocalContext.current),
+                    itemName = item.getLocaleName(),
                     itemCost = item.cost,
-                    itemEffect = item.getLocaleEffect(LocalContext.current),
+                    itemEffect = item.getLocaleEffect(),
                     itemSprite = item.sprite,
-                    typeColor = colorResource(pokemon.type1.backgroundTextColor),
+                    typeColor = pokemon.type1?.getBackgroundTextColor!!(),
                 )
             }
-
-        }
         }
 
     }
@@ -548,15 +548,13 @@ fun AbilitiesSection(pokemon: PokemonEntity) {
             fontSize = 14.sp,
             modifier = Modifier.padding(15.dp)
         )
-        pokemon.type1?.let { colorResource(id = it.backgroundColor) }?.let {
-            pokemon.abilities.forEach { ability ->
-                AbilityItem(
-                    abilityName = ability.getLocaleName(LocalContext.current),
-                    abilityDescription = ability.getLocaleEffect(LocalContext.current),
-                    typeColor = colorResource(pokemon.type1.backgroundTextColor),
-                    backgroundColor=it
-                )
-            }
+        pokemon.abilities.forEach { ability ->
+            AbilityItem(
+                abilityName = ability.getLocaleName(LocalContext.current),
+                abilityDescription = ability.getLocaleEffect(LocalContext.current),
+                typeColor = pokemon.type1?.getBackgroundTextColor!!(),
+                backgroundColor = pokemon.type1?.getBackgroundColor!!()
+            )
         }
     }
 }
@@ -699,8 +697,7 @@ fun TypeRow(type: PokemonType) {
 
     Row (modifier = Modifier
         .background(
-            colorResource(type.backgroundTextColor)
-                .copy(alpha = 0.8f),
+            type.getBackgroundTextColor().copy(alpha = 0.8f),
             RoundedCornerShape(30)
         )
         .width(150.dp)

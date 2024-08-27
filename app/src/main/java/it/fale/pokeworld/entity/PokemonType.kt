@@ -1,41 +1,71 @@
 package it.fale.pokeworld.entity
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.Composable
 import androidx.room.TypeConverter
 import it.fale.pokeworld.R
+import it.fale.pokeworld.ui.theme.LocalThemedColorsPalette
 import kotlin.random.Random
 
-enum class PokemonType(val type: String, val string: Int, val icon: Int, val backgroundColor: Int, val backgroundTextColor: Int) {
+/**
+ * Tipo di Pokemon
+ *
+ * @param type Codice del tipo di Pokemon
+ * @param string Stringa da utilizzare come titolo
+ * @param icon Icona da utilizzare
+ * @param getBackgroundColor Funzione per ottenere il colore di sfondo da utilizzare
+ * @param getBackgroundTextColor Funzione per ottenere il colore del testo da utilizzare
+ */
+enum class PokemonType(
+    val type: String,
+    val string: Int,
+    val icon: Int,
+    val getBackgroundColor: @Composable () -> Color = { Color.Unspecified },
+    val getBackgroundTextColor: @Composable () -> Color = { Color.Unspecified }
+) {
 
-    NORMAL("normal", R.string.normal, R.drawable.normal, R.color.normal_light_background, R.color.normal_light_text),
-    FIGHTING("fighting", R.string.fighting, R.drawable.fighting, R.color.fighting_light_background, R.color.fighting_light_text),
-    FLYING("flying", R.string.flying, R.drawable.flying, R.color.flying_light_background, R.color.flying_light_text),
-    POISON("poison", R.string.poison, R.drawable.poison, R.color.poison_light_background, R.color.poison_light_text),
-    GROUND("ground", R.string.ground, R.drawable.ground, R.color.ground_light_background, R.color.ground_light_text),
-    ROCK("rock", R.string.rock, R.drawable.rock, R.color.rock_light_background, R.color.rock_light_text),
-    BUG("bug", R.string.bug, R.drawable.bug, R.color.bug_light_background, R.color.bug_light_text),
-    GHOST("ghost", R.string.ghost, R.drawable.ghost, R.color.ghost_light_background, R.color.ghost_light_text),
-    STEEL("steel", R.string.steel, R.drawable.steel, R.color.steel_light_background, R.color.steel_light_text),
-    FIRE("fire", R.string.fire, R.drawable.fire, R.color.fire_light_background, R.color.fire_light_text),
-    WATER("water", R.string.water, R.drawable.water, R.color.water_light_background, R.color.water_light_text),
-    GRASS("grass", R.string.grass, R.drawable.grass, R.color.grass_light_background, R.color.grass_light_text),
-    ELECTRIC("electric", R.string.electric, R.drawable.electric, R.color.electric_light_background, R.color.electric_light_text),
-    PSYCHIC("psychic", R.string.psychic, R.drawable.psychic, R.color.psychic_light_background, R.color.psychic_light_text),
-    ICE("ice", R.string.ice, R.drawable.ice, R.color.ice_light_background, R.color.ice_light_text),
-    DRAGON("dragon", R.string.dragon, R.drawable.dragon, R.color.dragon_light_background, R.color.dragon_light_text),
-    DARK("dark", R.string.dark, R.drawable.dark, R.color.dark_light_background, R.color.dark_light_text),
-    FAIRY("fairy", R.string.fairy, R.drawable.fairy, R.color.fairy_light_background, R.color.fairy_light_text),
-    STELLAR("stellar", R.string.stellar, R.drawable.stellar, R.color.stellar_light_background, R.color.stellar_light_text),
-    UNKNOWN("unknown", R.string.unknown, R.drawable.normal, R.color.normal_light_background, R.color.normal_light_text),
-    SHADOW("shadow", R.string.shadow, R.drawable.normal, R.color.shadow_light_background, R.color.shadow_light_text);
+    NORMAL("normal", R.string.normal, R.drawable.normal,{ LocalThemedColorsPalette.current.normalBackground }, { LocalThemedColorsPalette.current.normalTextBackground }),
+    FIGHTING("fighting", R.string.fighting, R.drawable.fighting, { LocalThemedColorsPalette.current.fightingBackground }, { LocalThemedColorsPalette.current.fightingTextBackground }),
+    FLYING("flying", R.string.flying, R.drawable.flying, { LocalThemedColorsPalette.current.flyingBackground }, { LocalThemedColorsPalette.current.flyingTextBackground }),
+    POISON("poison", R.string.poison, R.drawable.poison, { LocalThemedColorsPalette.current.poisonBackground }, { LocalThemedColorsPalette.current.poisonTextBackground }),
+    GROUND("ground", R.string.ground, R.drawable.ground, { LocalThemedColorsPalette.current.groundBackground }, { LocalThemedColorsPalette.current.groundTextBackground }),
+    ROCK("rock", R.string.rock, R.drawable.rock, { LocalThemedColorsPalette.current.rockBackground }, { LocalThemedColorsPalette.current.rockTextBackground }),
+    BUG("bug", R.string.bug, R.drawable.bug, { LocalThemedColorsPalette.current.bugBackground }, { LocalThemedColorsPalette.current.bugTextBackground }),
+    GHOST("ghost", R.string.ghost, R.drawable.ghost, { LocalThemedColorsPalette.current.ghostBackground }, { LocalThemedColorsPalette.current.ghostTextBackground }),
+    STEEL("steel", R.string.steel, R.drawable.steel, { LocalThemedColorsPalette.current.steelBackground }, { LocalThemedColorsPalette.current.steelTextBackground }),
+    FIRE("fire", R.string.fire, R.drawable.fire, { LocalThemedColorsPalette.current.fireBackground }, { LocalThemedColorsPalette.current.fireTextBackground }),
+    WATER("water", R.string.water, R.drawable.water, { LocalThemedColorsPalette.current.waterBackground }, { LocalThemedColorsPalette.current.waterTextBackground }),
+    GRASS("grass", R.string.grass, R.drawable.grass, { LocalThemedColorsPalette.current.grassBackground }, { LocalThemedColorsPalette.current.grassTextBackground }),
+    ELECTRIC("electric", R.string.electric, R.drawable.electric, { LocalThemedColorsPalette.current.electricBackground }, { LocalThemedColorsPalette.current.electricTextBackground }),
+    PSYCHIC("psychic", R.string.psychic, R.drawable.psychic, { LocalThemedColorsPalette.current.psychicBackground }, { LocalThemedColorsPalette.current.psychicTextBackground }),
+    ICE("ice", R.string.ice, R.drawable.ice, { LocalThemedColorsPalette.current.iceBackground }, { LocalThemedColorsPalette.current.iceTextBackground }),
+    DRAGON("dragon", R.string.dragon, R.drawable.dragon, { LocalThemedColorsPalette.current.dragonBackground }, { LocalThemedColorsPalette.current.dragonTextBackground }),
+    DARK("dark", R.string.dark, R.drawable.dark, { LocalThemedColorsPalette.current.darkBackground }, { LocalThemedColorsPalette.current.darkTextBackground }),
+    FAIRY("fairy", R.string.fairy, R.drawable.fairy, { LocalThemedColorsPalette.current.fairyBackground }, { LocalThemedColorsPalette.current.fairyTextBackground }),
+    STELLAR("stellar", R.string.stellar, R.drawable.stellar, { LocalThemedColorsPalette.current.stellarBackground }, { LocalThemedColorsPalette.current.stellarTextBackground }),
+    UNKNOWN("unknown", R.string.unknown, R.drawable.normal, { LocalThemedColorsPalette.current.normalBackground }, { LocalThemedColorsPalette.current.normalTextBackground }),
+    SHADOW("shadow", R.string.shadow, R.drawable.normal, { LocalThemedColorsPalette.current.shadowBackground }, { LocalThemedColorsPalette.current.shadowTextBackground });
 
     companion object {
 
+        /**
+         * Ottiene il tipo di Pokemon da un codice
+         *
+         * @param type Codice del tipo di Pokemon
+         *
+         * @return Il tipo di Pokemon corrispondente al codice
+         */
         fun fromType(type: String): PokemonType? {
             return entries.find { it.type == type }
         }
 
+        /**
+         * Ottiene un tipo di Pokemon casuale
+         *
+         * @return Il tipo di Pokemon casuale
+         */
         fun getRandomPokemonType(): PokemonType {
-            val values = PokemonType.values()
+            val values = PokemonType.entries
             val randomIndex = Random.nextInt(values.size)
             return values[randomIndex]
         }
@@ -43,13 +73,30 @@ enum class PokemonType(val type: String, val string: Int, val icon: Int, val bac
 
 }
 
+/**
+ * Converte un tipo di Pokemon in una stringa
+ */
 class PokemonTypeConverter {
 
+    /**
+     * Converte un tipo di Pokemon in una stringa
+     *
+     * @param type Il tipo di Pokemon da convertire
+     *
+     * @return La stringa corrispondente al tipo di Pokemon
+     */
     @TypeConverter
     fun fromPokemonType(type: PokemonType?): String? {
         return type?.type
     }
 
+    /**
+     * Converte una stringa in un tipo di Pokemon
+     *
+     * @param type La stringa da convertire
+     *
+     * @return Il tipo di Pokemon corrispondente alla stringa
+     */
     @TypeConverter
     fun toPokemonType(type: String): PokemonType? {
         return PokemonType.fromType(type)

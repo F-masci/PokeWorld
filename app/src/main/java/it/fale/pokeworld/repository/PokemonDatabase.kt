@@ -1,4 +1,4 @@
-package it.fale.pokeworld.entity.repository
+package it.fale.pokeworld.repository
 
 import android.content.Context
 import android.util.Log
@@ -14,8 +14,7 @@ import it.fale.pokeworld.entity.cross.PokemonItemCross
 import it.fale.pokeworld.entity.cross.PokemonMoveCross
 
 /**
- * Database room contenente le informazioni dei Pokemon
- * Realizzato come Singleton
+ * Classe per gestire il database locale.
  */
 @Database(entities = [
         PokemonEntity::class,
@@ -33,8 +32,12 @@ abstract class PokemonDatabase: RoomDatabase() {
 
     companion object {
 
+        // Singola istanza del database
         private var db: PokemonDatabase? = null
 
+        /**
+         * Ottiene l'istanza del database.
+         */
         fun getInstance(context: Context): PokemonDatabase {
             if (db == null) {
                 Log.d("PokemonDatabase", "Creating new database instance")
@@ -51,5 +54,8 @@ abstract class PokemonDatabase: RoomDatabase() {
         }
     }
 
+    /**
+     * Ottiene il DAO per le operazioni di database.
+     */
     abstract fun pokemonDao(): PokemonDao
 }

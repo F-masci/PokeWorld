@@ -1,4 +1,4 @@
-package it.fale.pokeworld.entity.repository
+package it.fale.pokeworld.repository
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -11,16 +11,28 @@ import it.fale.pokeworld.entity.MoveEntity
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonTypeConverter
 
+/**
+ * Interfaccia per l'accesso al database
+ */
 @Dao
 @TypeConverters(PokemonTypeConverter::class)
 interface PokemonDao {
 
+    /**
+     * Ottiene la lista di tutti i Pokemon
+     */
     @Query("SELECT * FROM pokemon")
     suspend fun retrievePokemonList(): List<PokemonEntity>
 
+    /**
+     * Ottiene un Pokemon tramite il suo ID
+     */
     @Query("SELECT * FROM pokemon WHERE id = :pokemonId")
     suspend fun retrievePokemon(pokemonId: Int): PokemonEntity?
 
+    /**
+     * Ottiene le abilità di un Pokemon tramite il suo ID
+     */
     @Transaction
     @Query(
         """
@@ -32,6 +44,9 @@ interface PokemonDao {
     )
     suspend fun retrieveAbilitiesForPokemon(pokemonId: Int): List<AbilityEntity>
 
+    /**
+     * Ottiene gli item di un Pokemon tramite il suo ID
+     */
     @Transaction
     @Query(
         """
@@ -43,6 +58,9 @@ interface PokemonDao {
     )
     suspend fun retrieveItemsForPokemon(pokemonId: Int): List<ItemEntity>
 
+    /**
+     * Ottiene le mosse di un Pokemon tramite il suo ID
+     */
     @Transaction
     @Query(
         """
@@ -53,8 +71,5 @@ interface PokemonDao {
         """
     )
     suspend fun retrieveMovesForPokemon(pokemonId: Int): List<MoveEntity>
-
-    @Insert
-    suspend fun insertPokemon(pokemon: PokemonEntity)
 
 }

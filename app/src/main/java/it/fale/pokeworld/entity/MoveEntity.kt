@@ -1,15 +1,15 @@
 package it.fale.pokeworld.entity
 
-import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import it.fale.pokeworld.utils.LANGUAGE_KEY
-import it.fale.pokeworld.utils.PREFERENCES_NAME
+import it.fale.pokeworld.repository.UserPreferencesRepository
 import it.fale.pokeworld.utils.Translation
 import it.fale.pokeworld.utils.TranslationListConverter
-import java.util.Locale
 
+/**
+ * Classe che rappresenta una mossa di un Pokemon
+ */
 @Entity(tableName = "move")
 @TypeConverters(TranslationListConverter::class)
 data class MoveEntity(
@@ -25,15 +25,25 @@ data class MoveEntity(
     val descriptions: List<Translation> = emptyList(),
 ) {
 
-    fun getLocaleName(context: Context): String {
-        val language = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).getString(LANGUAGE_KEY, Locale.getDefault().language)!!
-        val name = names.find { it.language == language }
-        return name?.text ?: ""
+    /**
+     * Ottiene il nome della mossa in base alla lingua dell'utente
+     *
+     * @return Nome della mossa in base alla lingua dell'utente
+     */
+    fun getLocaleName(): String {
+        val language = UserPreferencesRepository.getLanguagePreference()
+        val name = names.find { it.language == language.code }
+        return name?.text ?: "Translation not available"
     }
 
-    fun getLocaleDescription(context: Context): String {
-        val language = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).getString(LANGUAGE_KEY, Locale.getDefault().language)!!
-        val description = descriptions.find { it.language == language }
-        return description?.text ?: ""
+    /**
+     * Ottiene la descrizione della mossa in base alla lingua dell'utente
+     *
+     * @return Descrizione della mossa in base alla lingua dell'utente
+     */
+    fun getLocaleDescription(): String {
+        val language = UserPreferencesRepository.getLanguagePreference()
+        val description = descriptions.find { it.language == language.code }
+        return description?.text ?: "Translation not available"
     }
 }

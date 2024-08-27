@@ -1,21 +1,27 @@
 package it.fale.pokeworld.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import it.fale.pokeworld.entity.PokemonEntity
-import it.fale.pokeworld.entity.repository.PokemonRepository
-import it.fale.pokeworld.utils.FAVOURITE_KEY
-import it.fale.pokeworld.utils.PREFERENCES_NAME
-import it.fale.pokeworld.viewmodel.shared.FavoritePokemonSharedRepository
+import it.fale.pokeworld.repository.PokemonRepository
+import it.fale.pokeworld.repository.FavoritePokemonSharedRepository
+import it.fale.pokeworld.repository.UserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PokemonDetailViewModel(private val repository: PokemonRepository, private val favoritePokemonSharedRepository: FavoritePokemonSharedRepository): ViewModel() {
+/**
+ * ViewModel per la schermata dei dettagli di un pokemon.
+ *
+ *  @param pokemonRepository Repository per le operazioni di database.
+ */
+class PokemonDetailViewModel(
+    private val pokemonRepository: PokemonRepository,
+): ViewModel() {
 
+    // Pokemon da visualizzare
     private val _pokemon: MutableStateFlow<PokemonEntity?> = MutableStateFlow(null)
     private val _detailsLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -25,33 +31,46 @@ class PokemonDetailViewModel(private val repository: PokemonRepository, private 
     val detailsLoaded: StateFlow<Boolean>
         get() = _detailsLoaded.asStateFlow()
 
+    /**
+     * Carica i dettagli di un pokemon.
+     *
+     * @param pokemonId Id del pokemon da caricare.
+     */
     fun loadPokemon(pokemonId: Int) {
+        // Specifica che i valori non sono ancora stati caricati
         _detailsLoaded.value = false
         viewModelScope.launch(Dispatchers.IO) {
-            _pokemon.value = repository.retrievePokemon(pokemonId, PokemonRepository.LOAD_ALL)
+            // Carica i dettagli del pokemon dal DB
+            _pokemon.value = pokemonRepository.retrievePokemon(pokemonId, PokemonRepository.LOAD_ALL)
+            // Specifica che i valori sono ancora stati caricati
             _detailsLoaded.value = true
         }
     }
-    fun saveFavoritePokemon(context: Context) {
-        val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putInt(FAVOURITE_KEY, pokemon.value!!.id)
-        editor.apply()
-        favoritePokemonSharedRepository.updateFavoritePokemon(pokemon.value)
+
+    /**
+     * Salva il pokemon preferito dell'utente.
+     * Il pokemonId viene preso dal pokemon correntemente visualizzato.
+     */
+    fun saveFavoritePokemon() {
+        UserPreferencesRepository.saveFavoritePokemonId(pokemon.value!!.id)
+        FavoritePokemonSharedRepository.updateFavoritePokemon(pokemon.value)
     }
 
-    fun getFavoritePokemonId(context: Context): Int? {
-        val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        val favoriteId = sharedPreferences.getInt(FAVOURITE_KEY, -1)
-        return if (favoriteId == -1) null else favoriteId
+    /**
+     * Ritorna l'id del pokemon preferito dell'utente.
+     *
+     * @return Id del pokemon preferito dell'utente.
+     */
+    fun getFavoritePokemonId(): Int? {
+        return UserPreferencesRepository.getFavoritePokemonId()
     }
 
-    fun clearFavoritePokemon(context: Context) {
-        val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.remove(FAVOURITE_KEY)
-        editor.apply()
-        favoritePokemonSharedRepository.updateFavoritePokemon(null)
+    /**
+     * Rimuove il pokemon preferito dell'utente.
+     */
+    fun clearFavoritePokemon() {
+        UserPreferencesRepository.clearFavoritePokemonId()
+        FavoritePokemonSharedRepository.updateFavoritePokemon(null)
     }
 
 }

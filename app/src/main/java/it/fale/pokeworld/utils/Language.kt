@@ -1,8 +1,8 @@
 package it.fale.pokeworld.utils
 
-import it.fale.pokeworld.entity.PokemonType
-import kotlin.random.Random
-
+/**
+ * Enumerazione per le lingue supportate dall'applicazione.
+ */
 enum class Language(val text: String, val code: String) {
 
     ENGLISH("English", "en"),
@@ -10,11 +10,11 @@ enum class Language(val text: String, val code: String) {
 
     companion object {
         fun fromText(text: String): Language {
-            return Language.entries.find { it.text == text } ?: Language.ENGLISH
+            return Language.entries.find { it.text == text } ?: ENGLISH
         }
 
         fun fromCode(code: String): Language {
-            return Language.entries.find { it.code == code } ?: Language.ENGLISH
+            return Language.entries.find { it.code == code } ?: ENGLISH
         }
     }
 

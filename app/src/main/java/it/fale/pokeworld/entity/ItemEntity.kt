@@ -1,15 +1,15 @@
 package it.fale.pokeworld.entity
 
-import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import it.fale.pokeworld.utils.LANGUAGE_KEY
-import it.fale.pokeworld.utils.PREFERENCES_NAME
+import it.fale.pokeworld.repository.UserPreferencesRepository
 import it.fale.pokeworld.utils.Translation
 import it.fale.pokeworld.utils.TranslationListConverter
-import java.util.Locale
 
+/**
+ * Classe che rappresenta un oggetto di gioco
+ */
 @Entity(tableName = "item")
 @TypeConverters(TranslationListConverter::class)
 data class ItemEntity(
@@ -21,16 +21,25 @@ data class ItemEntity(
     val sprite: String?
 ) {
 
-    fun getLocaleName(context: Context): String {
-        val language = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
-            LANGUAGE_KEY, Locale.getDefault().language)!!
-        val name = names.find { it.language == language }
-        return name?.text ?: ""
+    /**
+     * Ottiene il nome dell'oggetto in base alla lingua dell'utente
+     *
+     * @return Nome dell'oggetto in base alla lingua dell'utente
+     */
+    fun getLocaleName(): String {
+        val language = UserPreferencesRepository.getLanguagePreference()
+        val name = names.find { it.language == language.code }
+        return name?.text ?: "Translation not available"
     }
 
-    fun getLocaleEffect(context: Context): String {
-        val language = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).getString(LANGUAGE_KEY, Locale.getDefault().language)!!
-        val effect = effects.find { it.language == language }
-        return effect?.text ?: ""
+    /**
+     * Ottiene l'effetto dell'oggetto in base alla lingua dell'utente
+     *
+     * @return Effetto dell'oggetto in base alla lingua dell'utente
+     */
+    fun getLocaleEffect(): String {
+        val language = UserPreferencesRepository.getLanguagePreference()
+        val effect = effects.find { it.language == language.code }
+        return effect?.text ?: "Translation not available"
     }
 }

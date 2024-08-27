@@ -4,12 +4,13 @@ import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import it.fale.pokeworld.utils.LANGUAGE_KEY
-import it.fale.pokeworld.utils.PREFERENCES_NAME
+import it.fale.pokeworld.repository.UserPreferencesRepository
 import it.fale.pokeworld.utils.Translation
 import it.fale.pokeworld.utils.TranslationListConverter
-import java.util.Locale
 
+/**
+ * Classe che rappresenta una abilità di un Pokemon
+ */
 @Entity(tableName = "ability")
 @TypeConverters(TranslationListConverter::class)
 data class AbilityEntity(
@@ -20,15 +21,25 @@ data class AbilityEntity(
     val effects: List<Translation> = emptyList()
 ) {
 
+    /**
+     * Ottiene il nome dell'abilità in base alla lingua dell'utente
+     *
+     * @return Nome dell'abilità in base alla lingua dell'utente
+     */
     fun getLocaleName(context: Context): String {
-        val language = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).getString(LANGUAGE_KEY, Locale.getDefault().language)!!
-        val name = names.find { it.language == language }
-        return name?.text ?: ""
+        val language = UserPreferencesRepository.getLanguagePreference()
+        val name = names.find { it.language == language.code }
+        return name?.text ?: "Translation not available"
     }
 
+    /**
+     * Ottiene la descrizione dell'abilità in base alla lingua dell'utente
+     *
+     * @return Descrizione dell'abilità in base alla lingua dell'utente
+     */
     fun getLocaleEffect(context: Context): String {
-        val language = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE).getString(LANGUAGE_KEY, Locale.getDefault().language)!!
-        val effect = effects.find { it.language == language }
-        return effect?.text ?: ""
+        val language = UserPreferencesRepository.getLanguagePreference()
+        val effect = effects.find { it.language == language.code }
+        return effect?.text ?: "Translation not available"
     }
 }
