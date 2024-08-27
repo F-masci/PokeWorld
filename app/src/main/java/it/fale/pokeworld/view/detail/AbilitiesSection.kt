@@ -19,13 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
+import it.fale.pokeworld.ui.theme.detail.AbilityItemConstants
+import it.fale.pokeworld.ui.theme.detail.AbilitySectionConstants
 
 /**
- * Composable per la sezione relativa alle abilità del Pokemon.
+ * Composable per la sezione relativa alle abilitàdel Pokemon.
  *
  * @param pokemon Il Pokemon di cui mostrare le abilità.
  */
@@ -34,20 +35,20 @@ fun AbilitiesSection(pokemon: PokemonEntity) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(AbilitySectionConstants.sectionPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = stringResource(R.string.abilities),
             fontSize = 14.sp,
-            modifier = Modifier.padding(15.dp)
+            modifier = Modifier.padding(AbilitySectionConstants.titlePadding)
         )
         pokemon.abilities.forEach { ability ->
             AbilityItem(
                 abilityName = ability.getLocaleName(LocalContext.current),
                 abilityDescription = ability.getLocaleEffect(LocalContext.current),
-                typeColor = pokemon.type1?.getBackgroundTextColor!!(),
-                backgroundColor = pokemon.type1?.getBackgroundColor!!()
+                typeColor = pokemon.type1!!.getBackgroundTextColor(),
+                backgroundColor = pokemon.type1.getBackgroundColor()
             )
         }
     }
@@ -73,10 +74,10 @@ fun AbilityItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .background(typeColor, RoundedCornerShape(10.dp))
+            .padding(AbilityItemConstants.itemPadding)
+            .background(typeColor, RoundedCornerShape(AbilityItemConstants.roundedCornerShape))
             .clickable { isExpanded = !isExpanded }
-            .padding(16.dp)
+            .padding(AbilityItemConstants.contentPadding)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -91,15 +92,15 @@ fun AbilityItem(
             Arrow(isExpanded = isExpanded)
         }
 
-        if (isExpanded) {
+        if(isExpanded) {
             Text(
                 text = abilityDescription,
                 fontSize = 11.sp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .background(backgroundColor, RoundedCornerShape(10.dp))
-                    .padding(16.dp)
+                    .padding(top = AbilityItemConstants.expandedDescriptionPaddingTop)
+                    .background(backgroundColor, RoundedCornerShape(AbilityItemConstants.roundedCornerShape))
+                    .padding(AbilityItemConstants.contentPadding)
             )
         }
     }

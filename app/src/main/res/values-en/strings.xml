@@ -53,4 +53,6 @@
     <string name="speed">Speed</string>
     <string name="special_defense">Special defense</string>
     <string name="special_attack">Special attack</string>
+    <string name="no_internet">Internet connection not available</string>
+    <string name="unstable_internet">Unable to play audio due to internet connection</string>
 </resources>

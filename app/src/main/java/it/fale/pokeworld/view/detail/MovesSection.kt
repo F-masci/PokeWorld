@@ -22,37 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.fale.pokeworld.R
-import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.ui.theme.WhiteDetails
-
-/**
- * Composable per la sezione relativa alle mosse del Pokemon.
- *
- * @param pokemon Il Pokemon di cui mostrare le mosse.
- */
-@Composable
-fun MovesSection(pokemon: PokemonEntity){
-    Text(
-        text = stringResource(R.string.moves),
-        fontSize = 14.sp,
-        modifier = Modifier.padding(15.dp)
-    )
-    pokemon.moves.forEach { move ->
-        MoveItem(
-            moveName = move.getLocaleName(),
-            moveDescription = move.getLocaleDescription(),
-            accuracy = move.accuracy,
-            effectChance = move.effectChance,
-            power = move.power,
-            priority = move.priority,
-            type = pokemon.type1!!
-        )
-    }
-}
+import it.fale.pokeworld.ui.theme.detail.MoveItemConstants
 
 /**
  * Composable per mostrare una mossa.
@@ -80,14 +54,12 @@ fun MoveItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(MoveItemConstants.itemOuterPadding)
             .background(
-                type
-                    .getBackgroundTextColor()
-                    .copy(alpha = 0.8f),
-                RoundedCornerShape(10.dp)
+                type.getBackgroundTextColor().copy(alpha = MoveItemConstants.itemBackgroundAlpha),
+                RoundedCornerShape(MoveItemConstants.itemRoundedCornerShape)
             )
-            .padding(15.dp)
+            .padding(MoveItemConstants.itemPadding)
             .clickable { isExpanded = !isExpanded }
     ) {
 
@@ -97,26 +69,31 @@ fun MoveItem(
         ) {
             Text(
                 text = moveName,
-                fontSize = 11.sp,
+                fontSize = 11.sp, // Esempio di stile non incluso nelle costanti
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Start
             )
             Text(
                 text = stringResource(R.string.priority) + ": ${priority ?: "-"}",
-                fontSize = 8.sp,
+                fontSize = 8.sp, // Esempio di stile non incluso nelle costanti
                 modifier = Modifier
-                    .background(Color.White.copy(0.8f), RoundedCornerShape(10.dp))
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                    .background(Color.White.copy(MoveItemConstants.priorityBackgroundAlpha),
+                        RoundedCornerShape(MoveItemConstants.priorityRoundedCornerShape)
+                    )
+                    .padding(
+                        horizontal = MoveItemConstants.priorityPadding,
+                        vertical = MoveItemConstants.priorityVerticalPadding
+                    ),
                 textAlign = TextAlign.End
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(MoveItemConstants.spacerHeight))
         Divider(
-            color = Color.Black.copy(alpha = 0.1f),
-            thickness = 1.dp,
+            color = Color.Black.copy(alpha = MoveItemConstants.dividerAlpha),
+            thickness = MoveItemConstants.dividerThickness,
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(MoveItemConstants.spacerHeight))
         if (hasDescription) {
             Row(
                 modifier = Modifier
@@ -126,8 +103,8 @@ fun MoveItem(
             ) {
                 Text(
                     text = stringResource(R.string.description),
-                    fontSize = 11.sp,
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    fontSize = 11.sp, // Esempio di stile non incluso nelle costanti
+                    modifier = Modifier.padding(horizontal = MoveItemConstants.descriptionPadding)
                 )
                 Arrow(isExpanded = isExpanded)
             }
@@ -136,15 +113,18 @@ fun MoveItem(
         if (hasDescription && isExpanded) {
             Text(
                 text = moveDescription,
-                fontSize = 12.sp,
+                fontSize = 12.sp, // Esempio di stile non incluso nelle costanti
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White.copy(0.6f), RoundedCornerShape(5.dp))
-                    .padding(4.dp)
+                    .background(
+                        Color.White.copy(MoveItemConstants.expandedDescriptionBackgroundAlpha),
+                        RoundedCornerShape(MoveItemConstants.expandedDescriptionRoundedCornerShape)
+                    )
+                    .padding(MoveItemConstants.expandedDescriptionPadding)
 
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(MoveItemConstants.spacerHeight))
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
@@ -161,11 +141,11 @@ fun MoveItem(
 fun ValueMoves(title: String, value: Int?){
     Text(
         text = title+":\n ${value ?: "-"}",
-        fontSize = 8.sp,
+        fontSize = 8.sp, // Esempio di stile non incluso nelle costanti
         textAlign = TextAlign.Center,
         modifier = Modifier
-            .background(WhiteDetails, RoundedCornerShape(10.dp))
-            .padding(8.dp)
+            .background(WhiteDetails, RoundedCornerShape(MoveItemConstants.valueRoundedCornerShape))
+            .padding(MoveItemConstants.valuePadding)
 
 
     )

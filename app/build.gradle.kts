@@ -74,47 +74,35 @@ dependencies {
 
     /** --- ROOM --- **/
 
-    val room_version = "2.6.1"
-
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 
     /** --- GSON --- **/
 
-    implementation("com.google.code.gson:gson:2.11.0")
+    implementation(libs.gson)
 
     /** --- COIL --- **/
 
-    implementation ("io.coil-kt:coil-compose:2.0.0")
-    implementation("io.coil-kt:coil-gif:2.1.0")
+    implementation(libs.coil.gif)
 
     /** --- NAVIGATION --- **/
-    implementation("androidx.navigation:navigation-compose:2.5.0")
+    implementation(libs.androidx.navigation.compose)
 
     /** --- HILT --- **/
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation(libs.androidx.hilt.navigation.compose)
 
     /** ---MODALE--- **/
-    implementation ("androidx.compose.material3:material3:1.0.1")
-    implementation ("androidx.compose.material:material:1.4.3")
+    implementation (libs.material3)
+    implementation (libs.androidx.material)
 
     /** ---MODALE--- **/
-//    implementation ("androidx.compose.material:material:1.4.0")
-    implementation ("androidx.compose.ui:ui:1.4.0")
-    implementation ("androidx.compose.foundation:foundation:1.4.0")
-  //  implementation ("androidx.compose.material3:material3:1.0.0")
-    implementation ("androidx.compose.material3:material3:1.1.0")
-
-    implementation("com.google.accompanist:accompanist-drawablepainter:0.34.0")
+    implementation (libs.androidx.foundation)
+    implementation(libs.accompanist.drawablepainter)
 
 
-    implementation ("androidx.compose.ui:ui:1.5.0")
-
-    implementation ("androidx.compose.runtime:runtime-livedata:1.5.0")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation ("androidx.activity:activity-compose:1.7.2")
-    implementation ("androidx.compose.material:material:1.5.0")
+    implementation (libs.androidx.compose.ui.ui)
+    implementation (libs.androidx.runtime.livedata)
 
 }

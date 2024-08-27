@@ -26,12 +26,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.ui.theme.WhiteDetails
+import it.fale.pokeworld.ui.theme.detail.ItemCardConstants
+import it.fale.pokeworld.ui.theme.detail.ItemSectionConstants
 
 /**
  * Composable per la sezione relativa agli oggetti del Pokemon.
@@ -43,16 +44,16 @@ fun ItemSection(pokemon: PokemonEntity) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(ItemSectionConstants.sectionPadding),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Text(
             text = stringResource(R.string.items),
             fontSize = 14.sp,
-            modifier = Modifier.padding(15.dp)
+            modifier = Modifier.padding(ItemSectionConstants.sectionPadding)
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(ItemSectionConstants.cardSpacing),
             modifier = Modifier.fillMaxWidth()
         ) {
             pokemon.items.forEach { item ->
@@ -61,11 +62,10 @@ fun ItemSection(pokemon: PokemonEntity) {
                     itemCost = item.cost,
                     itemEffect = item.getLocaleEffect(),
                     itemSprite = item.sprite,
-                    typeColor = pokemon.type1?.getBackgroundTextColor!!(),
+                    typeColor = pokemon.type1!!.getBackgroundTextColor()
                 )
             }
         }
-
     }
 }
 
@@ -84,23 +84,21 @@ fun ItemCard(
     itemCost: Int,
     itemEffect: String,
     itemSprite: String?,
-    typeColor: Color
-
-) {
+    typeColor: Color) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(ItemCardConstants.itemPadding)
             .border(
-                width = 2.dp,
+                width = ItemCardConstants.borderWidth,
                 color = typeColor,
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(ItemCardConstants.roundedCornerShape)
             )
-            .background(WhiteDetails, RoundedCornerShape(10.dp))
+            .background(WhiteDetails, RoundedCornerShape(ItemCardConstants.roundedCornerShape))
             .clickable { isExpanded = !isExpanded }
-            .padding(16.dp)
+            .padding(ItemCardConstants.itemPadding)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -111,19 +109,19 @@ fun ItemCard(
                 AsyncImage(
                     model = it,
                     contentDescription = null,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(ItemCardConstants.imageSize)
                 )
             }
             Text(
                 text = itemName,
                 fontSize = 11.sp,
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = ItemCardConstants.itemNamePaddingTop)
             )
             Arrow(isExpanded)
         }
 
         if (isExpanded) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(ItemCardConstants.expandedSectionSpacerHeight))
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
@@ -134,10 +132,10 @@ fun ItemCard(
                 fontSize = 11.sp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp)
+                    .padding(top = ItemCardConstants.textPaddingTop)
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(ItemCardConstants.textPaddingTop))
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
@@ -148,8 +146,7 @@ fun ItemCard(
                 fontSize = 11.sp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp)
-            )
+                    .padding(top = ItemCardConstants.textPaddingTop))
         }
     }
 }

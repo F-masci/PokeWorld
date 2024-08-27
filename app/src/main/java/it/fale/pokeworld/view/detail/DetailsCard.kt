@@ -1,6 +1,8 @@
 package it.fale.pokeworld.view.detail
 
+import android.content.Context
 import android.media.MediaPlayer
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -43,7 +46,15 @@ import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.ui.theme.detail.DetailsCardConstants
+import it.fale.pokeworld.ui.theme.detail.MovesSectionConstants
+import it.fale.pokeworld.utils.isNetworkAvailable
 import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withContext
 
 /**
  * Composable per la pagina di dettaglio.
@@ -120,7 +131,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                     {
                         IconButton(
                             onClick = {
-                                playAudio(pokemon)
+                                playAudio(context, pokemon)
                             },
                             modifier = Modifier
                                 .padding(DetailsCardConstants.iconPadding)
@@ -210,9 +221,26 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                 Spacer(Modifier.height(10.dp))
                 ItemSection(pokemon = pokemon)
             }
+
+            // Moves section
             item {
                 Spacer(Modifier.height(10.dp))
-                MovesSection(pokemon = pokemon)
+                Text(
+                    text = stringResource(R.string.moves),
+                    fontSize = MovesSectionConstants.titleFontSize,
+                    modifier = Modifier.padding(MovesSectionConstants.sectionPadding)
+                )
+            }
+            items (pokemon.moves) { move ->
+                MoveItem(
+                    moveName = move.getLocaleName(),
+                    moveDescription = move.getLocaleDescription(),
+                    accuracy = move.accuracy,
+                    effectChance = move.effectChance,
+                    power = move.power,
+                    priority = move.priority,
+                    type = pokemon.type1!!
+                )
             }
         }
     }
@@ -287,16 +315,40 @@ fun ConfirmFavoriteChangeDialog(
 /**
  * Funzione per riprodurre il verso del Pokemon.
  *
+ * @param context Il contesto in cui viene eseguita la funzione.
  * @param pokemon Il Pokemon di cui riprodurre il suono
  */
-fun playAudio(pokemon: PokemonEntity) {
+fun playAudio(context: Context, pokemon: PokemonEntity) {
 
-    val mediaPlayer: MediaPlayer?
+    if (!isNetworkAvailable(context)) {
+        Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show()
+        return
+    }
 
-    mediaPlayer = MediaPlayer()
-    mediaPlayer.setDataSource(pokemon.criesLatest)
-    mediaPlayer.prepare()
-    mediaPlayer.start()
+    val mediaPlayer = MediaPlayer()
+
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            withTimeout(5000L) {
+                mediaPlayer.setDataSource(pokemon.criesLatest)
+                mediaPlayer.prepare()
+                withContext(Dispatchers.Main) {
+                    mediaPlayer.start()
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            withContext(Dispatchers.Main) {
+                mediaPlayer.release()
+                Toast.makeText(context, R.string.unstable_internet, Toast.LENGTH_SHORT).show()
+            }
+        } finally {
+            withContext(Dispatchers.Main) {
+                mediaPlayer.setOnCompletionListener {
+                    mediaPlayer.release()
+                }
+            }
+        }
+    }
 }
 
 /**
