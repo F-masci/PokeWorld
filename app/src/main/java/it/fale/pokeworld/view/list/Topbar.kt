@@ -1,7 +1,6 @@
 package it.fale.pokeworld.view.list
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -50,7 +49,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
@@ -59,7 +57,6 @@ import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.ui.theme.list.TopbarConstants
-import it.fale.pokeworld.ui.theme.pokemonPixelFont
 import it.fale.pokeworld.ui.theme.themedColorsPalette
 import it.fale.pokeworld.ui.theme.themedTypography
 
@@ -93,7 +90,7 @@ fun TopBar(
 ){
 
     // Variabile per memorizzare la query corrente
-    var _query: String = query ?: ""
+    val _query: String = query ?: ""
 
     Row(
         modifier = Modifier
@@ -258,6 +255,7 @@ fun FavePokemon(
 ){
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
+    val dialogText = stringResource(id = R.string.no_favorite_disclaimer)
 
     if(pokemon == null) {
         Spacer(Modifier.width(TopbarConstants.favoriteSpacerWidth))
@@ -294,7 +292,7 @@ fun FavePokemon(
             onDismissRequest = { showDialog = false },
             confirmButton = {},
             text = {
-                Text(stringResource(id = R.string.no_favorite_disclaimer))
+                Text(dialogText)
             }
         )
 }

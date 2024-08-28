@@ -283,20 +283,26 @@ fun ConfirmFavoriteChangeDialog(
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
 ) {
+
+    val titleText = stringResource(R.string.change_favorite)
+    val messageText = stringResource(R.string.change_favorite_disclaimer)
+    val confirmButtonText = stringResource(R.string.yes)
+    val cancelButtonText = stringResource(R.string.no)
+
     AlertDialog(
         onDismissRequest = onCancel,
         title = {
-            Text(text = stringResource(R.string.change_favorite))
+            Text(text = titleText)
         },
         text = {
-            Text(stringResource(R.string.change_favorite_disclaimer))
+            Text(text = messageText)
         },
         confirmButton = {
             Button(
                 onClick = onConfirm,
             ) {
                 Text(
-                    text = stringResource(R.string.yes),
+                    text = confirmButtonText,
                     textAlign = TextAlign.Center,
                     fontSize = 11.sp
                 )
@@ -306,7 +312,7 @@ fun ConfirmFavoriteChangeDialog(
             Button(
                 onClick = onCancel,
             ) {
-                Text(stringResource(R.string.no))
+                Text(text = cancelButtonText)
             }
         }
     )
