@@ -12,6 +12,6 @@ object PokemonCardConstants {
 
     val pokemonImageWidth = 100.dp
     val pokemonImageHeight = 100.dp
-    val pokemonImageBorderRadius = 10
+    const val POKEMON_IMAGE_BORDER_RADIUS = 10
 
 }

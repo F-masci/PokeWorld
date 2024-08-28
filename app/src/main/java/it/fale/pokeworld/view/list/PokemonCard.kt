@@ -63,7 +63,7 @@ fun PokemonCard(
                     .height(PokemonCardConstants.cardHeight)
                     .background(
                         MaterialTheme.themedColorsPalette.pokemonImageBackground,
-                        RoundedCornerShape(PokemonCardConstants.pokemonImageBorderRadius)
+                        RoundedCornerShape(PokemonCardConstants.POKEMON_IMAGE_BORDER_RADIUS)
                     )
             ) {}
 

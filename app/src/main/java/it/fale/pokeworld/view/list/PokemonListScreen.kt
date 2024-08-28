@@ -140,8 +140,8 @@ fun PokemonListScreen(
 
                     Box(
                         modifier = Modifier
-                            .fillMaxHeight(PokemonListConstants.maxMainBoxSize)
-                            .fillMaxWidth(PokemonListConstants.maxMainBoxSize)
+                            .fillMaxHeight(PokemonListConstants.MAX_MAIN_BOX_SIZE)
+                            .fillMaxWidth(PokemonListConstants.MAX_MAIN_BOX_SIZE)
                     ) {
                         LazyVerticalGrid(
                             columns = GridCells.Adaptive(PokemonListConstants.cellAdaptiveSize),
@@ -157,12 +157,12 @@ fun PokemonListScreen(
                                             .border(
                                                 PokemonListConstants.cardBorderRadius,
                                                 MaterialTheme.themedColorsPalette.mainListCardBorder,
-                                                RoundedCornerShape(PokemonListConstants.cardBackgroundRadius))
+                                                RoundedCornerShape(PokemonListConstants.CARD_BACKGROUND_RADIUS))
                                             .height(PokemonListConstants.cardHeight)
                                             .width(PokemonListConstants.cardWidth)
                                             .background(
                                                 pokemon.type1!!.getBackgroundColor(),
-                                                RoundedCornerShape(PokemonListConstants.cardBackgroundRadius)
+                                                RoundedCornerShape(PokemonListConstants.CARD_BACKGROUND_RADIUS)
                                             ),
                                         onClick = {
                                             navController.navigate("pokemon_details_screen/${pokemon.id}")

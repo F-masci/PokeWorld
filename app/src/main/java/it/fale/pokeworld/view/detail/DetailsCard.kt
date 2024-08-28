@@ -110,7 +110,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                     Canvas(modifier = Modifier
                         .height(350.dp)
                         .width(350.dp)
-                        .background(Color.White.copy(0.8f), RoundedCornerShape(DetailsCardConstants.roundedCornerPercentage))) {}
+                        .background(Color.White.copy(0.8f), RoundedCornerShape(DetailsCardConstants.ROUNDED_CORNER_PERCENTAGE))) {}
 
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)

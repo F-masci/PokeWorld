@@ -120,7 +120,7 @@ fun DrawerContent(
                 modifier = Modifier
                     .background(
                         MaterialTheme.themedColorsPalette.drawerOptionsBackgroundColor,
-                        RoundedCornerShape(DrawerConstants.buttonCornerRadius)
+                        RoundedCornerShape(DrawerConstants.BUTTON_CORNER_RADIUS)
                     )
             ) {
                 Text(
@@ -153,7 +153,7 @@ fun DrawerContent(
                     modifier = Modifier
                         .background(
                             MaterialTheme.themedColorsPalette.drawerOptionsBackgroundColor,
-                            RoundedCornerShape(DrawerConstants.buttonCornerRadius)
+                            RoundedCornerShape(DrawerConstants.BUTTON_CORNER_RADIUS)
                         )
                 ) {
                     Text(
