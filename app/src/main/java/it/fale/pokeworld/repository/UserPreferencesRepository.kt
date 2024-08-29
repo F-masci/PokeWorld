@@ -5,15 +5,15 @@ import android.content.SharedPreferences
 import it.fale.pokeworld.utils.Language
 import java.util.Locale
 
-const val PREFERENCES_FILE_NAME: String = "pokeworld_preferences"
-const val PREFS_LANGUAGE_KEY: String = "language_preference"
-const val PREFS_THEME_KEY: String = "dark_theme"
-const val PREFS_FAVORITE_POKEMON_KEY: String ="favorite_pokemon"
-
 /**
  * Repository per le preferenze dell'utente.
  */
 object UserPreferencesRepository {
+
+    private const val PREFERENCES_FILE_NAME: String = "pokeworld_preferences"
+    private const val PREFS_LANGUAGE_KEY: String = "language_preference"
+    private const val PREFS_THEME_KEY: String = "dark_theme"
+    private const val PREFS_FAVORITE_POKEMON_KEY: String ="favorite_pokemon"
 
     // Variabili per la gestione delle preferenze
     private lateinit var sharedPreferences: SharedPreferences
