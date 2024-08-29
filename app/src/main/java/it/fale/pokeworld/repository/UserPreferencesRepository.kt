@@ -91,7 +91,7 @@ object UserPreferencesRepository {
      */
     fun getFavoritePokemonId(): Int? {
         val id = sharedPreferences.getInt(PREFS_FAVORITE_POKEMON_KEY, -1)
-        return if(id == 0) null else id
+        return if(id == -1) null else id
     }
 
 }
