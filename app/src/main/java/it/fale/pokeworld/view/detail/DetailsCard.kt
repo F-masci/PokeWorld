@@ -38,7 +38,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
@@ -53,8 +52,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 
 /**
  * Composable per la pagina di dettaglio.
@@ -79,7 +78,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(0.dp),
+                .padding(DetailsCardConstants.lazyColumnPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
@@ -103,14 +102,14 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                     }
                 }
                 Box(modifier = Modifier
-                    .width(350.dp)
-                    .height(300.dp),
+                    .width(DetailsCardConstants.generalWidth)
+                    .height(DetailsCardConstants.boxHeight),
                     contentAlignment = Alignment.Center) {
 
                     Canvas(modifier = Modifier
-                        .height(350.dp)
-                        .width(350.dp)
-                        .background(Color.White.copy(0.8f), RoundedCornerShape(DetailsCardConstants.roundedCornerPercentage))) {}
+                        .height(DetailsCardConstants.canvasHeight)
+                        .width(DetailsCardConstants.generalWidth)
+                        .background(Color.White.copy(DetailsCardConstants.backgroundOpacity), RoundedCornerShape(DetailsCardConstants.roundedCornerPercentage))) {}
 
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
@@ -119,8 +118,8 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                             .build(),
                         contentDescription = null,
                         modifier = Modifier
-                            .width(350.dp)
-                            .height(200.dp)
+                            .width(DetailsCardConstants.generalWidth)
+                            .height(DetailsCardConstants.imageHeight)
                     )
 
                     Row( modifier = Modifier
@@ -187,44 +186,44 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                         modifier = Modifier
                             .background(
                                 backgroundTextColor,
-                                RoundedCornerShape(15)
+                                RoundedCornerShape(DetailsCardConstants.textRoundedCornerPercentage)
                             )
-                            .width(170.dp)
-                            .padding(15.dp),
+                            .width(DetailsCardConstants.textWidth)
+                            .padding(DetailsCardConstants.textPadding),
                         textAlign = TextAlign.Center,
-                        fontSize = 11.sp
+                        fontSize = DetailsCardConstants.fontSize
                     )
-                    Spacer(modifier = Modifier.width(20.dp))
+                    Spacer(modifier = Modifier.width(DetailsCardConstants.spacerWidth))
                     Text(
                         text = stringResource(R.string.weight) + ": ${pokemon.weight}",
                         modifier = Modifier
                             .background(
                                 backgroundTextColor,
-                                RoundedCornerShape(15)
+                                RoundedCornerShape(DetailsCardConstants.textRoundedCornerPercentage)
                             )
-                            .width(170.dp)
-                            .padding(15.dp),
+                            .width(DetailsCardConstants.textWidth)
+                            .padding(DetailsCardConstants.textPadding),
                         textAlign = TextAlign.Center,
-                        fontSize = 11.sp
+                        fontSize = DetailsCardConstants.fontSize
                     )
                 }
             }
             item {
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(DetailsCardConstants.itemSpacerHeight))
                 StatsSection(pokemon = pokemon)
             }
             item {
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(DetailsCardConstants.itemSpacerHeight))
                 AbilitiesSection(pokemon = pokemon)
             }
             item {
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(DetailsCardConstants.itemSpacerHeight))
                 ItemSection(pokemon = pokemon)
             }
 
             // Moves section
             item {
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(DetailsCardConstants.itemSpacerHeight))
                 Text(
                     text = stringResource(R.string.moves),
                     fontSize = MovesSectionConstants.titleFontSize,
@@ -256,19 +255,19 @@ fun TypeRow(type: PokemonType) {
 
     Row (modifier = Modifier
         .background(
-            type.getBackgroundTextColor().copy(alpha = 0.8f),
-            RoundedCornerShape(30)
+            type.getBackgroundTextColor().copy(alpha = DetailsCardConstants.backgroundOpacity),
+            RoundedCornerShape(DetailsCardConstants.typeRowRoundedCornerPercentage)
         )
-        .width(150.dp)
-        .padding(4.dp),
+        .width(DetailsCardConstants.typeRowWidth)
+        .padding(DetailsCardConstants.typeRowPadding),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically){
         Image(
             painterResource(id = type.icon), "type_icon",
             modifier = Modifier
-                .padding(2.dp)
-                .height(20.dp))
-        Text(stringResource(id = type.string), fontSize = 10.sp)
+                .padding(DetailsCardConstants.typeRowImagePadding)
+                .height(DetailsCardConstants.typeRowImageHeight))
+        Text(stringResource(id = type.string), fontSize = DetailsCardConstants.typeRowFontSize)
     }
 }
 
@@ -304,7 +303,7 @@ fun ConfirmFavoriteChangeDialog(
                 Text(
                     text = confirmButtonText,
                     textAlign = TextAlign.Center,
-                    fontSize = 11.sp
+                    fontSize = DetailsCardConstants.fontSize
                 )
             }
         },
