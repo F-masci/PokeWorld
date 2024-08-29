@@ -56,7 +56,7 @@ fun MoveItem(
             .fillMaxWidth()
             .padding(MoveItemConstants.itemOuterPadding)
             .background(
-                type.getBackgroundTextColor().copy(alpha = MoveItemConstants.itemBackgroundAlpha),
+                type.getBackgroundTextColor().copy(alpha = MoveItemConstants.ITEM_BACKGROUND_ALPHA),
                 RoundedCornerShape(MoveItemConstants.itemRoundedCornerShape)
             )
             .padding(MoveItemConstants.itemPadding)
@@ -77,7 +77,7 @@ fun MoveItem(
                 text = stringResource(R.string.priority) + ": ${priority ?: "-"}",
                 fontSize = 8.sp, // Esempio di stile non incluso nelle costanti
                 modifier = Modifier
-                    .background(Color.White.copy(MoveItemConstants.priorityBackgroundAlpha),
+                    .background(Color.White.copy(MoveItemConstants.PRIORITY_BACKGROUND_ALPHA),
                         RoundedCornerShape(MoveItemConstants.priorityRoundedCornerShape)
                     )
                     .padding(
@@ -89,7 +89,7 @@ fun MoveItem(
         }
         Spacer(modifier = Modifier.height(MoveItemConstants.spacerHeight))
         Divider(
-            color = Color.Black.copy(alpha = MoveItemConstants.dividerAlpha),
+            color = Color.Black.copy(alpha = MoveItemConstants.DIVIDER_ALPHA),
             thickness = MoveItemConstants.dividerThickness,
             modifier = Modifier.fillMaxWidth()
         )
@@ -117,7 +117,7 @@ fun MoveItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        Color.White.copy(MoveItemConstants.expandedDescriptionBackgroundAlpha),
+                        Color.White.copy(MoveItemConstants.EXPANDED_DESCRIPTION_BACKGROUND_ALPHA),
                         RoundedCornerShape(MoveItemConstants.expandedDescriptionRoundedCornerShape)
                     )
                     .padding(MoveItemConstants.expandedDescriptionPadding)

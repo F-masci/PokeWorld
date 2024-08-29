@@ -16,7 +16,7 @@ object TopbarConstants {
     val searchBarHeight = 56.dp
     val searchBarRadius = 15.dp
 
-    val buttonRadius = 100
+    const val BUTTON_RADIUS = 100
     val buttonWidth = 70.dp
     val buttonHeight = 50.dp
     val buttonIconSize = 80.dp

@@ -7,6 +7,7 @@ object DetailsCardConstants {
     val lazyColumnPadding = 0.dp
     val generalPaddingSize = 20.dp
     val typeRowSpacerWidth = 20.dp
+    const val ROUNDED_CORNER_PERCENTAGE = 10
     const val roundedCornerPercentage = 10
     const val textRoundedCornerPercentage = 15
     const val typeRowRoundedCornerPercentage = 30

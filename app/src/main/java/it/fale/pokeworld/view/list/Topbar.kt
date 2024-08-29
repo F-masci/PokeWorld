@@ -90,7 +90,7 @@ fun TopBar(
 ){
 
     // Variabile per memorizzare la query corrente
-    val _query: String = query ?: ""
+    val mQuery: String = query ?: ""
 
     Row(
         modifier = Modifier
@@ -136,7 +136,7 @@ fun TopBar(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 TextField(
-                    value = _query,
+                    value = mQuery,
                     onValueChange = { newValue ->
                         filterPokemon(newValue, selectedType1, selectedType2)
                     },
@@ -168,7 +168,7 @@ fun TopBar(
                     modifier = Modifier
                         .background(
                             MaterialTheme.themedColorsPalette.mainYellow,
-                            RoundedCornerShape(TopbarConstants.buttonRadius)
+                            RoundedCornerShape(TopbarConstants.BUTTON_RADIUS)
                         )
                         .width(TopbarConstants.buttonWidth)
                         .height(TopbarConstants.buttonHeight)
@@ -225,7 +225,7 @@ fun TopBar(
                     modifier = Modifier
                         .background(
                             MaterialTheme.themedColorsPalette.mainYellow,
-                            RoundedCornerShape(TopbarConstants.buttonRadius)
+                            RoundedCornerShape(TopbarConstants.BUTTON_RADIUS)
                         )
                         .width(TopbarConstants.buttonWidth)
                         .height(TopbarConstants.buttonHeight)
@@ -276,7 +276,7 @@ fun FavePokemon(
                 .fillMaxHeight()
                 .clickable { navController.navigate("pokemon_details_screen/${pokemon.id}") }){
             AsyncImage(
-                model = pokemon.spriteDefault,
+                model = pokemon.getImageUrl(),
                 contentDescription = "Favorite Pokemon",
                 modifier = Modifier.height(TopbarConstants.favoriteIconHeight)
             )
