@@ -1,6 +1,5 @@
 package it.fale.pokeworld.entity
 
-import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
@@ -26,7 +25,7 @@ data class AbilityEntity(
      *
      * @return Nome dell'abilità in base alla lingua dell'utente
      */
-    fun getLocaleName(context: Context): String {
+    fun getLocaleName(): String {
         val language = UserPreferencesRepository.getLanguagePreference()
         val name = names.find { it.language == language.code }
         return name?.text ?: "Translation not available"
@@ -37,7 +36,7 @@ data class AbilityEntity(
      *
      * @return Descrizione dell'abilità in base alla lingua dell'utente
      */
-    fun getLocaleEffect(context: Context): String {
+    fun getLocaleEffect(): String {
         val language = UserPreferencesRepository.getLanguagePreference()
         val effect = effects.find { it.language == language.code }
         return effect?.text ?: "Translation not available"

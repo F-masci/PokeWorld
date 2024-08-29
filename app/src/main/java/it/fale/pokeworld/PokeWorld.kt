@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -51,8 +52,9 @@ class PokeWorld : ComponentActivity(){
         setContent {
 
             val navController = rememberNavController()
+            val isSystemInDarkTheme = isSystemInDarkTheme()
 
-            var isDarkTheme by rememberSaveable { mutableStateOf(UserPreferencesRepository.getDarkModePreference()) }
+            var isDarkTheme by rememberSaveable { mutableStateOf(UserPreferencesRepository.getDarkModePreference(isSystemInDarkTheme)) }
             var language by rememberSaveable { mutableStateOf(UserPreferencesRepository.getLanguagePreference()) }
 
             PokeWorldTheme(

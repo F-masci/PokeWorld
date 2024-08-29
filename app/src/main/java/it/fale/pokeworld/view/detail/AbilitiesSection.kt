@@ -17,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import it.fale.pokeworld.R
@@ -45,8 +44,8 @@ fun AbilitiesSection(pokemon: PokemonEntity) {
         )
         pokemon.abilities.forEach { ability ->
             AbilityItem(
-                abilityName = ability.getLocaleName(LocalContext.current),
-                abilityDescription = ability.getLocaleEffect(LocalContext.current),
+                abilityName = ability.getLocaleName(),
+                abilityDescription = ability.getLocaleEffect(),
                 typeColor = pokemon.type1!!.getBackgroundTextColor(),
                 backgroundColor = pokemon.type1.getBackgroundColor()
             )

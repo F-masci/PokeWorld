@@ -61,6 +61,12 @@ fun PokeWorldTheme(
     }
 }
 
+/**
+ * Ottiene un contesto con la lingua specificata.
+ *
+ * @param languageCode Il codice della lingua da utilizzare.
+ * @return Il contesto con la lingua specificata.
+ */
 fun Context.getLocalizedContext(languageCode: String): Context {
     val locale = Locale(languageCode)
     Locale.setDefault(locale)

@@ -18,7 +18,7 @@ class TranslationListConverter {
     }
 
     @TypeConverter
-    fun toTranslationList(data: String):List<Translation> {
+    fun toTranslationList(data: String): List<Translation> {
         val listType = object : TypeToken<List<Translation>>() {}.type
         return Gson().fromJson(data, listType)
     }

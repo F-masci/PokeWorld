@@ -37,10 +37,11 @@ object UserPreferencesRepository {
     /**
      * Ottiene la preferenza di tema da SharedPreferences.
      *
+     * @param defValue Valore di default da utilizzare se non viene trovato nulla.
      * @return True se il tema è scuro, false altrimenti.
      */
-    fun getDarkModePreference(): Boolean {
-        return sharedPreferences.getBoolean(PREFS_THEME_KEY, false)
+    fun getDarkModePreference(defValue: Boolean = false): Boolean {
+        return sharedPreferences.getBoolean(PREFS_THEME_KEY, defValue)
     }
 
     /**
@@ -55,13 +56,14 @@ object UserPreferencesRepository {
     /**
      * Ottiene la preferenza di lingua da SharedPreferences.
      *
+     * @param defValue Valore di default da utilizzare se non viene trovato nulla.
      * @return La lingua corrente.
      */
-    fun getLanguagePreference(): Language {
+    fun getLanguagePreference(defValue: String = Locale.getDefault().language): Language {
         return Language.fromCode(
             sharedPreferences.getString(
                 PREFS_LANGUAGE_KEY,
-                Locale.getDefault().language
+                defValue
             )!!
         )
     }
