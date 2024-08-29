@@ -24,6 +24,7 @@ import it.fale.pokeworld.view.detail.PokemonDetailsScreen
 import it.fale.pokeworld.view.list.PokemonListScreen
 import it.fale.pokeworld.viewmodel.ViewModelFactory
 import it.fale.pokeworld.repository.FavoritePokemonSharedRepository
+import it.fale.pokeworld.repository.PokemonRepositoryImpl
 import it.fale.pokeworld.repository.UserPreferencesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +43,7 @@ class PokeWorld : ComponentActivity(){
 
         UserPreferencesRepository.initialize(this)
 
-        val pokemonRepository = PokemonRepository(PokemonDatabase.getInstance(applicationContext).pokemonDao())
+        val pokemonRepository: PokemonRepository = PokemonRepositoryImpl(PokemonDatabase.getInstance(applicationContext).pokemonDao())
         loadFavoritePokemon(pokemonRepository)
 
         val factory = ViewModelFactory(pokemonRepository)
