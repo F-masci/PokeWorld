@@ -6,6 +6,12 @@ import androidx.room.Index
 import it.fale.pokeworld.entity.ItemEntity
 import it.fale.pokeworld.entity.PokemonEntity
 
+/**
+ * Classe che rappresenta la relazione tra un Pokemon e un oggetto
+ *
+ * @param pokemonId ID del Pokemon
+ * @param itemId ID dell'oggetto
+ */
 @Entity(
     tableName = "pokemon_item",
     primaryKeys = ["pokemonId", "itemId"],

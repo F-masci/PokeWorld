@@ -40,7 +40,7 @@ data class PokemonEntity(
     val attack: Int = 0,
     val defense: Int = 0,
     val specialAttack: Int = 0,
-    val specialDefense: Int =0,
+    val specialDefense: Int = 0,
     val speed: Int = 0
 
 ) {

@@ -19,18 +19,27 @@ interface PokemonDao {
 
     /**
      * Ottiene la lista di tutti i Pokemon
+     *
+     * @return Lista di Pokemon
      */
     @Query("SELECT * FROM pokemon")
     suspend fun retrievePokemonList(): List<PokemonEntity>
 
     /**
      * Ottiene un Pokemon tramite il suo ID
+     *
+     * @param pokemonId ID del Pokemon
+     * @return Il Pokemon con l'ID specificato
      */
     @Query("SELECT * FROM pokemon WHERE id = :pokemonId")
     suspend fun retrievePokemon(pokemonId: Int): PokemonEntity?
 
+
     /**
      * Ottiene le abilità di un Pokemon tramite il suo ID
+     *
+     * @param pokemonId ID del Pokemon
+     * @return Lista di abilità del Pokemon
      */
     @Transaction
     @Query(
@@ -45,6 +54,9 @@ interface PokemonDao {
 
     /**
      * Ottiene gli item di un Pokemon tramite il suo ID
+     *
+     * @param pokemonId ID del Pokemon
+     * @return Lista di item del Pokemon
      */
     @Transaction
     @Query(
@@ -59,6 +71,9 @@ interface PokemonDao {
 
     /**
      * Ottiene le mosse di un Pokemon tramite il suo ID
+     *
+     * @param pokemonId ID del Pokemon
+     * @return Lista di mosse del Pokemon
      */
     @Transaction
     @Query(

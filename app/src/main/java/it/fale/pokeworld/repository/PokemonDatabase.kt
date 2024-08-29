@@ -37,6 +37,9 @@ abstract class PokemonDatabase: RoomDatabase() {
 
         /**
          * Ottiene l'istanza del database.
+         *
+         * @param context Context dell'applicazione.
+         * @return L'istanza del database.
          */
         fun getInstance(context: Context): PokemonDatabase {
             if (db == null) {
@@ -56,6 +59,8 @@ abstract class PokemonDatabase: RoomDatabase() {
 
     /**
      * Ottiene il DAO per le operazioni di database.
+     *
+     * @return Il DAO per le operazioni di database.
      */
     abstract fun pokemonDao(): PokemonDao
 }

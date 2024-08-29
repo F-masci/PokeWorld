@@ -6,6 +6,12 @@ import androidx.room.Index
 import it.fale.pokeworld.entity.MoveEntity
 import it.fale.pokeworld.entity.PokemonEntity
 
+/**
+ * Classe che rappresenta la relazione tra un Pokemon e una mossa
+ *
+ * @param pokemonId ID del Pokemon
+ * @param moveId ID della mossa
+ */
 @Entity(
     tableName = "pokemon_move",
     primaryKeys = ["pokemonId", "moveId"],

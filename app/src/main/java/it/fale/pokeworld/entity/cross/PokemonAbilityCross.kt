@@ -6,6 +6,12 @@ import androidx.room.Index
 import it.fale.pokeworld.entity.AbilityEntity
 import it.fale.pokeworld.entity.PokemonEntity
 
+/**
+ * Classe che rappresenta la relazione tra un Pokemon e una abilità
+ *
+ * @param pokemonId ID del Pokemon
+ * @param abilityId ID dell'abilità
+ */
 @Entity(
     tableName = "pokemon_ability",
     primaryKeys = ["pokemonId", "abilityId"],
