@@ -2,6 +2,9 @@ package it.fale.pokeworld.repository
 
 import it.fale.pokeworld.entity.PokemonEntity
 
+/**
+ * Interfaccia per le operazioni di accesso ai dati dei pokemon.
+ */
 interface PokemonRepository {
 
     companion object {
