@@ -17,6 +17,15 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import java.util.Locale
 
+/**
+ * Composable per il tema e la lingua della UI.
+ *
+ * @param darkTheme Indica se il tema è scuro.
+ * @param languageCode Il codice della lingua da utilizzare.
+ * @param context Il contesto corrente dell'applicazione.
+ * @param dynamicColor Indica se utilizzare i colori dinamici.
+ * @param content Il contenuto della UI.
+ */
 @Composable
 fun PokeWorldTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -27,11 +36,14 @@ fun PokeWorldTheme(
     content: @Composable () -> Unit
 ) {
 
+    // Ottiene il contesto con la lingua specificata
     val localizedContext = context.getLocalizedContext(languageCode)
 
+    // Ottiene i colori personalizzati e il tipografia da utilizzare
     val themedColorsPalette = if(darkTheme) darkThemedColorsPalette else lightThemedColorsPalette
     val themedTypography = mainThemedTypography
 
+    // Imposta lo schema di colori di default per il tema
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
             if (darkTheme) dynamicDarkColorScheme(localizedContext) else dynamicLightColorScheme(localizedContext)
@@ -48,6 +60,8 @@ fun PokeWorldTheme(
         }
     }
 
+    // Fornisce lo schema di colori personale e la tipografia ai componenti dell'applicazione
+    // Il contesto corrente dell'applicazione viene sovrascritto con quello modificato
     CompositionLocalProvider(
         LocalContext provides localizedContext,
         LocalThemedColorsPalette provides themedColorsPalette,
