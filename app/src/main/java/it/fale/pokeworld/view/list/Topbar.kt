@@ -73,7 +73,7 @@ import it.fale.pokeworld.ui.theme.themedTypography
  * @param filterPokemon La funzione da eseguire per filtrare i Pokémon.
  * @param randomFilters La funzione da eseguire per ottenere filtri casuali.
  * @param favoritePokemon Il Pokémon preferito.
- * @param navController Il controller di navigazione.
+ * @param onFavoritePokemonClicked La funzione da eseguire quando viene cliccato il Pokémon preferito.
  */
 @Composable
 fun TopBar(
@@ -86,7 +86,7 @@ fun TopBar(
     filterPokemon: (String?, PokemonType?, PokemonType?) -> Unit,
     randomFilters: () -> Pair<PokemonType, PokemonType>,
     favoritePokemon: PokemonEntity?,
-    navController: NavController
+    onFavoritePokemonClicked: (Int) -> Unit
 ){
 
     // Variabile per memorizzare la query corrente
@@ -122,7 +122,7 @@ fun TopBar(
             modifier = Modifier.height(TopbarConstants.logoHeight)
         )
         Spacer(Modifier.width(TopbarConstants.spacerHeight))
-        FavePokemon(favoritePokemon, navController)
+        FavePokemon(favoritePokemon, onFavoritePokemonClicked)
     }
     if (isSearchBarVisible) {
         Column(
@@ -246,12 +246,12 @@ fun TopBar(
  * Composable per il Pokémon preferito.
  *
  * @param pokemon Il Pokémon preferito.
- * @param navController Il controller di navigazione.
+ * @param onFavoritePokemonClicked La funzione da eseguire quando viene cliccato il Pokémon preferito.
  */
 @Composable
 fun FavePokemon(
     pokemon: PokemonEntity?,
-    navController: NavController
+    onFavoritePokemonClicked: (Int) -> Unit
 ){
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
@@ -274,7 +274,7 @@ fun FavePokemon(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxHeight()
-                .clickable { navController.navigate("pokemon_details_screen/${pokemon.id}") }){
+                .clickable { onFavoritePokemonClicked(pokemon.id) }){
             AsyncImage(
                 model = pokemon.getImageUrl(),
                 contentDescription = "Favorite Pokemon",

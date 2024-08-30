@@ -71,7 +71,7 @@ class PokeWorld : ComponentActivity(){
                     composable("pokemon_list_screen") {
                         
                         PokemonListScreen(
-                            navController = navController,
+                            onPokemonClicked = { navController.navigate("pokemon_details_screen/$it") },
                             pokemonListViewModel = viewModel(factory = factory),
                             isDarkTheme = isDarkTheme,
                             onThemeToggle = { isDark ->

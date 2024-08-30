@@ -46,7 +46,7 @@ import java.util.Locale
 /**
  * Composable per la lista di Pokémon.
  *
- * @param navController Il controller di navigazione per navigare tra le schermate.
+ * @param onPokemonClicked La funzione da eseguire quando viene cliccato un Pokémon.
  * @param pokemonListViewModel Il ViewModel per la lista di Pokémon.
  * @param isDarkTheme Il flag che indica se il tema è scuro.
  * @param onThemeToggle La funzione da eseguire quando cambia lo stato del tema.
@@ -55,7 +55,7 @@ import java.util.Locale
  */
 @Composable
 fun PokemonListScreen(
-    navController: NavController,
+    onPokemonClicked: (Int) -> Unit,
     pokemonListViewModel: PokemonListViewModel,
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     onThemeToggle: (Boolean) -> Unit = {},
@@ -135,7 +135,7 @@ fun PokemonListScreen(
                             pokemonListViewModel.randomFilters()
                         },
                         favoritePokemon = favoritePokemon.value,
-                        navController = navController
+                        onFavoritePokemonClicked = onPokemonClicked
                     )
 
                     Box(
@@ -165,7 +165,7 @@ fun PokemonListScreen(
                                                 RoundedCornerShape(PokemonListConstants.CARD_BACKGROUND_RADIUS)
                                             ),
                                         onClick = {
-                                            navController.navigate("pokemon_details_screen/${pokemon.id}")
+                                            onPokemonClicked(pokemon.id)
                                         }
                                     )
                                 }
