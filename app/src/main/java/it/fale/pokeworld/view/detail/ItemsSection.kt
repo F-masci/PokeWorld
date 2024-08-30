@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,13 +27,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.ui.theme.WhiteDetails
 import it.fale.pokeworld.ui.theme.detail.ItemCardConstants
 import it.fale.pokeworld.ui.theme.detail.ItemSectionConstants
+import it.fale.pokeworld.ui.theme.themedTypography
 
 /**
  * Composable per la sezione relativa agli oggetti del Pokemon.
@@ -49,7 +50,7 @@ fun ItemSection(pokemon: PokemonEntity) {
     ) {
         Text(
             text = stringResource(R.string.items),
-            fontSize = 14.sp,
+            style = MaterialTheme.themedTypography.sectionsTitleTextStyle,
             modifier = Modifier.padding(ItemSectionConstants.sectionPadding)
         )
         Row(
@@ -114,7 +115,7 @@ fun ItemCard(
             }
             Text(
                 text = itemName,
-                fontSize = 11.sp,
+                style = MaterialTheme.themedTypography.itemTextStyle,
                 modifier = Modifier.padding(top = ItemCardConstants.itemNamePaddingTop)
             )
             Arrow(isExpanded)
@@ -129,7 +130,7 @@ fun ItemCard(
                     }
                     append(" $itemCost")
                 },
-                fontSize = 11.sp,
+                style = MaterialTheme.themedTypography.itemTextStyle,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = ItemCardConstants.textPaddingTop)
@@ -143,7 +144,7 @@ fun ItemCard(
                     }
                     append(" $itemEffect")
                 },
-                fontSize = 11.sp,
+                style = MaterialTheme.themedTypography.itemTextStyle,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = ItemCardConstants.textPaddingTop))

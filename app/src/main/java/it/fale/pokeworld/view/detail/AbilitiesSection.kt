@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,11 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.sp
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.ui.theme.detail.AbilityItemConstants
 import it.fale.pokeworld.ui.theme.detail.AbilitySectionConstants
+import it.fale.pokeworld.ui.theme.themedTypography
 
 /**
  * Composable per la sezione relativa alle abilitàdel Pokemon.
@@ -39,7 +40,7 @@ fun AbilitiesSection(pokemon: PokemonEntity) {
     ) {
         Text(
             text = stringResource(R.string.abilities),
-            fontSize = 14.sp,
+            style = MaterialTheme.themedTypography.sectionsTitleTextStyle,
             modifier = Modifier.padding(AbilitySectionConstants.titlePadding)
         )
         pokemon.abilities.forEach { ability ->
@@ -85,7 +86,7 @@ fun AbilityItem(
         ) {
             Text(
                 text = abilityName,
-                fontSize = 11.sp,
+                style = MaterialTheme.themedTypography.itemTextStyle,
                 modifier = Modifier.weight(1f)
             )
             Arrow(isExpanded = isExpanded)
@@ -94,7 +95,7 @@ fun AbilityItem(
         if(isExpanded) {
             Text(
                 text = abilityDescription,
-                fontSize = 11.sp,
+                style = MaterialTheme.themedTypography.itemTextStyle,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = AbilityItemConstants.expandedDescriptionPaddingTop)

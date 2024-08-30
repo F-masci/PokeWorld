@@ -14,11 +14,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import it.fale.pokeworld.R
+import it.fale.pokeworld.ui.theme.detail.LoaderConstants
 
 /**
  * Composable per la schermata di caricamento della pagina di dettaglio.
@@ -35,7 +35,7 @@ fun Loader() {
         modifier = Modifier
             .fillMaxSize()
             .background(gradient)
-            .padding(16.dp),
+            .padding(LoaderConstants.columnPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -46,8 +46,8 @@ fun Loader() {
                 .build(),
             contentDescription = "Animated loading GIF",
             modifier = Modifier
-                .width(180.dp)
-                .height(180.dp)
+                .width(LoaderConstants.imageWidth)
+                .height(LoaderConstants.imageHeight)
         )
     }
 }

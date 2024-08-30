@@ -10,6 +10,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import it.fale.pokeworld.R
 
@@ -42,7 +43,19 @@ data class ThemedTypography(
     val topbarFilterTypeOptionsLabel: TextStyle = TextStyle.Default,
     val topbarFilterTypeLabel: TextStyle = TextStyle.Default,
 
-    val pokemonCardTitle: TextStyle = TextStyle.Default
+    val pokemonCardTitle: TextStyle = TextStyle.Default,
+
+    val characteristicsTextStyle: TextStyle = TextStyle.Default,
+    val typeRowTextStyle: TextStyle = TextStyle.Default,
+
+    val sectionsTitleTextStyle: TextStyle = TextStyle.Default,
+    val itemTextStyle: TextStyle = TextStyle.Default,
+    val statisticsTextStyle: TextStyle = TextStyle.Default,
+
+    val alertDialogTextStyle: TextStyle = TextStyle.Default,
+    val alertDialogTitleStyle: TextStyle = TextStyle.Default,
+
+
 )
 
 val mainThemedTypography = ThemedTypography(
@@ -76,6 +89,45 @@ val mainThemedTypography = ThemedTypography(
         fontFamily = pokemonPixelFont,
         fontWeight = FontWeight.Normal,
         fontSize = 15.sp
+    ),
+
+    characteristicsTextStyle = TextStyle(
+        fontFamily = pokemonPixelFont,
+        fontSize = 11.sp,
+        textAlign = TextAlign.Center
+    ),
+
+    typeRowTextStyle = TextStyle(
+        fontFamily = pokemonPixelFont,
+        fontSize = 10.sp,
+    ),
+
+    sectionsTitleTextStyle = TextStyle(
+        fontFamily = pokemonPixelFont,
+        fontSize = 14.sp
+    ),
+
+    itemTextStyle = TextStyle(
+        fontFamily = pokemonPixelFont,
+        fontSize = 11.sp
+    ),
+
+    statisticsTextStyle = TextStyle(
+        fontFamily = pokemonPixelFont,
+        fontSize = 11.sp,
+        textAlign = TextAlign.Center
+    ),
+
+    alertDialogTitleStyle = TextStyle(
+        fontFamily = pokemonPixelFont,
+        fontSize = 14.sp,
+        textAlign = TextAlign.Center
+    ),
+
+    alertDialogTextStyle = TextStyle(
+        fontFamily = pokemonPixelFont,
+        fontSize = 11.sp,
+        textAlign = TextAlign.Left
     )
 
 )

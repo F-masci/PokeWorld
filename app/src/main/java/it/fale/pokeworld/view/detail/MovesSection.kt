@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,6 +28,7 @@ import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.ui.theme.WhiteDetails
 import it.fale.pokeworld.ui.theme.detail.MoveItemConstants
+import it.fale.pokeworld.ui.theme.themedTypography
 
 /**
  * Composable per mostrare una mossa.
@@ -69,7 +71,7 @@ fun MoveItem(
         ) {
             Text(
                 text = moveName,
-                fontSize = 11.sp, // Esempio di stile non incluso nelle costanti
+                style = MaterialTheme.themedTypography.itemTextStyle,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Start
             )
@@ -103,7 +105,7 @@ fun MoveItem(
             ) {
                 Text(
                     text = stringResource(R.string.description),
-                    fontSize = 11.sp, // Esempio di stile non incluso nelle costanti
+                    style = MaterialTheme.themedTypography.itemTextStyle,
                     modifier = Modifier.padding(horizontal = MoveItemConstants.descriptionPadding)
                 )
                 Arrow(isExpanded = isExpanded)

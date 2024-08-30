@@ -23,6 +23,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
@@ -46,6 +46,8 @@ import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.entity.PokemonType
 import it.fale.pokeworld.ui.theme.detail.DetailsCardConstants
 import it.fale.pokeworld.ui.theme.detail.MovesSectionConstants
+import it.fale.pokeworld.ui.theme.themedColorsPalette
+import it.fale.pokeworld.ui.theme.themedTypography
 import it.fale.pokeworld.utils.isNetworkAvailable
 import it.fale.pokeworld.viewmodel.PokemonDetailViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -68,8 +70,8 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
     var isFavorite by remember { mutableStateOf(currentFavoriteId == pokemon.id) }
     var showConfirmationDialog by remember { mutableStateOf(false) }
 
-    val backgroundColor = pokemon.type1?.getBackgroundColor?.invoke() ?: Color.White
-    val backgroundTextColor = pokemon.type1?.getBackgroundTextColor?.invoke() ?: Color.White
+    val backgroundColor = pokemon.type1?.getBackgroundColor?.invoke() ?: MaterialTheme.themedColorsPalette.defaultDetailBackgroundColor
+    val backgroundTextColor = pokemon.type1?.getBackgroundTextColor?.invoke() ?: MaterialTheme.themedColorsPalette.defaultDetailBackgroundColor
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -109,7 +111,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                     Canvas(modifier = Modifier
                         .height(DetailsCardConstants.canvasHeight)
                         .width(DetailsCardConstants.generalWidth)
-                        .background(Color.White.copy(DetailsCardConstants.backgroundOpacity), RoundedCornerShape(DetailsCardConstants.roundedCornerPercentage))) {}
+                        .background(MaterialTheme.themedColorsPalette.pokemonBackground, RoundedCornerShape(DetailsCardConstants.ROUNDED_CORNER_PERCENTAGE))) {}
 
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
@@ -178,7 +180,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                     )
                 }
                 Row(
-                    modifier = Modifier.padding(0.dp, 15.dp),
+                    modifier = Modifier.padding(DetailsCardConstants.characteristicRowHorizontalPadding, DetailsCardConstants.characteristicsRowVerticalPadding),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
@@ -186,12 +188,11 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                         modifier = Modifier
                             .background(
                                 backgroundTextColor,
-                                RoundedCornerShape(DetailsCardConstants.textRoundedCornerPercentage)
+                                RoundedCornerShape(DetailsCardConstants.TEXT_ROUNDED_CORNER_PERCENTAGE)
                             )
                             .width(DetailsCardConstants.textWidth)
                             .padding(DetailsCardConstants.textPadding),
-                        textAlign = TextAlign.Center,
-                        fontSize = DetailsCardConstants.fontSize
+                        style = MaterialTheme.themedTypography.characteristicsTextStyle
                     )
                     Spacer(modifier = Modifier.width(DetailsCardConstants.spacerWidth))
                     Text(
@@ -199,12 +200,11 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                         modifier = Modifier
                             .background(
                                 backgroundTextColor,
-                                RoundedCornerShape(DetailsCardConstants.textRoundedCornerPercentage)
+                                RoundedCornerShape(DetailsCardConstants.TEXT_ROUNDED_CORNER_PERCENTAGE)
                             )
                             .width(DetailsCardConstants.textWidth)
                             .padding(DetailsCardConstants.textPadding),
-                        textAlign = TextAlign.Center,
-                        fontSize = DetailsCardConstants.fontSize
+                        style = MaterialTheme.themedTypography.characteristicsTextStyle
                     )
                 }
             }
@@ -226,7 +226,7 @@ fun DetailsCard(pokemonDetailViewModel: PokemonDetailViewModel, pokemon: Pokemon
                 Spacer(Modifier.height(DetailsCardConstants.itemSpacerHeight))
                 Text(
                     text = stringResource(R.string.moves),
-                    fontSize = MovesSectionConstants.titleFontSize,
+                    style = MaterialTheme.themedTypography.sectionsTitleTextStyle,
                     modifier = Modifier.padding(MovesSectionConstants.sectionPadding)
                 )
             }
@@ -255,8 +255,8 @@ fun TypeRow(type: PokemonType) {
 
     Row (modifier = Modifier
         .background(
-            type.getBackgroundTextColor().copy(alpha = DetailsCardConstants.backgroundOpacity),
-            RoundedCornerShape(DetailsCardConstants.typeRowRoundedCornerPercentage)
+            type.getBackgroundTextColor().copy(alpha = DetailsCardConstants.BACKGROUND_OPACITY),
+            RoundedCornerShape(DetailsCardConstants.TYPE_ROW_ROUNDED_CORNER_PERCENTAGE)
         )
         .width(DetailsCardConstants.typeRowWidth)
         .padding(DetailsCardConstants.typeRowPadding),
@@ -267,7 +267,7 @@ fun TypeRow(type: PokemonType) {
             modifier = Modifier
                 .padding(DetailsCardConstants.typeRowImagePadding)
                 .height(DetailsCardConstants.typeRowImageHeight))
-        Text(stringResource(id = type.string), fontSize = DetailsCardConstants.typeRowFontSize)
+        Text(stringResource(id = type.string), style = MaterialTheme.themedTypography.typeRowTextStyle)
     }
 }
 
@@ -291,10 +291,12 @@ fun ConfirmFavoriteChangeDialog(
     AlertDialog(
         onDismissRequest = onCancel,
         title = {
-            Text(text = titleText)
+            Text(text = titleText,
+                style = MaterialTheme.themedTypography.alertDialogTitleStyle)
         },
         text = {
-            Text(text = messageText)
+            Text(text = messageText,
+                style = MaterialTheme.themedTypography.alertDialogTextStyle)
         },
         confirmButton = {
             Button(
@@ -302,8 +304,7 @@ fun ConfirmFavoriteChangeDialog(
             ) {
                 Text(
                     text = confirmButtonText,
-                    textAlign = TextAlign.Center,
-                    fontSize = DetailsCardConstants.fontSize
+                    style = MaterialTheme.themedTypography.alertDialogTextStyle
                 )
             }
         },
@@ -311,7 +312,7 @@ fun ConfirmFavoriteChangeDialog(
             Button(
                 onClick = onCancel,
             ) {
-                Text(text = cancelButtonText)
+                Text(text = cancelButtonText, style = MaterialTheme.themedTypography.alertDialogTextStyle)
             }
         }
     )
@@ -366,5 +367,5 @@ fun Arrow(isExpanded: Boolean){
     Icon(
         painter = painterResource(id = if (isExpanded) R.drawable.dropup_arrow else R.drawable.dropdown_arrow),
         contentDescription = null,
-        modifier = Modifier.size(24.dp))
+        modifier = Modifier.size(DetailsCardConstants.arrowIconSize))
 }

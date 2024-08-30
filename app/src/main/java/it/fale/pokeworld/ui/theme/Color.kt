@@ -49,6 +49,11 @@ data class ThemedColorsPalette(
 
     val pokemonImageBackground: Color = Color.Unspecified,
 
+    /* --- Detail --- */
+
+    val defaultDetailBackgroundColor: Color = Color.Unspecified,
+    val pokemonBackground: Color = Color.Unspecified,
+
     /* --- Tipi --- */
 
     val normalBackground: Color = Color.Unspecified,
@@ -124,6 +129,11 @@ val lightThemedColorsPalette = ThemedColorsPalette(
     /* --- Pokemon --- */
 
     pokemonImageBackground = Color.White.copy(0.6f),
+
+    /* --- Detail --- */
+
+    defaultDetailBackgroundColor = Color.White,
+    pokemonBackground = Color.White.copy(0.8f),
 
     /* --- Tipi --- */
 

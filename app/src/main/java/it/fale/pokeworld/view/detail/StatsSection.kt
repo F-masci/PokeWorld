@@ -9,18 +9,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import it.fale.pokeworld.R
 import it.fale.pokeworld.entity.PokemonEntity
 import it.fale.pokeworld.ui.theme.WhiteDetails
 import it.fale.pokeworld.ui.theme.detail.StatsSectionConstants
+import it.fale.pokeworld.ui.theme.themedTypography
 
 /**
  * Composable per la sezione relativa alle statistiche del Pokemon.
@@ -38,7 +38,7 @@ fun StatsSection(pokemon: PokemonEntity){
     ){
         Text(
             text = stringResource(R.string.stats),
-            fontSize = 14.sp,
+            style = MaterialTheme.themedTypography.sectionsTitleTextStyle,
             modifier = Modifier.padding(StatsSectionConstants.sectionPadding)
         )
         Column {
@@ -52,8 +52,7 @@ fun StatsSection(pokemon: PokemonEntity){
                         )
                         .width(StatsSectionConstants.statLabelWidth)
                         .padding(StatsSectionConstants.statLabelPadding),
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.sp
+                    style = MaterialTheme.themedTypography.statisticsTextStyle
                 )
                 Spacer(modifier = Modifier.width(StatsSectionConstants.rowSpacerWidth))
                 Text(
@@ -65,8 +64,7 @@ fun StatsSection(pokemon: PokemonEntity){
                         )
                         .width(StatsSectionConstants.statLabelWidth)
                         .padding(StatsSectionConstants.statLabelPadding),
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.sp
+                    style = MaterialTheme.themedTypography.statisticsTextStyle
                 )
             }
             Spacer(modifier = Modifier.height(StatsSectionConstants.columnSpacerHeight))
@@ -80,8 +78,7 @@ fun StatsSection(pokemon: PokemonEntity){
                         )
                         .width(StatsSectionConstants.statLabelWidth)
                         .padding(StatsSectionConstants.statLabelPadding),
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.sp
+                    style = MaterialTheme.themedTypography.statisticsTextStyle
                 )
                 Spacer(modifier = Modifier.width(StatsSectionConstants.rowSpacerWidth))
                 Text(
@@ -93,8 +90,7 @@ fun StatsSection(pokemon: PokemonEntity){
                         )
                         .width(StatsSectionConstants.statLabelWidth)
                         .padding(StatsSectionConstants.statLabelPadding),
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.sp
+                    style = MaterialTheme.themedTypography.statisticsTextStyle
                 )
             }
             Spacer(modifier = Modifier.height(StatsSectionConstants.columnSpacerHeight))
@@ -107,8 +103,7 @@ fun StatsSection(pokemon: PokemonEntity){
                         )
                         .width(StatsSectionConstants.statLabelWidth)
                         .padding(StatsSectionConstants.statLabelPadding),
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.sp
+                    style = MaterialTheme.themedTypography.statisticsTextStyle
                 )
                 Spacer(modifier = Modifier.width(StatsSectionConstants.rowSpacerWidth))
                 Text(
@@ -120,8 +115,7 @@ fun StatsSection(pokemon: PokemonEntity){
                         )
                         .width(StatsSectionConstants.statLabelWidth)
                         .padding(StatsSectionConstants.statLabelPadding),
-                    textAlign = TextAlign.Center,
-                    fontSize = 11.sp
+                    style = MaterialTheme.themedTypography.statisticsTextStyle
                 )
             }
             Spacer(modifier = Modifier.height(StatsSectionConstants.columnSpacerHeight))
