@@ -191,10 +191,10 @@ fun DrawerContent(
         Spacer(modifier = Modifier.weight(1f))
 
         Text(
-            "Alpha Version Database v1.0",
+            "Alpha Version\nDatabase v1.0",
             modifier = Modifier
                 .padding(DrawerConstants.labelPaddingSize),
-            style = MaterialTheme.themedTypography.drawerOptionsLabel,
+            style = MaterialTheme.themedTypography.drawerItemLabel,
             color = MaterialTheme.themedColorsPalette.mainTextColor
         )
     }
