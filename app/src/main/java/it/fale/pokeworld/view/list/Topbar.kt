@@ -140,7 +140,8 @@ fun TopBar(
                     onValueChange = { newValue ->
                         filterPokemon(newValue, selectedType1, selectedType2)
                     },
-                    placeholder = { Text(stringResource(R.string.search)) },
+                    placeholder = { Text(stringResource(R.string.search),style= MaterialTheme.themedTypography.drawerOptionsLabel)
+                                   },
                     modifier = Modifier
                         .heightIn(
                             min = TopbarConstants.searchBarHeight,

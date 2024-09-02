@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.dp
 
 object PokemonCardConstants {
 
+    val polemonCardPadding=5.dp
     val firstSpacerHeight = 10.dp
     val spacerHeight = 20.dp
 

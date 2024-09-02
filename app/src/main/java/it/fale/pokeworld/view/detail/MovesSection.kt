@@ -115,7 +115,7 @@ fun MoveItem(
         if (hasDescription && isExpanded) {
             Text(
                 text = moveDescription,
-                fontSize = 12.sp, // Esempio di stile non incluso nelle costanti
+                fontSize = 9.sp, // Esempio di stile non incluso nelle costanti
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
@@ -143,7 +143,7 @@ fun MoveItem(
 fun ValueMoves(title: String, value: Int?){
     Text(
         text = title+":\n ${value ?: "-"}",
-        fontSize = 7.sp, // Esempio di stile non incluso nelle costanti
+        fontSize = 6.sp, // Esempio di stile non incluso nelle costanti
         textAlign = TextAlign.Center,
         modifier = Modifier
             .background(WhiteDetails, RoundedCornerShape(MoveItemConstants.valueRoundedCornerShape))

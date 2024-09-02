@@ -63,7 +63,7 @@ val mainThemedTypography = ThemedTypography(
     drawerItemLabel = TextStyle(
         fontFamily = pokemonPixelFont,
         fontWeight = FontWeight.Bold,
-        fontSize = 14.sp
+        fontSize = 12.sp
     ),
     drawerOptionsLabel = TextStyle(
         fontFamily = pokemonPixelFont,
@@ -77,56 +77,56 @@ val mainThemedTypography = ThemedTypography(
     ),
 
     topbarFilterTypeOptionsLabel = TextStyle(
-        fontSize = 12.sp,
+        fontSize = 7.sp,
         fontFamily = pokemonPixelFont
     ),
     topbarFilterTypeLabel = TextStyle(
-        fontSize = 10.sp,
+        fontSize = 6.sp,
         fontFamily = pokemonPixelFont
     ),
 
     pokemonCardTitle = TextStyle(
         fontFamily = pokemonPixelFont,
         fontWeight = FontWeight.Normal,
-        fontSize = 15.sp
+        fontSize = 10.sp
     ),
 
     characteristicsTextStyle = TextStyle(
         fontFamily = pokemonPixelFont,
-        fontSize = 11.sp,
+        fontSize = 9.sp,
         textAlign = TextAlign.Center
     ),
 
     typeRowTextStyle = TextStyle(
         fontFamily = pokemonPixelFont,
-        fontSize = 10.sp,
+        fontSize = 9.sp,
     ),
 
     sectionsTitleTextStyle = TextStyle(
         fontFamily = pokemonPixelFont,
-        fontSize = 14.sp
+        fontSize = 10.sp
     ),
 
     itemTextStyle = TextStyle(
         fontFamily = pokemonPixelFont,
-        fontSize = 11.sp
+        fontSize = 9.sp
     ),
 
     statisticsTextStyle = TextStyle(
         fontFamily = pokemonPixelFont,
-        fontSize = 11.sp,
+        fontSize = 10.sp,
         textAlign = TextAlign.Center
     ),
 
     alertDialogTitleStyle = TextStyle(
         fontFamily = pokemonPixelFont,
-        fontSize = 14.sp,
+        fontSize = 12.sp,
         textAlign = TextAlign.Center
     ),
 
     alertDialogTextStyle = TextStyle(
         fontFamily = pokemonPixelFont,
-        fontSize = 11.sp,
+        fontSize = 9.sp,
         textAlign = TextAlign.Left
     )
 
