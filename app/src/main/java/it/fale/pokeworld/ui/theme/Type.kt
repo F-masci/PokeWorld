@@ -81,7 +81,7 @@ val mainThemedTypography = ThemedTypography(
         fontFamily = pokemonPixelFont
     ),
     topbarFilterTypeLabel = TextStyle(
-        fontSize = 6.sp,
+        fontSize = 7.sp,
         fontFamily = pokemonPixelFont
     ),
 
