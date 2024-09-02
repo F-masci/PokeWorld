@@ -63,12 +63,12 @@ val mainThemedTypography = ThemedTypography(
     drawerItemLabel = TextStyle(
         fontFamily = pokemonPixelFont,
         fontWeight = FontWeight.Bold,
-        fontSize = 20.sp
+        fontSize = 14.sp
     ),
     drawerOptionsLabel = TextStyle(
         fontFamily = pokemonPixelFont,
         fontWeight = FontWeight.Light,
-        fontSize = 12.sp
+        fontSize = 10.sp
     ),
     drawerDropdownItemLabel = TextStyle(
         fontFamily = pokemonPixelFont,

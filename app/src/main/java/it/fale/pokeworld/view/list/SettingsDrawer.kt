@@ -194,6 +194,7 @@ fun DrawerContent(
             "Alpha Version Database v1.0",
             modifier = Modifier
                 .padding(DrawerConstants.labelPaddingSize),
+            style = MaterialTheme.themedTypography.drawerOptionsLabel,
             color = MaterialTheme.themedColorsPalette.mainTextColor
         )
     }
